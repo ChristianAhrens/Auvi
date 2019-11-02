@@ -78,14 +78,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 		g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY + outerMargin, meterWidth, outerMargin), Justification::centred, true);
 
 		meterLeft += meterWidth + meterSpacing;
-	}
-
-
-	// draw some placeholder text
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("MultiMeterAudioVisualizer", getLocalBounds(),
-                Justification::topLeft, true);   
+	}  
 }
 
 void MultiMeterAudioVisualizer::resized()
@@ -93,4 +86,9 @@ void MultiMeterAudioVisualizer::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
+}
+
+AbstractAudioVisualizer::VisuType MultiMeterAudioVisualizer::getType()
+{
+    return AbstractAudioVisualizer::VisuType::MultiMeter;
 }

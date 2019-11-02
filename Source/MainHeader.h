@@ -18,6 +18,14 @@
 class MainHeader    : public Component
 {
 public:
+    class Listener
+    {
+    public:
+        virtual ~Listener(){};
+        //virtual void doSomething() = 0;
+    };
+    
+public:
     MainHeader();
     ~MainHeader();
 

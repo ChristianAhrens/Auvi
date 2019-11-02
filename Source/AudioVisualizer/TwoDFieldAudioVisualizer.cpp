@@ -50,3 +50,8 @@ void TwoDFieldAudioVisualizer::resized()
     // components that your component contains..
 
 }
+
+AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()
+{
+    return AbstractAudioVisualizer::VisuType::TwoDField;
+}

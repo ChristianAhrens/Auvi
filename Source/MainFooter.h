@@ -12,18 +12,32 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "AudioVisualizer/AbstractAudioVisualizer.h"
+
 //==============================================================================
 /*
 */
-class MainFooter    : public Component
+class MainFooter : public Component, public ComboBox::Listener
 {
+public:
+    class Listener
+    {
+    public:
+        virtual ~Listener(){};
+        virtual void updateVisuType(AbstractAudioVisualizer::VisuType type) = 0;
+    };
+    
 public:
     MainFooter();
     ~MainFooter();
 
     void paint (Graphics&) override;
     void resized() override;
+    
+    void comboBoxChanged(ComboBox *comboBoxThatHasChanged) override;
 
 private:
+    std::unique_ptr<ComboBox>   m_visuTypeSelect;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainFooter)
 };

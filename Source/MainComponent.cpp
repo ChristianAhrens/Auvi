@@ -20,12 +20,12 @@ MainComponent::MainComponent()
 {
     m_Header            = std::make_unique<MainHeader>();
 	addAndMakeVisible(m_Header.get());
-    m_AudioVisualizer   = std::make_unique<MultiMeterAudioVisualizer>();
-	addAndMakeVisible(m_AudioVisualizer.get());
     m_Footer            = std::make_unique<MainFooter>();
 	addAndMakeVisible(m_Footer.get());
 
     m_Processor         = std::make_unique<MainProcessor>();
+    
+    updateVisuType(AbstractAudioVisualizer::VisuType::Scope);
 
 	setSize(400, 600);
 }
@@ -61,4 +61,26 @@ void MainComponent::resized()
 							FlexItem(*m_Footer.get()).withFlex(1).withMaxWidth(panelMaxSize) });
 	}
 	fb.performLayout(getLocalBounds().toFloat());
+}
+
+void MainComponent::updateVisuType(AbstractAudioVisualizer::VisuType type)
+{
+    m_AudioVisualizer.reset();
+    
+    switch(type)
+    {
+        case AbstractAudioVisualizer::VisuType::MultiMeter:
+            m_AudioVisualizer = std::make_unique<MultiMeterAudioVisualizer>();
+            break;
+        case AbstractAudioVisualizer::VisuType::TwoDField:
+            m_AudioVisualizer = std::make_unique<TwoDFieldAudioVisualizer>();
+            break;
+        default:
+            m_AudioVisualizer = std::make_unique<ScopeAudioVisualizer>();
+            break;
+    }
+    
+    addAndMakeVisible(m_AudioVisualizer.get());
+    
+    resized();
 }

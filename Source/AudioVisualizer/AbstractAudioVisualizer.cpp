@@ -49,3 +49,26 @@ void AbstractAudioVisualizer::resized()
     // components that your component contains..
 
 }
+
+std::string AbstractAudioVisualizer::VisuTypeToString(VisuType type)
+{
+    switch(type)
+    {
+        case MultiMeter:
+            return "MultiMeter";
+        case Scope:
+            return "Scope";
+        case TwoDField:
+            return "TwoDField";
+        case Rta:
+            return "RTA";
+        case Waterfall:
+            return "Waterfall";
+        case Waveform:
+            return "Waveform";
+        case InvalidFirst:
+        case InvalidLast:
+        default:
+            return "Invalid";
+    }
+}

@@ -71,13 +71,6 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.625f * scopeDiameter));
 	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter,
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
-
-
-	// draw some placeholder text
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("ScopeAudioVisualizer", getLocalBounds(),
-                Justification::topLeft, true);   
 }
 
 void ScopeAudioVisualizer::resized()
@@ -85,4 +78,9 @@ void ScopeAudioVisualizer::resized()
     // This method is where you should set the bounds of any child
     // components that your component contains..
 
+}
+
+AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
+{
+    return AbstractAudioVisualizer::VisuType::Scope;
 }
