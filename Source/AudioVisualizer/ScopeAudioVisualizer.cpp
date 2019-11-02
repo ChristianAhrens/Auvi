@@ -37,7 +37,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 	auto scopeDiameter = width < height ? width : height;
 	auto scopeRect = Rectangle<float>((getWidth() - scopeDiameter) * 0.5f, (getHeight() - scopeDiameter) * 0.5f, scopeDiameter, scopeDiameter);
 
-	// do the drawing
+	// fill our visualization area background
 	g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 	g.fillEllipse(scopeRect);
 
@@ -71,6 +71,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.625f * scopeDiameter));
 	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter,
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
+
 
 	// draw some placeholder text
     g.setColour (Colours::white);

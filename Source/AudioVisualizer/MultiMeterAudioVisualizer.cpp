@@ -24,24 +24,68 @@ MultiMeterAudioVisualizer::~MultiMeterAudioVisualizer()
 {
 }
 
-void MultiMeterAudioVisualizer::paint (Graphics& g)
+void MultiMeterAudioVisualizer::paint(Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+	// (Our component is opaque, so we must completely fill the background with a solid colour)
+	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
+	// calculate what we need for our center circle
+	auto width = getWidth();
+	auto height = getHeight();
+	auto outerMargin = 20;
+	auto visuAreaWidth = width - 2 * outerMargin;
+	auto visuAreaHeight = height - 2 * outerMargin;
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+	Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
 
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+	// fill our visualization area background
+	g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+	g.fillRect(visuArea);
 
+	auto visuAreaOrigX = float(outerMargin);
+	auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
+
+	// draw a simple baseline
+	g.setColour(Colours::white);
+	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
+
+	// draw dummy meters
+	std::map<float, std::string> meterDataKV;
+	meterDataKV.insert(std::pair<float, std::string>(0.5f, "first"));
+	meterDataKV.insert(std::pair<float, std::string>(0.6f, "second"));
+	meterDataKV.insert(std::pair<float, std::string>(0.4f, "third"));
+	meterDataKV.insert(std::pair<float, std::string>(0.8f, "fourth"));
+	meterDataKV.insert(std::pair<float, std::string>(0.3f, "fifth"));
+	meterDataKV.insert(std::pair<float, std::string>(0.1f, "sixth"));
+	meterDataKV.insert(std::pair<float, std::string>(0.9f, "seventh"));
+	meterDataKV.insert(std::pair<float, std::string>(0.7f, "eighth"));
+
+	auto meterSpacing = outerMargin * 0.5f;
+	auto meterWidth = (visuArea.getWidth() - (meterDataKV.size() + 1) * meterSpacing) / meterDataKV.size();
+	auto meterMaxHeight = visuArea.getHeight() - 2 * meterSpacing;
+	auto meterLeft = visuAreaOrigX + meterSpacing;
+	Rectangle<int> meterRect;
+	meterRect.setBottom(visuAreaOrigY);
+	meterRect.setWidth(meterWidth);
+
+	g.setColour(Colours::azure.darker());
+	g.setFont(14.0f);
+	for (std::pair<float, std::string> data : meterDataKV)
+	{
+		auto meterHeight = meterMaxHeight * data.first;
+
+		g.fillRect(Rectangle<int>(meterLeft, visuAreaOrigY - meterHeight, meterWidth, meterHeight));
+		g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY + outerMargin, meterWidth, outerMargin), Justification::centred, true);
+
+		meterLeft += meterWidth + meterSpacing;
+	}
+
+
+	// draw some placeholder text
     g.setColour (Colours::white);
     g.setFont (14.0f);
     g.drawText ("MultiMeterAudioVisualizer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+                Justification::topLeft, true);   
 }
 
 void MultiMeterAudioVisualizer::resized()

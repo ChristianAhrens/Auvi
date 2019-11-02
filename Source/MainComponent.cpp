@@ -20,7 +20,7 @@ MainComponent::MainComponent()
 {
     m_Header            = std::make_unique<MainHeader>();
 	addAndMakeVisible(m_Header.get());
-    m_AudioVisualizer   = std::make_unique<ScopeAudioVisualizer>();
+    m_AudioVisualizer   = std::make_unique<MultiMeterAudioVisualizer>();
 	addAndMakeVisible(m_AudioVisualizer.get());
     m_Footer            = std::make_unique<MainFooter>();
 	addAndMakeVisible(m_Footer.get());
