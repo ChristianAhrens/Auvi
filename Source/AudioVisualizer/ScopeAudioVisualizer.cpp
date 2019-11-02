@@ -26,22 +26,57 @@ ScopeAudioVisualizer::~ScopeAudioVisualizer()
 
 void ScopeAudioVisualizer::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+	// fill the background as starting point
+    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
+	// calculate what we need for our center circle
+	auto outerMargin = 20;
+	auto legendMarkerSize = 20;
+	auto width = getWidth() - 2 * outerMargin;
+	auto height = getHeight() - 2 * outerMargin;
+	auto scopeDiameter = width < height ? width : height;
+	auto scopeRect = Rectangle<float>((getWidth() - scopeDiameter) * 0.5f, (getHeight() - scopeDiameter) * 0.5f, scopeDiameter, scopeDiameter);
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+	// do the drawing
+	g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+	g.fillEllipse(scopeRect);
 
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+	// outer and inner circle
+    g.setColour (Colours::white);
+	g.drawEllipse(scopeRect, 4); // outer circle
+	g.drawEllipse(scopeRect.reduced(0.25f * scopeDiameter), 2); // inner circle
 
+	// crosshairs
+	g.drawLine(Line<float>((getWidth() - scopeDiameter) * 0.5f - outerMargin, getHeight() * 0.5f,
+		getWidth() * 0.5f + scopeDiameter * 0.5f + outerMargin, getHeight() * 0.5f), 2); // horizontal crosshair
+	g.drawLine(Line<float>(getWidth() * 0.5f, (getHeight() - scopeDiameter) * 0.5f - outerMargin,
+		getWidth() * 0.5f, getHeight() * 0.5f + scopeDiameter * 0.5f + outerMargin), 2); // vertical crosshair
+
+	// horizontal legend marker lines
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
+							scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.375f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
+							scopeRect.getX() + 0.375f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.625f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
+							scopeRect.getX() + 0.625f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.875f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
+							scopeRect.getX() + 0.875f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
+
+	// vertical legend marker lines
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.125f * scopeDiameter,
+							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.125f * scopeDiameter));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.375f * scopeDiameter,
+							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.375f * scopeDiameter));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.625f * scopeDiameter,
+							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.625f * scopeDiameter));
+	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter,
+							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
+
+	// draw some placeholder text
     g.setColour (Colours::white);
     g.setFont (14.0f);
     g.drawText ("ScopeAudioVisualizer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+                Justification::topLeft, true);   
 }
 
 void ScopeAudioVisualizer::resized()
