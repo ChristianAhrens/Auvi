@@ -25,9 +25,7 @@ MainFooter::~MainFooter()
 
 void MainFooter::paint (Graphics& g)
 {
-	//g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).overlaidWith(
-	//	getLookAndFeel().findColour(ResizableWindow::backgroundColourId)));
-	g.fillAll(Colours::green);
+	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 }
 
 void MainFooter::resized()

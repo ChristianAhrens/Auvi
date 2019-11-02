@@ -18,16 +18,16 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    setSize (400, 600);
-    
     m_Header            = std::make_unique<MainHeader>();
 	addAndMakeVisible(m_Header.get());
-    m_AudioVisualizer   = std::make_unique<TwoDFieldAudioVisualizer>();
+    m_AudioVisualizer   = std::make_unique<ScopeAudioVisualizer>();
 	addAndMakeVisible(m_AudioVisualizer.get());
     m_Footer            = std::make_unique<MainFooter>();
 	addAndMakeVisible(m_Footer.get());
 
     m_Processor         = std::make_unique<MainProcessor>();
+
+	setSize(400, 600);
 }
 
 MainComponent::~MainComponent()
@@ -42,23 +42,23 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-	auto panelMaxSize = 50.0f;
+	auto panelMaxSize = 40.0f;
 	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
-
+	
 	FlexBox fb;
 	if(isPortrait)
 	{
 		fb.flexDirection = FlexBox::Direction::column;
-		fb.items.addArray({ FlexItem(*m_Header.get()).withMaxWidth(panelMaxSize),
-							FlexItem(*m_AudioVisualizer.get()),
-							FlexItem(*m_Footer.get()).withMaxWidth(panelMaxSize) });
+		fb.items.addArray({ FlexItem(*m_Header.get()).withFlex(1).withMaxHeight(panelMaxSize),
+							FlexItem(*m_AudioVisualizer.get()).withFlex(4),
+							FlexItem(*m_Footer.get()).withFlex(1).withMaxHeight(panelMaxSize) });
 	}
 	else
 	{
 		fb.flexDirection = FlexBox::Direction::row;
-		fb.items.addArray({ FlexItem(*m_Header.get()).withMaxHeight(panelMaxSize),
-							FlexItem(*m_AudioVisualizer.get()),
-							FlexItem(*m_Footer.get()).withMaxHeight(panelMaxSize) });
+		fb.items.addArray({ FlexItem(*m_Header.get()).withFlex(1).withMaxWidth(panelMaxSize),
+							FlexItem(*m_AudioVisualizer.get()).withFlex(4),
+							FlexItem(*m_Footer.get()).withFlex(1).withMaxWidth(panelMaxSize) });
 	}
 	fb.performLayout(getLocalBounds().toFloat());
 }

@@ -25,9 +25,7 @@ MainHeader::~MainHeader()
 
 void MainHeader::paint (Graphics& g)
 {
-	//g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).overlaidWith(
-	//	getLookAndFeel().findColour(ResizableWindow::backgroundColourId)));
-	g.fillAll(Colours::red);
+	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 }
 
 void MainHeader::resized()
