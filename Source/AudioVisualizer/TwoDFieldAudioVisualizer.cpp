@@ -26,22 +26,61 @@ TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
 
 void TwoDFieldAudioVisualizer::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
+    // calculate what we need for our center circle
+    auto width = getWidth();
+    auto height = getHeight();
+    auto outerMargin = 40;
+    auto visuAreaWidth = width - 2 * outerMargin;
+    auto visuAreaHeight = height - 2 * outerMargin;
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+    Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
 
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    // fill our visualization area background
+    g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+    g.fillRect(visuArea);
 
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("TwoDFieldAudioVisualizer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+    auto visuAreaOrigX = float(outerMargin);
+    auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
+
+    // draw a simple frame
+    g.setColour(Colours::white);
+    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
+    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight, visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight));
+    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX, visuAreaOrigY - visuAreaHeight));
+    g.drawLine(Line<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight));
+    
+    // draw dashed field dimension indication lines
+    float dparam[]{ 4.0f, 5.0f };
+    g.drawDashedLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight), dparam, 2);
+    g.drawDashedLine(Line<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight, visuAreaOrigX + visuAreaWidth, visuAreaOrigY), dparam, 2);
+    g.drawDashedLine(Line<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight, visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight), dparam, 2);
+    
+    // draw level indication lines
+    float levelL = float(rand()%100)*0.01f;
+    float levelC = float(rand()%100)*0.01f;
+    float levelR = float(rand()%100)*0.01f;
+    float levelRS = float(rand()%100)*0.01f;
+    float levelLS = float(rand()%100)*0.01f;
+    
+    Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
+    Point<float> leftMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight);
+    Point<float> centerMax = levelOrig - Point<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight);
+    Point<float> rightMax = levelOrig - Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight);
+    Point<float> rightSurroundMax = levelOrig - Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
+    Point<float> leftSurroundMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY);
+    
+    g.setColour(Colours::azure.darker());
+    Path path;
+    path.startNewSubPath(levelOrig - leftMax*levelL);
+    path.lineTo(levelOrig - centerMax*levelC);
+    path.lineTo(levelOrig - rightMax*levelR);
+    path.lineTo(levelOrig - rightSurroundMax*levelRS);
+    path.lineTo(levelOrig - leftSurroundMax*levelLS);
+    path.lineTo(levelOrig - leftMax*levelL);
+    g.strokePath(path, PathStrokeType(2));
 }
 
 void TwoDFieldAudioVisualizer::resized()

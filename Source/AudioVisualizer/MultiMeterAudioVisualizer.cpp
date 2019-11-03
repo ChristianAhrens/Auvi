@@ -51,14 +51,14 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 
 	// draw dummy meters
 	std::map<float, std::string> meterDataKV;
-	meterDataKV.insert(std::pair<float, std::string>(0.5f, "first"));
-	meterDataKV.insert(std::pair<float, std::string>(0.6f, "second"));
-	meterDataKV.insert(std::pair<float, std::string>(0.4f, "third"));
-	meterDataKV.insert(std::pair<float, std::string>(0.8f, "fourth"));
-	meterDataKV.insert(std::pair<float, std::string>(0.3f, "fifth"));
-	meterDataKV.insert(std::pair<float, std::string>(0.1f, "sixth"));
-	meterDataKV.insert(std::pair<float, std::string>(0.9f, "seventh"));
-	meterDataKV.insert(std::pair<float, std::string>(0.7f, "eighth"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "first"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "second"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "third"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "fourth"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "fifth"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "sixth"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "seventh"));
+	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "eighth"));
 
 	auto meterSpacing = outerMargin * 0.5f;
 	auto meterWidth = (visuArea.getWidth() - (meterDataKV.size() + 1) * meterSpacing) / meterDataKV.size();

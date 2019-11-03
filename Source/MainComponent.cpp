@@ -30,7 +30,7 @@ MainComponent::MainComponent()
     
     updateVisuType(AbstractAudioVisualizer::VisuType::Scope);
 
-	setSize(400, 600);
+	setSize(500, 580);
 }
 
 MainComponent::~MainComponent()
