@@ -33,6 +33,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	auto width = getWidth();
 	auto height = getHeight();
 	auto outerMargin = 20;
+    auto maxMeterWidth = 50;
 	auto visuAreaWidth = width - 2 * outerMargin;
 	auto visuAreaHeight = height - 2 * outerMargin;
 
@@ -50,18 +51,19 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
 
 	// draw dummy meters
-	std::map<float, std::string> meterDataKV;
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "first"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "second"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "third"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "fourth"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "fifth"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "sixth"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "seventh"));
-	meterDataKV.insert(std::pair<float, std::string>(float(rand()%100)*0.01f, "eighth"));
+	std::vector<std::pair<float, std::string>> meterData;
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "first"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "second"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "third"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "fourth"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "fifth"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "sixth"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "seventh"));
+	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "eighth"));
 
 	auto meterSpacing = outerMargin * 0.5f;
-	auto meterWidth = (visuArea.getWidth() - (meterDataKV.size() + 1) * meterSpacing) / meterDataKV.size();
+	auto meterWidth = (visuArea.getWidth() - (meterData.size() + 1) * meterSpacing) / meterData.size();
+    meterWidth = meterWidth > maxMeterWidth ? maxMeterWidth : meterWidth;
 	auto meterMaxHeight = visuArea.getHeight() - 2 * meterSpacing;
 	auto meterLeft = visuAreaOrigX + meterSpacing;
 	Rectangle<int> meterRect;
@@ -70,12 +72,12 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 
 	g.setColour(Colours::azure.darker());
 	g.setFont(14.0f);
-	for (std::pair<float, std::string> data : meterDataKV)
+	for (const std::pair<float, std::string> &data : meterData)
 	{
 		auto meterHeight = meterMaxHeight * data.first;
 
 		g.fillRect(Rectangle<int>(meterLeft, visuAreaOrigY - meterHeight, meterWidth, meterHeight));
-		g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY + outerMargin, meterWidth, outerMargin), Justification::centred, true);
+		g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY, meterWidth, outerMargin), Justification::centred, true);
 
 		meterLeft += meterWidth + meterSpacing;
 	}  
