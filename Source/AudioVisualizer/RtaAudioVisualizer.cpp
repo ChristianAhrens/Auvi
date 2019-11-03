@@ -26,22 +26,52 @@ RtaAudioVisualizer::~RtaAudioVisualizer()
 
 void RtaAudioVisualizer::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
+    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
-       You should replace everything in this method with your own
-       drawing code..
-    */
+    // calculate what we need for our center circle
+    auto width = getWidth();
+    auto height = getHeight();
+    auto outerMargin = 20;
+    auto visuAreaWidth = width - 2 * outerMargin;
+    auto visuAreaHeight = height - 2 * outerMargin;
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+    Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
 
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    // fill our visualization area background
+    g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+    g.fillRect(visuArea);
 
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("RtaAudioVisualizer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+    auto visuAreaOrigX = float(outerMargin);
+    auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
+
+    // draw a simple baseline
+    g.setColour(Colours::white);
+    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
+
+    // draw dummy curve
+    g.setColour(Colours::azure.darker());
+    
+    std::vector<float> plotPoints;
+    for(int i=0; i<50; ++i)
+    {
+        plotPoints.push_back(float(rand()%100)*0.01f);
+    }
+    
+    float newPointX = visuAreaOrigX;
+    float newPointY = visuAreaOrigY - plotPoints.front()*visuAreaHeight;
+    float plotStepWidth = plotPoints.size()>0 ? float(visuAreaWidth)/float(plotPoints.size()-1) : 1;
+    
+    Path path;
+    path.startNewSubPath(Point<float>(newPointX, newPointY));
+    for(int i = 1; i < plotPoints.size(); ++i)
+    {
+        newPointX += plotStepWidth;
+        newPointY = visuAreaOrigY - plotPoints.at(i)*visuAreaHeight;
+        
+        path.lineTo(Point<float>(newPointX, newPointY));
+    }
+    g.strokePath(path, PathStrokeType(2));
 }
 
 void RtaAudioVisualizer::resized()
