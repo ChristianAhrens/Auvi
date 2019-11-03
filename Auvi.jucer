@@ -20,6 +20,10 @@
               resource="0" file="Source/AudioVisualizer/MultiMeterAudioVisualizer.cpp"/>
         <FILE id="T0yWsQ" name="MultiMeterAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/MultiMeterAudioVisualizer.h"/>
+        <FILE id="ViI2uj" name="RtaAudioVisualizer.cpp" compile="1" resource="0"
+              file="Source/AudioVisualizer/RtaAudioVisualizer.cpp"/>
+        <FILE id="tApziv" name="RtaAudioVisualizer.h" compile="0" resource="0"
+              file="Source/AudioVisualizer/RtaAudioVisualizer.h"/>
         <FILE id="fagShg" name="ScopeAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/ScopeAudioVisualizer.cpp"/>
         <FILE id="RRJxwc" name="ScopeAudioVisualizer.h" compile="0" resource="0"
@@ -28,6 +32,14 @@
               file="Source/AudioVisualizer/TwoDFieldAudioVisualizer.cpp"/>
         <FILE id="GmYCJH" name="TwoDFieldAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/TwoDFieldAudioVisualizer.h"/>
+        <FILE id="v53Bu5" name="WaterfallAudioVisualizer.cpp" compile="1" resource="0"
+              file="Source/AudioVisualizer/WaterfallAudioVisualizer.cpp"/>
+        <FILE id="t6UiPX" name="WaterfallAudioVisualizer.h" compile="0" resource="0"
+              file="Source/AudioVisualizer/WaterfallAudioVisualizer.h"/>
+        <FILE id="TL4Jaf" name="WaveformAudioVisualizer.cpp" compile="1" resource="0"
+              file="Source/AudioVisualizer/WaveformAudioVisualizer.cpp"/>
+        <FILE id="rLHOfi" name="WaveformAudioVisualizer.h" compile="0" resource="0"
+              file="Source/AudioVisualizer/WaveformAudioVisualizer.h"/>
       </GROUP>
       <FILE id="erIvMw" name="MainFooter.cpp" compile="1" resource="0" file="Source/MainFooter.cpp"/>
       <FILE id="mvViVu" name="MainFooter.h" compile="0" resource="0" file="Source/MainFooter.h"/>

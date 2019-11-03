@@ -9,11 +9,14 @@
 #include "MainComponent.h"
 
 #include "MainHeader.h"
+#include "MainFooter.h"
+#include "MainProcessor.h"
 #include "AudioVisualizer/TwoDFieldAudioVisualizer.h"
 #include "AudioVisualizer/MultiMeterAudioVisualizer.h"
 #include "AudioVisualizer/ScopeAudioVisualizer.h"
-#include "MainFooter.h"
-#include "MainProcessor.h"
+#include "AudioVisualizer/RtaAudioVisualizer.h"
+#include "AudioVisualizer/WaterfallAudioVisualizer.h"
+#include "AudioVisualizer/WaveformAudioVisualizer.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -74,6 +77,15 @@ void MainComponent::updateVisuType(AbstractAudioVisualizer::VisuType type)
             break;
         case AbstractAudioVisualizer::VisuType::TwoDField:
             m_AudioVisualizer = std::make_unique<TwoDFieldAudioVisualizer>();
+            break;
+        case AbstractAudioVisualizer::VisuType::Rta:
+            m_AudioVisualizer = std::make_unique<RtaAudioVisualizer>();
+            break;
+        case AbstractAudioVisualizer::VisuType::Waterfall:
+            m_AudioVisualizer = std::make_unique<WaterfallAudioVisualizer>();
+            break;
+        case AbstractAudioVisualizer::VisuType::Waveform:
+            m_AudioVisualizer = std::make_unique<WaveformAudioVisualizer>();
             break;
         default:
             m_AudioVisualizer = std::make_unique<ScopeAudioVisualizer>();
