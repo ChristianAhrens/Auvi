@@ -84,3 +84,8 @@ AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::Scope;
 }
+
+void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

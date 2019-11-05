@@ -22,10 +22,15 @@ class ScopeAudioVisualizer    : public AbstractAudioVisualizer
 public:
     ScopeAudioVisualizer();
     ~ScopeAudioVisualizer();
-
+    
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     
+    //==============================================================================
+    void processingDataChanged(AbstractProcessorData *data) override;
+    
+    //==============================================================================
     VisuType getType() override;
 
 private:

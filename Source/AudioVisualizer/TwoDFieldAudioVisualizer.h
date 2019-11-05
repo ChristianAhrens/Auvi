@@ -22,10 +22,15 @@ class TwoDFieldAudioVisualizer    : public AbstractAudioVisualizer
 public:
     TwoDFieldAudioVisualizer();
     ~TwoDFieldAudioVisualizer();
-
+    
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     
+    //==============================================================================
+    void processingDataChanged(AbstractProcessorData *data) override;
+    
+    //==============================================================================
     VisuType getType() override;
 
 private:

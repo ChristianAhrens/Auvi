@@ -55,3 +55,8 @@ AbstractAudioVisualizer::VisuType WaterfallAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::Waterfall;
 }
+
+void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

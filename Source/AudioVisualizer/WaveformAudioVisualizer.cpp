@@ -55,3 +55,8 @@ AbstractAudioVisualizer::VisuType WaveformAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::Waveform;
 }
+
+void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

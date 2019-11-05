@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    MainHeader.cpp
+    Header.cpp
     Created: 1 Nov 2019 11:34:46am
     Author:  Christian Ahrens
 
@@ -9,26 +9,26 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "MainHeader.h"
+#include "Header.h"
 
 //==============================================================================
-MainHeader::MainHeader()
+Header::Header()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
 }
 
-MainHeader::~MainHeader()
+Header::~Header()
 {
 }
 
-void MainHeader::paint (Graphics& g)
+void Header::paint (Graphics& g)
 {
 	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 }
 
-void MainHeader::resized()
+void Header::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..

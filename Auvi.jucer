@@ -11,6 +11,22 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <GROUP id="{A4FA5224-B995-2116-2C5E-65302BD4192F}" name="Processor">
+        <FILE id="H6UJ20" name="AbstractProcessorData.cpp" compile="1" resource="0"
+              file="Source/Processor/AbstractProcessorData.cpp"/>
+        <FILE id="JLU33M" name="AbstractProcessorData.h" compile="0" resource="0"
+              file="Source/Processor/AbstractProcessorData.h"/>
+        <FILE id="H2oATP" name="Processor.cpp" compile="1" resource="0" file="Source/Processor/Processor.cpp"/>
+        <FILE id="ydhmUs" name="Processor.h" compile="0" resource="0" file="Source/Processor/Processor.h"/>
+        <FILE id="XXook6" name="ProcessorLevelData.cpp" compile="1" resource="0"
+              file="Source/Processor/ProcessorLevelData.cpp"/>
+        <FILE id="wKK7HI" name="ProcessorLevelData.h" compile="0" resource="0"
+              file="Source/Processor/ProcessorLevelData.h"/>
+        <FILE id="TCOBEP" name="ProcessorSpectrumData.cpp" compile="1" resource="0"
+              file="Source/Processor/ProcessorSpectrumData.cpp"/>
+        <FILE id="R3G2dV" name="ProcessorSpectrumData.h" compile="0" resource="0"
+              file="Source/Processor/ProcessorSpectrumData.h"/>
+      </GROUP>
       <GROUP id="{15561174-C97B-3E3D-395E-723D2371D9A8}" name="AudioVisualizer">
         <FILE id="ZUrWEL" name="AbstractAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/AbstractAudioVisualizer.cpp"/>
@@ -41,13 +57,10 @@
         <FILE id="rLHOfi" name="WaveformAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/WaveformAudioVisualizer.h"/>
       </GROUP>
-      <FILE id="erIvMw" name="MainFooter.cpp" compile="1" resource="0" file="Source/MainFooter.cpp"/>
-      <FILE id="mvViVu" name="MainFooter.h" compile="0" resource="0" file="Source/MainFooter.h"/>
-      <FILE id="nwbfeG" name="MainHeader.cpp" compile="1" resource="0" file="Source/MainHeader.cpp"/>
-      <FILE id="jjcSrN" name="MainHeader.h" compile="0" resource="0" file="Source/MainHeader.h"/>
-      <FILE id="iPDtkS" name="MainProcessor.cpp" compile="1" resource="0"
-            file="Source/MainProcessor.cpp"/>
-      <FILE id="iINcYM" name="MainProcessor.h" compile="0" resource="0" file="Source/MainProcessor.h"/>
+      <FILE id="erIvMw" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
+      <FILE id="mvViVu" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
+      <FILE id="nwbfeG" name="Header.cpp" compile="1" resource="0" file="Source/Header.cpp"/>
+      <FILE id="jjcSrN" name="Header.h" compile="0" resource="0" file="Source/Header.h"/>
       <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>

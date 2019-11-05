@@ -8,9 +8,9 @@
 
 #include "MainComponent.h"
 
-#include "MainHeader.h"
-#include "MainFooter.h"
-#include "MainProcessor.h"
+#include "Header.h"
+#include "Footer.h"
+#include "Processor/Processor.h"
 #include "AudioVisualizer/TwoDFieldAudioVisualizer.h"
 #include "AudioVisualizer/MultiMeterAudioVisualizer.h"
 #include "AudioVisualizer/ScopeAudioVisualizer.h"
@@ -21,14 +21,14 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    m_Header            = std::make_unique<MainHeader>();
+    m_Header            = std::make_unique<Header>();
 	addAndMakeVisible(m_Header.get());
-    m_Footer            = std::make_unique<MainFooter>();
+    m_Footer            = std::make_unique<Footer>();
 	addAndMakeVisible(m_Footer.get());
 
-    m_Processor         = std::make_unique<MainProcessor>();
+    m_Processor         = std::make_unique<Processor>();
     
-    updateVisuType(AbstractAudioVisualizer::VisuType::Scope);
+    onUpdateVisuType(AbstractAudioVisualizer::VisuType::Scope);
 
 	setSize(500, 580);
 }
@@ -66,7 +66,7 @@ void MainComponent::resized()
 	fb.performLayout(getLocalBounds().toFloat());
 }
 
-void MainComponent::updateVisuType(AbstractAudioVisualizer::VisuType type)
+void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
 {
     m_AudioVisualizer.reset();
     

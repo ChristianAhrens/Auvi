@@ -94,3 +94,8 @@ AbstractAudioVisualizer::VisuType MultiMeterAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::MultiMeter;
 }
+
+void MultiMeterAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

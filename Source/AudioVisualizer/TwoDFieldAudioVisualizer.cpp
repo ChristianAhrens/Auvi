@@ -94,3 +94,8 @@ AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::TwoDField;
 }
+
+void TwoDFieldAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

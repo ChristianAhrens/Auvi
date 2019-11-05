@@ -85,3 +85,8 @@ AbstractAudioVisualizer::VisuType RtaAudioVisualizer::getType()
 {
     return AbstractAudioVisualizer::VisuType::Rta;
 }
+
+void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+{
+    ignoreUnused(data);
+}

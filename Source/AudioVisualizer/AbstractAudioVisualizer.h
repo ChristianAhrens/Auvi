@@ -12,10 +12,12 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 
+#include "../Processor/Processor.h"
+
 //==============================================================================
 /*
 */
-class AbstractAudioVisualizer    : public Component
+class AbstractAudioVisualizer : public Component, public Processor::Listener
 {
 public:
     enum VisuType
@@ -33,12 +35,15 @@ public:
 public:
     AbstractAudioVisualizer();
     ~AbstractAudioVisualizer();
-
+    
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     
+    //==============================================================================
     virtual VisuType getType() = 0;
     
+    //==============================================================================
     static std::string VisuTypeToString(VisuType type);
 
 private:

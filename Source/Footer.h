@@ -1,8 +1,8 @@
 /*
   ==============================================================================
 
-    MainHeader.h
-    Created: 1 Nov 2019 11:34:46am
+    MainFooter.h
+    Created: 1 Nov 2019 11:35:51am
     Author:  Christian Ahrens
 
   ==============================================================================
@@ -12,26 +12,32 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "AudioVisualizer/AbstractAudioVisualizer.h"
+
 //==============================================================================
 /*
 */
-class MainHeader    : public Component
+class Footer : public Component, public ComboBox::Listener
 {
 public:
     class Listener
     {
     public:
         virtual ~Listener(){};
-        //virtual void doSomething() = 0;
+        virtual void onUpdateVisuType(AbstractAudioVisualizer::VisuType type) = 0;
     };
     
 public:
-    MainHeader();
-    ~MainHeader();
+    Footer();
+    ~Footer();
 
     void paint (Graphics&) override;
     void resized() override;
+    
+    void comboBoxChanged(ComboBox *comboBoxThatHasChanged) override;
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainHeader)
+    std::unique_ptr<ComboBox>   m_visuTypeSelect;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Footer)
 };

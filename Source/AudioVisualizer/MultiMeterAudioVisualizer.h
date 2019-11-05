@@ -23,9 +23,14 @@ public:
     MultiMeterAudioVisualizer();
     ~MultiMeterAudioVisualizer();
 
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     
+    //==============================================================================
+    void processingDataChanged(AbstractProcessorData *data) override;
+    
+    //==============================================================================
     VisuType getType() override;
 
 private:

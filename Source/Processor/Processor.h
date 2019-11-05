@@ -12,14 +12,31 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+// Fwd. declarations
+class AbstractProcessorData;
+
 //==============================================================================
 /*
 */
-class MainProcessor    : public AudioProcessor
+class Processor :   public AudioProcessor,
+                    public Timer
 {
 public:
-    MainProcessor();
-    ~MainProcessor();
+    class Listener
+    {
+    public:
+        virtual ~Listener(){};
+        
+        virtual void processingDataChanged(AbstractProcessorData *data) = 0;
+    };
+    
+public:
+    Processor();
+    ~Processor();
+    
+    //==============================================================================
+    void AddListener(Listener *listener);
+    void RemoveListener(Listener *listener);
 
     //==============================================================================
     const String getName() const override;
@@ -42,9 +59,13 @@ public:
 
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    //==============================================================================
+    void timerCallback() override;
 
 private:
-    String m_Name;
+    String              m_Name;
+    Array<Listener*>    m_callbackListeners;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

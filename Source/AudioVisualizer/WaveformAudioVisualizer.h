@@ -22,10 +22,15 @@ class WaveformAudioVisualizer    : public AbstractAudioVisualizer
 public:
     WaveformAudioVisualizer();
     ~WaveformAudioVisualizer();
-
+    
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     
+    //==============================================================================
+    void processingDataChanged(AbstractProcessorData *data) override;
+    
+    //==============================================================================
     VisuType getType() override;
 
 private:
