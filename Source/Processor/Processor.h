@@ -12,8 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-// Fwd. declarations
-class AbstractProcessorData;
+#include "ProcessorLevelData.h"
+#include "ProcessorSpectrumData.h"
 
 //==============================================================================
 /*
@@ -64,6 +64,16 @@ public:
     void timerCallback() override;
 
 private:
+    void BroadcastData(AbstractProcessorData *data);
+    
+    /*dbg*/
+    ProcessorLevelData PrepareNextLevelData();
+    ProcessorSpectrumData PrepareNextSpectrumData();
+    
+    float m_dummyCalcBase;
+    ProcessorLevelData m_dummyLD;
+    /*dbg*/
+    
     String              m_Name;
     Array<Listener*>    m_callbackListeners;
     

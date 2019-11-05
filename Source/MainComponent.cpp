@@ -68,6 +68,7 @@ void MainComponent::resized()
 
 void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
 {
+    m_Processor->RemoveListener(m_AudioVisualizer.get());
     m_AudioVisualizer.reset();
     
     switch(type)
@@ -93,6 +94,7 @@ void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
     }
     
     addAndMakeVisible(m_AudioVisualizer.get());
+    m_Processor->AddListener(m_AudioVisualizer.get());
     
     resized();
 }

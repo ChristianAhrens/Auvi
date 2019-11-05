@@ -9,15 +9,21 @@
 */
 
 #include "../JuceLibraryCode/JuceHeader.h"
+
 #include "Processor.h"
+#include "ProcessorLevelData.h"
+#include "ProcessorSpectrumData.h"
 
 //==============================================================================
 Processor::Processor()
     : AudioProcessor()
 {
+    /*dbg*/m_dummyCalcBase = 0;
+    
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
+    startTimer(100);
 }
 
 Processor::~Processor()
@@ -128,7 +134,38 @@ void Processor::setStateInformation (const void* data, int sizeInBytes)
     /*dbg*/ignoreUnused(sizeInBytes);
 }
 
+ProcessorLevelData Processor::PrepareNextLevelData()
+{
+    float nextRms1Level = 0.5f*(1+sin(m_dummyCalcBase));
+    float nextPeak1Level = nextRms1Level + 0.1f;
+    m_dummyCalcBase += 0.1f;
+    
+    float nextRms2Level = 0.5f*(1+sin(m_dummyCalcBase));
+    float nextPeak2Level = nextRms2Level + 0.1f;
+    m_dummyCalcBase += 0.1f;
+    
+    m_dummyLD.SetLevel(1, ProcessorLevelData::LevelVal(nextRms1Level, nextPeak1Level));
+    m_dummyLD.SetLevel(2, ProcessorLevelData::LevelVal(nextRms2Level, nextPeak2Level));
+    
+    return m_dummyLD;
+}
+
+ProcessorSpectrumData Processor::PrepareNextSpectrumData()
+{
+    return ProcessorSpectrumData();
+}
+
 void Processor::timerCallback()
 {
+    ProcessorLevelData levelData = PrepareNextLevelData();
+    BroadcastData(&levelData);
     
+    ProcessorSpectrumData spectrumData = PrepareNextSpectrumData();
+    BroadcastData(&spectrumData);
+}
+
+void Processor::BroadcastData(AbstractProcessorData *data)
+{
+    for(Listener *l : m_callbackListeners)
+        l->processingDataChanged(data);
 }

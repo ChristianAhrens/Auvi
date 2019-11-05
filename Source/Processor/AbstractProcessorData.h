@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
 class AbstractProcessorData
 {
 public:
@@ -21,9 +23,12 @@ public:
     };
     
     AbstractProcessorData();
-    ~AbstractProcessorData();
+    virtual ~AbstractProcessorData();
     
     Type GetDataType();
+    
+    virtual void SetChannelCount(int count) = 0;
+    virtual unsigned long GetChannelCount() = 0;
     
 protected:
     Type    m_type;
