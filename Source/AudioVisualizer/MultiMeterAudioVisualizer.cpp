@@ -18,6 +18,7 @@ MultiMeterAudioVisualizer::MultiMeterAudioVisualizer()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
+    m_levelData = 0;
 }
 
 MultiMeterAudioVisualizer::~MultiMeterAudioVisualizer()
@@ -51,36 +52,35 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
 
 	// draw dummy meters
-	std::vector<std::pair<float, std::string>> meterData;
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "first"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "second"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "third"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "fourth"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "fifth"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "sixth"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "seventh"));
-	meterData.push_back(std::pair<float, std::string>(float(rand()%100)*0.01f, "eighth"));
+    if(m_levelData)
+    {
+        std::vector<std::pair<float, std::string>> meterData;
+        for(int i=1; i<=m_levelData->GetChannelCount(); ++i)
+        {
+            meterData.push_back(std::pair<float, std::string>(m_levelData->GetLevel(i).rms, std::to_string(i)));
+        }
+        
+        auto meterSpacing = outerMargin * 0.5f;
+        auto meterWidth = (visuArea.getWidth() - (meterData.size() + 1) * meterSpacing) / meterData.size();
+        meterWidth = meterWidth > maxMeterWidth ? maxMeterWidth : meterWidth;
+        auto meterMaxHeight = visuArea.getHeight() - 2 * meterSpacing;
+        auto meterLeft = visuAreaOrigX + meterSpacing;
+        Rectangle<int> meterRect;
+        meterRect.setBottom(visuAreaOrigY);
+        meterRect.setWidth(meterWidth);
 
-	auto meterSpacing = outerMargin * 0.5f;
-	auto meterWidth = (visuArea.getWidth() - (meterData.size() + 1) * meterSpacing) / meterData.size();
-    meterWidth = meterWidth > maxMeterWidth ? maxMeterWidth : meterWidth;
-	auto meterMaxHeight = visuArea.getHeight() - 2 * meterSpacing;
-	auto meterLeft = visuAreaOrigX + meterSpacing;
-	Rectangle<int> meterRect;
-	meterRect.setBottom(visuAreaOrigY);
-	meterRect.setWidth(meterWidth);
+        g.setColour(Colours::azure.darker());
+        g.setFont(14.0f);
+        for (const std::pair<float, std::string> &data : meterData)
+        {
+            auto meterHeight = meterMaxHeight * data.first;
 
-	g.setColour(Colours::azure.darker());
-	g.setFont(14.0f);
-	for (const std::pair<float, std::string> &data : meterData)
-	{
-		auto meterHeight = meterMaxHeight * data.first;
+            g.fillRect(Rectangle<int>(meterLeft, visuAreaOrigY - meterHeight, meterWidth, meterHeight));
+            g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY, meterWidth, outerMargin), Justification::centred, true);
 
-		g.fillRect(Rectangle<int>(meterLeft, visuAreaOrigY - meterHeight, meterWidth, meterHeight));
-		g.drawText(data.second, Rectangle<int>(meterLeft, visuAreaOrigY, meterWidth, outerMargin), Justification::centred, true);
-
-		meterLeft += meterWidth + meterSpacing;
-	}  
+            meterLeft += meterWidth + meterSpacing;
+        }
+    }
 }
 
 void MultiMeterAudioVisualizer::resized()
@@ -97,5 +97,19 @@ AbstractAudioVisualizer::VisuType MultiMeterAudioVisualizer::getType()
 
 void MultiMeterAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
-    ignoreUnused(data);
+    if(!data)
+        return;
+    
+    switch(data->GetDataType())
+    {
+        case AbstractProcessorData::Level:
+            m_levelData = std::move<ProcessorLevelData*>(static_cast<ProcessorLevelData*>(data));
+            repaint();
+            break;
+        case AbstractProcessorData::Spectrum:
+            break;
+        case AbstractProcessorData::Invalid:
+        default:
+            break;
+    }
 }

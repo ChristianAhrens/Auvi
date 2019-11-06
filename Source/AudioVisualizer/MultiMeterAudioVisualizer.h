@@ -34,5 +34,7 @@ public:
     VisuType getType() override;
 
 private:
+    ProcessorLevelData  *m_levelData;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MultiMeterAudioVisualizer)
 };
