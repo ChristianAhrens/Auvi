@@ -138,14 +138,28 @@ ProcessorLevelData Processor::PrepareNextLevelData()
 {
     float nextRms1Level = 0.5f*(1+sin(m_dummyCalcBase));
     float nextPeak1Level = nextRms1Level + 0.1f;
+    m_dummyLD.SetLevel(1, ProcessorLevelData::LevelVal(nextRms1Level, nextPeak1Level));
     m_dummyCalcBase += 0.1f;
     
     float nextRms2Level = 0.5f*(1+sin(m_dummyCalcBase));
     float nextPeak2Level = nextRms2Level + 0.1f;
+    m_dummyLD.SetLevel(2, ProcessorLevelData::LevelVal(nextRms2Level, nextPeak2Level));
     m_dummyCalcBase += 0.1f;
     
-    m_dummyLD.SetLevel(1, ProcessorLevelData::LevelVal(nextRms1Level, nextPeak1Level));
-    m_dummyLD.SetLevel(2, ProcessorLevelData::LevelVal(nextRms2Level, nextPeak2Level));
+    float nextRms3Level = 0.5f*(1+sin(m_dummyCalcBase));
+    float nextPeak3Level = nextRms3Level + 0.1f;
+    m_dummyLD.SetLevel(3, ProcessorLevelData::LevelVal(nextRms3Level, nextPeak3Level));
+    m_dummyCalcBase += 0.1f;
+    
+    float nextRms4Level = 0.5f*(1+sin(m_dummyCalcBase));
+    float nextPeak4Level = nextRms4Level + 0.1f;
+    m_dummyLD.SetLevel(4, ProcessorLevelData::LevelVal(nextRms4Level, nextPeak4Level));
+    m_dummyCalcBase += 0.1f;
+    
+    float nextRms5Level = 0.5f*(1+sin(m_dummyCalcBase));
+    float nextPeak5Level = nextRms5Level + 0.1f;
+    m_dummyLD.SetLevel(5, ProcessorLevelData::LevelVal(nextRms5Level, nextPeak5Level));
+    m_dummyCalcBase += 0.1f;
     
     return m_dummyLD;
 }
