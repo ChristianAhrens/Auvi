@@ -15,9 +15,11 @@
 TwoDFieldAudioVisualizer::TwoDFieldAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+    m_channelL = 1;
+    m_channelC = 2;
+    m_channelR = 3;
+    m_channelLS = 5;
+    m_channelRS = 4;
 }
 
 TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
@@ -33,17 +35,18 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     auto width = getWidth();
     auto height = getHeight();
     auto outerMargin = 40;
-    auto visuAreaWidth = width - 2 * outerMargin;
-    auto visuAreaHeight = height - 2 * outerMargin;
+    
+    auto visuAreaWidth = (width < height ? width : height) - 2 * outerMargin;
+    auto visuAreaHeight = (width < height ? width : height) - 2 * outerMargin;
+    
+    auto visuAreaOrigX = float(0.5f * (width - visuAreaWidth));
+    auto visuAreaOrigY = height - float(0.5f * (height - visuAreaHeight));
 
-    Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
+    Rectangle<int> visuArea(visuAreaOrigX, visuAreaOrigY - visuAreaHeight, visuAreaWidth, visuAreaHeight);
 
     // fill our visualization area background
     g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
     g.fillRect(visuArea);
-
-    auto visuAreaOrigX = float(outerMargin);
-    auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
 
     // draw a simple frame
     g.setColour(Colours::white);
@@ -59,12 +62,6 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.drawDashedLine(Line<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight, visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight), dparam, 2);
     
     // draw level indication lines
-    float levelL = float(rand()%100)*0.01f;
-    float levelC = float(rand()%100)*0.01f;
-    float levelR = float(rand()%100)*0.01f;
-    float levelRS = float(rand()%100)*0.01f;
-    float levelLS = float(rand()%100)*0.01f;
-    
     Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
     Point<float> leftMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight);
     Point<float> centerMax = levelOrig - Point<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight);
@@ -72,15 +69,37 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     Point<float> rightSurroundMax = levelOrig - Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
     Point<float> leftSurroundMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY);
     
+    float peakLevelL = m_levelData.GetLevel(m_channelL).peak;
+    float peakLevelC = m_levelData.GetLevel(m_channelC).peak;
+    float peakLevelR = m_levelData.GetLevel(m_channelR).peak;
+    float peakLevelLS = m_levelData.GetLevel(m_channelLS).peak;
+    float peakLevelRS = m_levelData.GetLevel(m_channelRS).peak;
+
     g.setColour(Colours::azure.darker());
-    Path path;
-    path.startNewSubPath(levelOrig - leftMax*levelL);
-    path.lineTo(levelOrig - centerMax*levelC);
-    path.lineTo(levelOrig - rightMax*levelR);
-    path.lineTo(levelOrig - rightSurroundMax*levelRS);
-    path.lineTo(levelOrig - leftSurroundMax*levelLS);
-    path.lineTo(levelOrig - leftMax*levelL);
-    g.strokePath(path, PathStrokeType(2));
+    Path peakPath;
+    peakPath.startNewSubPath(levelOrig - leftMax * peakLevelL);
+    peakPath.lineTo(levelOrig - centerMax * peakLevelC);
+    peakPath.lineTo(levelOrig - rightMax * peakLevelR);
+    peakPath.lineTo(levelOrig - rightSurroundMax * peakLevelRS);
+    peakPath.lineTo(levelOrig - leftSurroundMax * peakLevelLS);
+    peakPath.lineTo(levelOrig - leftMax * peakLevelL);
+    g.strokePath(peakPath, PathStrokeType(2));
+    
+    float rmsLevelL = m_levelData.GetLevel(m_channelL).rms;
+    float rmsLevelC = m_levelData.GetLevel(m_channelC).rms;
+    float rmsLevelR = m_levelData.GetLevel(m_channelR).rms;
+    float rmsLevelLS = m_levelData.GetLevel(m_channelLS).rms;
+    float rmsLevelRS = m_levelData.GetLevel(m_channelRS).rms;
+
+    g.setColour(Colours::azure.brighter());
+    Path rmsPath;
+    rmsPath.startNewSubPath(levelOrig - leftMax * rmsLevelL);
+    rmsPath.lineTo(levelOrig - centerMax * rmsLevelC);
+    rmsPath.lineTo(levelOrig - rightMax * rmsLevelR);
+    rmsPath.lineTo(levelOrig - rightSurroundMax * rmsLevelRS);
+    rmsPath.lineTo(levelOrig - leftSurroundMax * rmsLevelLS);
+    rmsPath.lineTo(levelOrig - leftMax * rmsLevelL);
+    g.strokePath(rmsPath, PathStrokeType(1));
 }
 
 void TwoDFieldAudioVisualizer::resized()
@@ -97,5 +116,19 @@ AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()
 
 void TwoDFieldAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
-    ignoreUnused(data);
+    if(!data)
+        return;
+    
+    switch(data->GetDataType())
+    {
+        case AbstractProcessorData::Level:
+            m_levelData = *(static_cast<ProcessorLevelData*>(data));
+            repaint();
+            break;
+        case AbstractProcessorData::Spectrum:
+            break;
+        case AbstractProcessorData::Invalid:
+        default:
+            break;
+    }
 }

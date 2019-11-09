@@ -34,5 +34,12 @@ public:
     VisuType getType() override;
 
 private:
+    unsigned long   m_channelL;
+    unsigned long   m_channelC;
+    unsigned long   m_channelR;
+    unsigned long   m_channelLS;
+    unsigned long   m_channelRS;
+    ProcessorLevelData  m_levelData;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TwoDFieldAudioVisualizer)
 };
