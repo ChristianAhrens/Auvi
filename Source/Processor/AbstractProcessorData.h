@@ -27,7 +27,7 @@ public:
     
     Type GetDataType();
     
-    virtual void SetChannelCount(int count) = 0;
+    virtual void SetChannelCount(unsigned long count) = 0;
     virtual unsigned long GetChannelCount() = 0;
     
 protected:

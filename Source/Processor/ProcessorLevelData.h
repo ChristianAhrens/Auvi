@@ -36,12 +36,12 @@ public:
     ProcessorLevelData();
     ~ProcessorLevelData();
     
-    void SetLevel(int channel, LevelVal level);
-    LevelVal GetLevel(int channel);
+    void SetLevel(unsigned long channel, LevelVal level);
+    LevelVal GetLevel(unsigned long channel);
     
-    void SetChannelCount(int count) override;
+    void SetChannelCount(unsigned long count) override;
     unsigned long GetChannelCount() override;
     
 private:
-    std::map<int, LevelVal>    m_levelMap;
+    std::map<unsigned long, LevelVal>    m_levelMap;
 };

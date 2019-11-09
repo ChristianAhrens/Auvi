@@ -30,13 +30,13 @@ public:
     ProcessorSpectrumData();
     ~ProcessorSpectrumData();
     
-    void SetSpectrum(int channel, SpectrumBands spectrum);
-    SpectrumBands GetSpectrum(int channel);
+    void SetSpectrum(unsigned long channel, SpectrumBands spectrum);
+    SpectrumBands GetSpectrum(unsigned long channel);
     
-    void SetChannelCount(int count) override;
+    void SetChannelCount(unsigned long count) override;
     unsigned long GetChannelCount() override;
     
 private:
-    std::map<int, SpectrumBands>    m_spectrumsMap;
+    std::map<unsigned long, SpectrumBands>    m_spectrumsMap;
 
 };

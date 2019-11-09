@@ -20,12 +20,12 @@ ProcessorSpectrumData::~ProcessorSpectrumData()
 
 }
 
-void ProcessorSpectrumData::SetSpectrum(int channel, ProcessorSpectrumData::SpectrumBands spectrum)
+void ProcessorSpectrumData::SetSpectrum(unsigned long channel, ProcessorSpectrumData::SpectrumBands spectrum)
 {
     m_spectrumsMap[channel] = spectrum;
 }
 
-ProcessorSpectrumData::SpectrumBands ProcessorSpectrumData::GetSpectrum(int channel)
+ProcessorSpectrumData::SpectrumBands ProcessorSpectrumData::GetSpectrum(unsigned long channel)
 {
     if(m_spectrumsMap.count(channel))
         return m_spectrumsMap.at(channel);
@@ -33,12 +33,12 @@ ProcessorSpectrumData::SpectrumBands ProcessorSpectrumData::GetSpectrum(int chan
         return ProcessorSpectrumData::SpectrumBands();
 }
 
-void ProcessorSpectrumData::SetChannelCount(int count)
+void ProcessorSpectrumData::SetChannelCount(unsigned long count)
 {
     if(GetChannelCount()==count)
         return;
     
-    for(int i=1; i<=count; i++)
+    for(unsigned long i=1; i<=count; i++)
     {
         if(!m_spectrumsMap.count(i))
             m_spectrumsMap[i] = SpectrumBands();
