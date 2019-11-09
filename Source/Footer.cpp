@@ -36,9 +36,17 @@ void Footer::paint (Graphics& g)
 
 void Footer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-    m_visuTypeSelect->setBounds(10,10,150,20);
+    auto isVertical = getWidth() < (110 + 10 + 10);
+    
+    auto selectWidth = 110;
+    auto selectHeight = 20;
+    
+    m_visuTypeSelect->setSize(selectWidth, selectHeight);
+    
+    if(isVertical)
+        m_visuTypeSelect->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(getWidth() - 10, 10));
+    else
+        m_visuTypeSelect->setTransform(AffineTransform::rotation(0).translated(10, 10));
 }
 
 void Footer::comboBoxChanged(ComboBox *comboBoxThatHasChanged)
