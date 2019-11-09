@@ -34,5 +34,15 @@ public:
     VisuType getType() override;
 
 private:
+    unsigned long GetNextScopeTailPos();
+    Point<float> MapValToRect(float x, float y, Rectangle<float> rectF);
+    
+    unsigned long   m_channelX;
+    unsigned long   m_channelY;
+    unsigned long   m_scopeTailLength;
+    unsigned long   m_scopeTailPos;
+    std::vector<ProcessorLevelData::LevelVal>   m_scopeTailX;
+    std::vector<ProcessorLevelData::LevelVal>   m_scopeTailY;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeAudioVisualizer)
 };

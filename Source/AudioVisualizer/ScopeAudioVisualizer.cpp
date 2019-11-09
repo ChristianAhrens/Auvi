@@ -15,13 +15,33 @@
 ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+    m_channelX = 1;
+    m_channelY = 5;
+    m_scopeTailLength = 50;
+    m_scopeTailPos = 0;
+    m_scopeTailX.resize(m_scopeTailLength);
+    m_scopeTailY.resize(m_scopeTailLength);
 }
 
 ScopeAudioVisualizer::~ScopeAudioVisualizer()
 {
+}
+
+unsigned long ScopeAudioVisualizer::GetNextScopeTailPos()
+{
+    if(m_scopeTailPos < m_scopeTailLength-1)
+        m_scopeTailPos++;
+    else if(m_scopeTailPos == m_scopeTailLength-1)
+        m_scopeTailPos = 0;
+    else
+        m_scopeTailPos = 0;
+    
+    return m_scopeTailPos;
+}
+
+Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangle<float> rectF)
+{
+    return Point<float>(rectF.getX()+(rectF.getWidth()*x), rectF.getY()+(rectF.getHeight()*y));
 }
 
 void ScopeAudioVisualizer::paint (Graphics& g)
@@ -71,6 +91,32 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.625f * scopeDiameter));
 	g.drawLine(Line<float>(	scopeRect.getX() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter,
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
+    
+    // scope curve
+    Point<float> newPeakPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).peak, m_scopeTailY.at(m_scopeTailPos).peak, scopeRect);
+    Point<float> newRmsPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).rms, m_scopeTailY.at(m_scopeTailPos).rms, scopeRect);
+    Path peakPath, rmsPath;
+    peakPath.startNewSubPath(newPeakPoint);
+    rmsPath.startNewSubPath(newRmsPoint);
+    unsigned long pos = m_scopeTailPos+1;
+    for(int i = 0; i < m_scopeTailLength; ++i)
+    {
+        if(pos < m_scopeTailLength-1)
+            pos++;
+        else if(pos == m_scopeTailLength-1)
+            pos = 0;
+        else
+            pos = 0;
+        
+        newPeakPoint = MapValToRect(m_scopeTailX.at(pos).peak, m_scopeTailY.at(pos).peak, scopeRect);
+        peakPath.lineTo(newPeakPoint);
+        newRmsPoint = MapValToRect(m_scopeTailX.at(pos).rms, m_scopeTailY.at(pos).rms, scopeRect);
+        rmsPath.lineTo(newRmsPoint);
+    }
+    g.setColour(Colours::azure.darker());
+    g.strokePath(peakPath, PathStrokeType(2));
+    g.setColour(Colours::azure.brighter());
+    g.strokePath(rmsPath, PathStrokeType(1));a
 }
 
 void ScopeAudioVisualizer::resized()
@@ -87,5 +133,28 @@ AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
 
 void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
-    ignoreUnused(data);
+    if(!data)
+        return;
+    
+    switch(data->GetDataType())
+    {
+        case AbstractProcessorData::Level:
+        {
+            ProcessorLevelData* ld = static_cast<ProcessorLevelData*>(data);
+            jassert(ld->GetChannelCount()>1);
+            if(ld->GetChannelCount()>1)
+            {
+                unsigned long iter = GetNextScopeTailPos();
+                m_scopeTailX[iter] = ld->GetLevel(m_channelX);
+                m_scopeTailY[iter] = ld->GetLevel(m_channelY);
+            }
+            repaint();
+            break;
+        }
+        case AbstractProcessorData::Spectrum:
+            break;
+        case AbstractProcessorData::Invalid:
+        default:
+            break;
+    }
 }
