@@ -116,7 +116,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
     g.setColour(Colours::azure.darker());
     g.strokePath(peakPath, PathStrokeType(2));
     g.setColour(Colours::azure.brighter());
-    g.strokePath(rmsPath, PathStrokeType(1));a
+    g.strokePath(rmsPath, PathStrokeType(1));
 }
 
 void ScopeAudioVisualizer::resized()
