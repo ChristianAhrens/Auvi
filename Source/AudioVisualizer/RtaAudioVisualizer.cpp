@@ -50,7 +50,7 @@ void RtaAudioVisualizer::paint (Graphics& g)
     g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
 
     // draw dummy curve
-    g.setColour(Colours::azure.darker());
+    g.setColour(Colours::forestgreen);
     
     std::vector<float> plotPoints;
     for(int i=0; i<50; ++i)
@@ -71,7 +71,7 @@ void RtaAudioVisualizer::paint (Graphics& g)
         
         path.lineTo(Point<float>(newPointX, newPointY));
     }
-    g.strokePath(path, PathStrokeType(2));
+    g.strokePath(path, PathStrokeType(3));
 }
 
 void RtaAudioVisualizer::resized()

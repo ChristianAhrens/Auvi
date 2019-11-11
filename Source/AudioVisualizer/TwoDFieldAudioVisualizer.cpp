@@ -75,7 +75,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     float peakLevelLS = m_levelData.GetLevel(m_channelLS).peak;
     float peakLevelRS = m_levelData.GetLevel(m_channelRS).peak;
 
-    g.setColour(Colours::azure.darker());
+    g.setColour(Colours::forestgreen.darker());
     Path peakPath;
     peakPath.startNewSubPath(levelOrig - leftMax * peakLevelL);
     peakPath.lineTo(levelOrig - centerMax * peakLevelC);
@@ -83,7 +83,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     peakPath.lineTo(levelOrig - rightSurroundMax * peakLevelRS);
     peakPath.lineTo(levelOrig - leftSurroundMax * peakLevelLS);
     peakPath.lineTo(levelOrig - leftMax * peakLevelL);
-    g.strokePath(peakPath, PathStrokeType(2));
+    g.strokePath(peakPath, PathStrokeType(3));
     
     float rmsLevelL = m_levelData.GetLevel(m_channelL).rms;
     float rmsLevelC = m_levelData.GetLevel(m_channelC).rms;
@@ -91,7 +91,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     float rmsLevelLS = m_levelData.GetLevel(m_channelLS).rms;
     float rmsLevelRS = m_levelData.GetLevel(m_channelRS).rms;
 
-    g.setColour(Colours::azure.brighter());
+    g.setColour(Colours::forestgreen);
     Path rmsPath;
     rmsPath.startNewSubPath(levelOrig - leftMax * rmsLevelL);
     rmsPath.lineTo(levelOrig - centerMax * rmsLevelC);
@@ -99,7 +99,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     rmsPath.lineTo(levelOrig - rightSurroundMax * rmsLevelRS);
     rmsPath.lineTo(levelOrig - leftSurroundMax * rmsLevelLS);
     rmsPath.lineTo(levelOrig - leftMax * rmsLevelL);
-    g.strokePath(rmsPath, PathStrokeType(1));
+    g.strokePath(rmsPath, PathStrokeType(2));
 }
 
 void TwoDFieldAudioVisualizer::resized()

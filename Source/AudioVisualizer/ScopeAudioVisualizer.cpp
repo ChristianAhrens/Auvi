@@ -55,7 +55,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 	auto width = getWidth() - 2 * outerMargin;
 	auto height = getHeight() - 2 * outerMargin;
 	auto scopeDiameter = width < height ? width : height;
-	auto scopeRect = Rectangle<float>((getWidth() - scopeDiameter) * 0.5f, (getHeight() - scopeDiameter) * 0.5f, scopeDiameter, scopeDiameter);
+	auto scopeRect = Rectangle<float>(float(getWidth() - scopeDiameter) * 0.5f, float(getHeight() - scopeDiameter) * 0.5f, scopeDiameter, scopeDiameter);
 
 	// fill our visualization area background
 	g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
@@ -113,10 +113,10 @@ void ScopeAudioVisualizer::paint (Graphics& g)
         newRmsPoint = MapValToRect(m_scopeTailX.at(pos).rms, m_scopeTailY.at(pos).rms, scopeRect);
         rmsPath.lineTo(newRmsPoint);
     }
-    g.setColour(Colours::azure.darker());
-    g.strokePath(peakPath, PathStrokeType(2));
-    g.setColour(Colours::azure.brighter());
-    g.strokePath(rmsPath, PathStrokeType(1));
+    g.setColour(Colours::forestgreen.darker());
+    g.strokePath(peakPath, PathStrokeType(3));
+    g.setColour(Colours::forestgreen);
+    g.strokePath(rmsPath, PathStrokeType(2));
 }
 
 void ScopeAudioVisualizer::resized()
