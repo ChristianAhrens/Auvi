@@ -40,14 +40,20 @@ public:
     //==============================================================================
     void onUpdateVisuType(AbstractAudioVisualizer::VisuType type) override;
 
+	//==============================================================================
+	AudioSelectComponent * onOpenAudioConfig() override;
+
 private:
     //==============================================================================
-    std::unique_ptr<Header>                     m_Header;
-    std::unique_ptr<AbstractAudioVisualizer>    m_AudioVisualizer;
-    std::unique_ptr<Footer>                     m_Footer;
+    std::unique_ptr<Header>						m_Header;
+    std::unique_ptr<AbstractAudioVisualizer>	m_AudioVisualizer;
+    std::unique_ptr<Footer>						m_Footer;
     
-    std::unique_ptr<Processor>                  m_Processor;
+    std::unique_ptr<Processor>					m_Processor;
+
+	std::unique_ptr<AudioSelectComponent>		m_audioConfig;
     
+	AudioDeviceManager							m_deviceManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

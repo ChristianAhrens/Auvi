@@ -12,17 +12,19 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "AudioSelectComponent.h"
+
 //==============================================================================
 /*
 */
-class Header    : public Component
+class Header    : public Component, public TextButton::Listener
 {
 public:
     class Listener
     {
     public:
         virtual ~Listener(){};
-        //virtual void doSomething() = 0;
+        virtual AudioSelectComponent * onOpenAudioConfig() = 0;
     };
     
 public:
@@ -32,6 +34,11 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 
+	void buttonClicked(Button* button) override;
+
 private:
+	std::unique_ptr<TextButton>	m_audioConfigOpen;
+	AudioSelectComponent*		m_audioConfigSelect;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Header)
 };

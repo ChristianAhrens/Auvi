@@ -11,6 +11,10 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <FILE id="QJFbbt" name="AudioSelectComponent.cpp" compile="1" resource="0"
+            file="Source/AudioSelectComponent.cpp"/>
+      <FILE id="ykU4ro" name="AudioSelectComponent.h" compile="0" resource="0"
+            file="Source/AudioSelectComponent.h"/>
       <GROUP id="{A4FA5224-B995-2116-2C5E-65302BD4192F}" name="Processor">
         <FILE id="H6UJ20" name="AbstractProcessorData.cpp" compile="1" resource="0"
               file="Source/Processor/AbstractProcessorData.cpp"/>
@@ -90,6 +94,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="y9CNR0" bigIcon="y9CNR0">
@@ -110,6 +115,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_IPHONE>
     <VS2019 targetFolder="Builds/VisualStudio2019" smallIcon="y9CNR0" bigIcon="y9CNR0">
@@ -130,6 +136,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../../../../Applications/JUCE/modules"/>
         <MODULEPATH id="juce_opengl" path="../../../../../Applications/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
@@ -138,6 +145,7 @@
     <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

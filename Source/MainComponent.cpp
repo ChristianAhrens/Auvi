@@ -21,6 +21,10 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+	m_deviceManager.initialiseWithDefaultDevices(2, 0);
+
+	m_audioConfig = nullptr;
+
     m_Header            = std::make_unique<Header>();
 	addAndMakeVisible(m_Header.get());
     m_Footer            = std::make_unique<Footer>();
@@ -97,4 +101,40 @@ void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
     m_Processor->AddListener(m_AudioVisualizer.get());
     
     resized();
+}
+
+AudioSelectComponent* MainComponent::onOpenAudioConfig()
+{
+	if (m_audioConfig)
+	{
+		removeChildComponent(m_audioConfig.get());
+		m_audioConfig = nullptr;
+
+		return nullptr;
+	}
+	else if (!m_audioConfig)
+	{
+		int  				minAudioInputChannels = 1;
+		int  				maxAudioInputChannels = INT_MAX;
+		int  				minAudioOutputChannels = 0;
+		int  				maxAudioOutputChannels = 0;
+		bool  				showMidiInputOptions = false;
+		bool  				showMidiOutputSelector = false;
+		bool  				showChannelsAsStereoPairs = false;
+		bool  				hideAdvancedOptionsWithButton = false;
+
+		m_audioConfig = std::make_unique<AudioSelectComponent>(m_deviceManager,
+			minAudioInputChannels,
+			maxAudioInputChannels,
+			minAudioOutputChannels,
+			maxAudioOutputChannels,
+			showMidiInputOptions,
+			showMidiOutputSelector,
+			showChannelsAsStereoPairs,
+			hideAdvancedOptionsWithButton);
+
+		addAndMakeVisible(m_audioConfig.get());
+
+		return m_audioConfig.get();
+	}
 }
