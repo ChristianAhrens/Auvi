@@ -44,9 +44,9 @@ void Footer::resized()
     m_visuTypeSelect->setSize(selectWidth, selectHeight);
     
     if(isVertical)
-        m_visuTypeSelect->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(getWidth() - 10, 10));
+        m_visuTypeSelect->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - 10), 10.0f));
     else
-        m_visuTypeSelect->setTransform(AffineTransform::rotation(0).translated(10, 10));
+        m_visuTypeSelect->setTransform(AffineTransform::rotation(0).translated(10.0f, 10.0f));
 }
 
 void Footer::comboBoxChanged(ComboBox *comboBoxThatHasChanged)

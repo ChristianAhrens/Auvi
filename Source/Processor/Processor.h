@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "ProcessorAudioSignalData.h"
 #include "ProcessorLevelData.h"
 #include "ProcessorSpectrumData.h"
 
@@ -67,11 +68,17 @@ private:
     void BroadcastData(AbstractProcessorData *data);
     
     /*dbg*/
-    ProcessorLevelData PrepareNextLevelData();
-    ProcessorSpectrumData PrepareNextSpectrumData();
-    
-    float m_dummyCalcBase;
-    ProcessorLevelData m_dummyLD;
+	ProcessorAudioSignalData PrepareNextSignalData();
+	float m_dummySignalCalcBase;
+	ProcessorAudioSignalData m_dummySignal;
+
+	ProcessorLevelData PrepareNextLevelData();
+    float m_dummyLevelCalcBase;
+    ProcessorLevelData m_dummyLevel;
+
+	ProcessorSpectrumData PrepareNextSpectrumData();
+	float m_dummySpectrumCalcBase;
+	ProcessorSpectrumData m_dummySpectrum;
     /*dbg*/
     
     String              m_Name;

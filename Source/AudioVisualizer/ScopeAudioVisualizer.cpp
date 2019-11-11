@@ -9,6 +9,7 @@
 */
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+
 #include "ScopeAudioVisualizer.h"
 
 //==============================================================================
@@ -16,7 +17,7 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
     m_channelX = 1;
-    m_channelY = 5;
+    m_channelY = 2;
     m_scopeTailLength = 50;
     m_scopeTailPos = 0;
     m_scopeTailX.resize(m_scopeTailLength);
@@ -138,19 +139,21 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     
     switch(data->GetDataType())
     {
-        case AbstractProcessorData::Level:
+        case AbstractProcessorData::AudioSignal:
         {
-            ProcessorLevelData* ld = static_cast<ProcessorLevelData*>(data);
+            ProcessorAudioSignalData* ld = static_cast<ProcessorAudioSignalData*>(data);
             jassert(ld->GetChannelCount()>1);
             if(ld->GetChannelCount()>1)
             {
                 unsigned long iter = GetNextScopeTailPos();
-                m_scopeTailX[iter] = ld->GetLevel(m_channelX);
-                m_scopeTailY[iter] = ld->GetLevel(m_channelY);
+                m_scopeTailX[iter] = ld->GetAudioSignal(m_channelX);
+                m_scopeTailY[iter] = ld->GetAudioSignal(m_channelY);
             }
             repaint();
             break;
         }
+		case AbstractProcessorData::Level:
+			break;
         case AbstractProcessorData::Spectrum:
             break;
         case AbstractProcessorData::Invalid:

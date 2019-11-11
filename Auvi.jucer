@@ -18,6 +18,10 @@
               file="Source/Processor/AbstractProcessorData.h"/>
         <FILE id="H2oATP" name="Processor.cpp" compile="1" resource="0" file="Source/Processor/Processor.cpp"/>
         <FILE id="ydhmUs" name="Processor.h" compile="0" resource="0" file="Source/Processor/Processor.h"/>
+        <FILE id="VQD9NH" name="ProcessorAudioSignalData.cpp" compile="1" resource="0"
+              file="Source/Processor/ProcessorAudioSignalData.cpp"/>
+        <FILE id="fYYkm3" name="ProcessorAudioSignalData.h" compile="0" resource="0"
+              file="Source/Processor/ProcessorAudioSignalData.h"/>
         <FILE id="XXook6" name="ProcessorLevelData.cpp" compile="1" resource="0"
               file="Source/Processor/ProcessorLevelData.cpp"/>
         <FILE id="wKK7HI" name="ProcessorLevelData.h" compile="0" resource="0"

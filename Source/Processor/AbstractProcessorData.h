@@ -18,6 +18,7 @@ public:
     enum Type
     {
         Invalid,
+		AudioSignal,
         Level,
         Spectrum,
     };
