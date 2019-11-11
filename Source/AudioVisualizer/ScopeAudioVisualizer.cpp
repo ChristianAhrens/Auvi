@@ -17,7 +17,7 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
     m_channelX = 1;
-    m_channelY = 2;
+    m_channelY = 5;
     m_scopeTailLength = 50;
     m_scopeTailPos = 0;
     m_scopeTailX.resize(m_scopeTailLength);
@@ -42,7 +42,13 @@ unsigned long ScopeAudioVisualizer::GetNextScopeTailPos()
 
 Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangle<float> rectF)
 {
-    return Point<float>(rectF.getX()+(rectF.getWidth()*x), rectF.getY()+(rectF.getHeight()*y));
+	float angle = (x != 0) ? atanf(fabs(y) / fabs(x)) * (180 / float_Pi) : 0;
+	float corr = (1 - (fabs(angle - 45.0f)/45.0f)) * 0.70710678f; // 0.70710678f=2/sqrt(2*2+2*2)
+
+	float pointX = corr * (0.5f * rectF.getWidth()) * x;
+	float pointY = corr * (0.5f * rectF.getHeight()) * y;
+
+	return Point<float>(rectF.getCentre() + Point<float>(pointX, pointY));
 }
 
 void ScopeAudioVisualizer::paint (Graphics& g)
