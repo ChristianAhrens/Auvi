@@ -31,7 +31,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	auto width = getWidth();
 	auto height = getHeight();
 	auto outerMargin = 20;
-    auto maxMeterWidth = 50;
+    auto maxMeterWidth = 30;
 	auto visuAreaWidth = width - 2 * outerMargin;
 	auto visuAreaHeight = height - 2 * outerMargin;
 
@@ -65,6 +65,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
         g.fillRect(Rectangle<float>(meterLeft, visuAreaOrigY - rmsMeterHeight, meterWidth, rmsMeterHeight));
         g.setColour(Colours::forestgreen.darker());
         g.fillRect(Rectangle<float>(meterLeft, visuAreaOrigY - rmsMeterHeight - peakMeterHeight, meterWidth, peakMeterHeight));
+		g.setColour(Colours::white);
         g.drawText(String(i), Rectangle<float>(meterLeft, visuAreaOrigY, meterWidth, float(outerMargin)), Justification::centred, true);
 
         meterLeft += meterWidth + meterSpacing;
