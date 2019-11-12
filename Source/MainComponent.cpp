@@ -103,14 +103,7 @@ void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
 
 AudioSelectComponent* MainComponent::onOpenAudioConfig()
 {
-	if (m_audioConfig)
-	{
-		removeChildComponent(m_audioConfig.get());
-		m_audioConfig = nullptr;
-
-		return nullptr;
-	}
-	else if (!m_audioConfig)
+	if (!m_audioConfig)
 	{
 		int  				minAudioInputChannels = 1;
 		int  				maxAudioInputChannels = INT_MAX;
@@ -135,4 +128,11 @@ AudioSelectComponent* MainComponent::onOpenAudioConfig()
 
 		return m_audioConfig.get();
 	}
+    else
+    {
+        removeChildComponent(m_audioConfig.get());
+        m_audioConfig = nullptr;
+
+        return nullptr;
+    }
 }
