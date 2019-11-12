@@ -29,8 +29,6 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_Header.get());
     m_Footer            = std::make_unique<Footer>();
 	addAndMakeVisible(m_Footer.get());
-
-    m_Processor         = std::make_unique<Processor>();
     
     onUpdateVisuType(AbstractAudioVisualizer::VisuType::Scope);
 
@@ -72,7 +70,7 @@ void MainComponent::resized()
 
 void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
 {
-    m_Processor->RemoveListener(m_AudioVisualizer.get());
+    m_Processor.RemoveListener(m_AudioVisualizer.get());
     m_AudioVisualizer.reset();
     
     switch(type)
@@ -98,7 +96,7 @@ void MainComponent::onUpdateVisuType(AbstractAudioVisualizer::VisuType type)
     }
     
     addAndMakeVisible(m_AudioVisualizer.get());
-    m_Processor->AddListener(m_AudioVisualizer.get());
+    m_Processor.AddListener(m_AudioVisualizer.get());
     
     resized();
 }
