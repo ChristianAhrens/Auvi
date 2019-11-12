@@ -21,7 +21,8 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-	m_deviceManager.initialiseWithDefaultDevices(2, 0);
+	m_deviceManager.initialiseWithDefaultDevices(1, 0);
+	m_deviceManager.addAudioCallback(&m_Processor);
 
 	m_audioConfig = nullptr;
 

@@ -20,6 +20,7 @@
 /*
 */
 class Processor :   public AudioProcessor,
+					public AudioIODeviceCallback,
                     public Timer
 {
 public:
@@ -60,6 +61,15 @@ public:
 
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+
+	//==============================================================================
+	void audioDeviceIOCallback(const float** inputChannelData,
+		int numInputChannels,
+		float** outputChannelData,
+		int numOutputChannels,
+		int numSamples) override;
+	void audioDeviceAboutToStart(AudioIODevice* device) override;
+	void audioDeviceStopped() override;
     
     //==============================================================================
     void timerCallback() override;

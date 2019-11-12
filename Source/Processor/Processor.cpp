@@ -136,6 +136,26 @@ void Processor::setStateInformation (const void* data, int sizeInBytes)
     /*dbg*/ignoreUnused(sizeInBytes);
 }
 
+void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInputChannels, 
+	float** outputChannelData, int numOutputChannels, int numSamples)
+{
+	/*dbg*/ignoreUnused(inputChannelData);
+	/*dbg*/ignoreUnused(numInputChannels);
+	/*dbg*/ignoreUnused(outputChannelData);
+	/*dbg*/ignoreUnused(numOutputChannels);
+	/*dbg*/ignoreUnused(numSamples);
+}
+
+void Processor::audioDeviceAboutToStart(AudioIODevice* device)
+{
+	/*dbg*/ignoreUnused(device);
+}
+
+void Processor::audioDeviceStopped()
+{
+	/*dbg*/ignoreUnused();
+}
+
 
 ProcessorAudioSignalData Processor::PrepareNextSignalData()
 {
