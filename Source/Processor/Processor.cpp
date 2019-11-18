@@ -183,7 +183,10 @@ void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInp
 		}
 	}
 
-	processBlock(AudioBuffer<float>(m_channels, numActiveChans, numSamples), MidiBuffer());
+    AudioBuffer<float> newAudioBuffer(m_channels, numActiveChans, numSamples);
+    MidiBuffer newMidiBuffer;
+    
+	processBlock(newAudioBuffer, newMidiBuffer);
 
 }
 
