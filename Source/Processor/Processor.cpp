@@ -50,21 +50,16 @@ const String Processor::getName() const
 
 void Processor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
 {
-    // This function will be called when the audio device is started, or when
-    // its settings (i.e. sample rate, block size, etc) are changed.
-
-    // You can use this function to initialise any resources you might need,
-    // but be careful - it will be called on the audio thread, not the GUI thread.
-
-    // For more details, see the help for AudioProcessor::prepareToPlay()
+	/*dbg*/jassertfalse; // aktuell nicht erwartet
+	m_sampleRate = sampleRate;
+	m_bufferSize = maximumExpectedSamplesPerBlock;
 }
 
 void Processor::releaseResources()
 {
-    // This will be called when the audio device stops, or when it is being
-    // restarted due to a setting change.
-
-    // For more details, see the help for AudioProcessor::releaseResources()
+	/*dbg*/jassertfalse; // aktuell nicht erwartet
+	m_sampleRate = 0;
+	m_bufferSize = 0;
 }
 
 void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -139,21 +134,72 @@ void Processor::setStateInformation (const void* data, int sizeInBytes)
 void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInputChannels, 
 	float** outputChannelData, int numOutputChannels, int numSamples)
 {
-	/*dbg*/ignoreUnused(inputChannelData);
-	/*dbg*/ignoreUnused(numInputChannels);
-	/*dbg*/ignoreUnused(outputChannelData);
-	/*dbg*/ignoreUnused(numOutputChannels);
-	/*dbg*/ignoreUnused(numSamples);
+	ignoreUnused(outputChannelData);
+	ignoreUnused(numOutputChannels);
+
+	// these should have been prepared by audioDeviceAboutToStart()...
+	jassert(m_sampleRate > 0 && m_bufferSize > 0);
+
+	const ScopedLock sl(m_readLock);
+
+	int numActiveChans = 0;
+	int numInputs = 0;
+
+	// messy stuff needed to compact the channels down into an array
+	// of non-zero pointers..
+	for (int i = 0; i < numInputChannels; ++i)
+	{
+		if (inputChannelData[i] != nullptr)
+		{
+			m_inputChans[numInputs++] = inputChannelData[i];
+			if (numInputs >= numElementsInArray(m_inputChans))
+				break;
+		}
+	}
+
+	if (numInputs > m_buffer.getNumChannels())
+	{
+		numActiveChans = m_buffer.getNumChannels();
+
+		// if there aren't enough output channels for the number of
+		// inputs, we need to create some temporary extra ones (can't
+		// use the input data in case it gets written to)
+		m_buffer.setSize(numInputs - m_buffer.getNumChannels(), numSamples,
+			false, false, true);
+
+		for (int i = numActiveChans; i < numInputs; ++i)
+		{
+			m_channels[numActiveChans] = m_buffer.getWritePointer(i);
+			memcpy(m_channels[numActiveChans], m_inputChans[i], (size_t)numSamples * sizeof(float));
+			++numActiveChans;
+		}
+	}
+	else
+	{
+		for (int i = 0; i < numInputs; ++i)
+		{
+			memcpy(m_channels[numActiveChans], m_inputChans[i], (size_t)numSamples * sizeof(float));
+			++numActiveChans;
+		}
+	}
+
+	processBlock(AudioBuffer<float>(m_channels, numActiveChans, numSamples), MidiBuffer());
+
 }
 
 void Processor::audioDeviceAboutToStart(AudioIODevice* device)
 {
-	/*dbg*/ignoreUnused(device);
+	if(device)
+	{
+		m_sampleRate = device->getCurrentSampleRate();
+		m_bufferSize = device->getCurrentBufferSizeSamples();
+	}
 }
 
 void Processor::audioDeviceStopped()
 {
-	/*dbg*/ignoreUnused();
+	m_sampleRate = 0;
+	m_bufferSize = 0;
 }
 
 

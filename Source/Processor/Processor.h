@@ -93,6 +93,17 @@ private:
     
     String              m_Name;
     Array<Listener*>    m_callbackListeners;
+
+	//==============================================================================
+	CriticalSection m_readLock;
+	double m_sampleRate = 0;
+	int m_bufferSize = 0;
+	
+	float* m_channels[128];
+	const float* m_inputChans[128];
+	AudioBuffer<float> m_buffer;
+
+	//float m_lastGain = 1.0f, m_gain = 1.0f;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };
