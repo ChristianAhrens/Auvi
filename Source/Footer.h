@@ -12,19 +12,21 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "VisuSelectComponent.h"
+
 #include "AudioVisualizer/AbstractAudioVisualizer.h"
 
 //==============================================================================
 /*
 */
-class Footer : public Component, public ComboBox::Listener
+class Footer : public Component, public TextButton::Listener
 {
 public:
     class Listener
     {
     public:
         virtual ~Listener(){};
-        virtual void onUpdateVisuType(AbstractAudioVisualizer::VisuType type) = 0;
+        virtual VisuSelectComponent * onOpenVisuConfig() = 0;
     };
     
 public:
@@ -34,10 +36,11 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     
-    void comboBoxChanged(ComboBox *comboBoxThatHasChanged) override;
+	void buttonClicked(Button* button) override;
 
 private:
-    std::unique_ptr<ComboBox>   m_visuTypeSelect;
+    std::unique_ptr<TextButton> m_visuConfigOpen;
+	VisuSelectComponent*        m_visuConfigSelect;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Footer)
 };

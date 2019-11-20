@@ -12,10 +12,10 @@
 
 #include "Header.h"
 #include "Footer.h"
+#include "Body.h"
 
 //==============================================================================
 /* Fwd declarations */
-class AbstractAudioVisualizer;
 class Processor;
 
 
@@ -26,7 +26,8 @@ class Processor;
 */
 class MainComponent   : public Component,
                         public Header::Listener,
-                        public Footer::Listener
+                        public Footer::Listener//,
+                        //public VisuSelectComponent::Listener
 {
 public:
     //==============================================================================
@@ -38,20 +39,24 @@ public:
     void resized() override;
     
     //==============================================================================
-    void onUpdateVisuType(AbstractAudioVisualizer::VisuType type) override;
+    VisuSelectComponent * onOpenVisuConfig() override;
 
 	//==============================================================================
 	AudioSelectComponent * onOpenAudioConfig() override;
+    
+    //==============================================================================
+    //void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;
 
 private:
     //==============================================================================
-    std::unique_ptr<Header>						m_Header;
-    std::unique_ptr<AbstractAudioVisualizer>	m_AudioVisualizer;
-    std::unique_ptr<Footer>						m_Footer;
+    std::unique_ptr<Header>						m_header;
+    std::unique_ptr<Body>                       m_body;
+    std::unique_ptr<Footer>						m_footer;
 
 	std::unique_ptr<AudioSelectComponent>		m_audioConfig;
+	std::unique_ptr<VisuSelectComponent>        m_visuConfig;
 
-	Processor									m_Processor;
+	Processor									m_processor;
 	AudioDeviceManager							m_deviceManager;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)

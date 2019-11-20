@@ -11,10 +11,7 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
-      <FILE id="QJFbbt" name="AudioSelectComponent.cpp" compile="1" resource="0"
-            file="Source/AudioSelectComponent.cpp"/>
-      <FILE id="ykU4ro" name="AudioSelectComponent.h" compile="0" resource="0"
-            file="Source/AudioSelectComponent.h"/>
+      <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{A4FA5224-B995-2116-2C5E-65302BD4192F}" name="Processor">
         <FILE id="H6UJ20" name="AbstractProcessorData.cpp" compile="1" resource="0"
               file="Source/Processor/AbstractProcessorData.cpp"/>
@@ -65,14 +62,23 @@
         <FILE id="rLHOfi" name="WaveformAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/WaveformAudioVisualizer.h"/>
       </GROUP>
-      <FILE id="erIvMw" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
-      <FILE id="mvViVu" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
       <FILE id="nwbfeG" name="Header.cpp" compile="1" resource="0" file="Source/Header.cpp"/>
       <FILE id="jjcSrN" name="Header.h" compile="0" resource="0" file="Source/Header.h"/>
-      <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="erIvMw" name="Footer.cpp" compile="1" resource="0" file="Source/Footer.cpp"/>
+      <FILE id="mvViVu" name="Footer.h" compile="0" resource="0" file="Source/Footer.h"/>
+      <FILE id="xObc4Q" name="Body.cpp" compile="1" resource="0" file="Source/Body.cpp"/>
+      <FILE id="UyqzPH" name="Body.h" compile="0" resource="0" file="Source/Body.h"/>
       <FILE id="WTxEOG" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
-      <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="pgmcMh" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="alQf6m" name="VisuSelectComponent.cpp" compile="1" resource="0"
+            file="Source/VisuSelectComponent.cpp"/>
+      <FILE id="EjQLdQ" name="VisuSelectComponent.h" compile="0" resource="0"
+            file="Source/VisuSelectComponent.h"/>
+      <FILE id="QJFbbt" name="AudioSelectComponent.cpp" compile="1" resource="0"
+            file="Source/AudioSelectComponent.cpp"/>
+      <FILE id="ykU4ro" name="AudioSelectComponent.h" compile="0" resource="0"
+            file="Source/AudioSelectComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

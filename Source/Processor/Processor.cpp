@@ -32,12 +32,12 @@ Processor::~Processor()
 {
 }
 
-void Processor::AddListener(Listener *listener)
+void Processor::addListener(Listener *listener)
 {
     m_callbackListeners.add(listener);
 }
 
-void Processor::RemoveListener(Listener *listener)
+void Processor::removeListener(Listener *listener)
 {
     m_callbackListeners.remove(m_callbackListeners.indexOf(listener));
 }

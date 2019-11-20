@@ -37,8 +37,8 @@ public:
     ~Processor();
     
     //==============================================================================
-    void AddListener(Listener *listener);
-    void RemoveListener(Listener *listener);
+    void addListener(Listener *listener);
+    void removeListener(Listener *listener);
 
     //==============================================================================
     const String getName() const override;
