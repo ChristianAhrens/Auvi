@@ -35,6 +35,7 @@ public:
     
     //==============================================================================
     void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;
+	const std::set<AbstractAudioVisualizer::VisuType> getActiveVisuTypes() override;
 
 private:
     std::map<AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>>    m_AudioVisualizers;

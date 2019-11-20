@@ -29,11 +29,15 @@ public:
     public:
         virtual ~Listener(){};
         virtual void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) = 0;
+		virtual const std::set<AbstractAudioVisualizer::VisuType> getActiveVisuTypes() = 0;
     };
     
 public:
     VisuSelectComponent();
+	VisuSelectComponent(std::set<AbstractAudioVisualizer::VisuType> visuTypes);
     ~VisuSelectComponent();
+
+	void setActiveVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes);
     
     void addListener(Listener *l);
 

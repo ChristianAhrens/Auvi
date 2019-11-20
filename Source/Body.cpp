@@ -24,8 +24,8 @@
 //==============================================================================
 Body::Body()
 {
-    std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{AbstractAudioVisualizer::VisuType::MultiMeter};
-    onUpdateVisuTypes(defaultVisuTypes);
+	m_processor = 0;
+
 }
 
 Body::~Body()
@@ -39,13 +39,12 @@ void Body::paint (Graphics& g)
 
 void Body::resized()
 {
+	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
     int visuCount = int(m_AudioVisualizers.size());
-    int rowCount = 1;
-    int colCount = 1;
-    while(rowCount < colCount)
-    {
-        colCount = visuCount / rowCount;
-    }
+    //int rowCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? visuCount % 2 : 0), 1);
+    //int colCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? 0 : visuCount % 2), 1);
+	int rowCount = int(0.5f * visuCount + 0.5f);
+	int colCount = int(0.5f * visuCount + 0.5f);
     
 	Grid grid;
     using Track = Grid::TrackInfo;
@@ -55,7 +54,6 @@ void Body::resized()
     while(colCount--)
         grid.templateColumns.add(Track (1_fr));
     
-    // clean up no longer used visualizers
     for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>> &p : m_AudioVisualizers)
     {
         if(p.second)
@@ -63,11 +61,26 @@ void Body::resized()
     }
     
     grid.performLayout (getLocalBounds());
+
+	//FlexBox fb;
+	//fb.flexDirection = FlexBox::Direction::column;
+	//fb.flexWrap = FlexBox::Wrap::wrap;
+	//fb.justifyContent = FlexBox::JustifyContent::center;
+	//fb.alignContent = FlexBox::AlignContent::center;
+	//for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>> &p : m_AudioVisualizers)
+	//{
+	//	if(p.second)
+	//		fb.items.add(FlexItem(*p.second).withFlex(1));
+	//}
+	//fb.performLayout(getLocalBounds().toFloat());
 }
 
 void Body::setProcessor(Processor *processor)
 {
     m_processor = processor;
+
+	std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{ AbstractAudioVisualizer::VisuType::MultiMeter };
+	onUpdateVisuTypes(defaultVisuTypes);
 }
 
 void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes)
@@ -91,8 +104,10 @@ void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTyp
     
     for(int i=AbstractAudioVisualizer::VisuType::InvalidFirst+1; i<AbstractAudioVisualizer::VisuType::InvalidLast; ++i)
     {
-        auto add = visuTypesToAdd.count((AbstractAudioVisualizer::VisuType)i)!=0;
-        auto remove = visuTypesToRemove.count((AbstractAudioVisualizer::VisuType)i)!=0;
+		AbstractAudioVisualizer::VisuType type = (AbstractAudioVisualizer::VisuType)i;
+
+        auto add = visuTypesToAdd.count(type)!=0;
+        auto remove = visuTypesToRemove.count(type)!=0;
         
         if(add && remove)
         {
@@ -100,41 +115,56 @@ void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTyp
             continue;
         }
         
-        if(remove && m_AudioVisualizers.count((AbstractAudioVisualizer::VisuType)i))
+        if(remove && m_AudioVisualizers.count(type))
         {
            if(m_processor)
-               m_processor->removeListener(m_AudioVisualizers.at((AbstractAudioVisualizer::VisuType)i).get());
-            m_AudioVisualizers.at((AbstractAudioVisualizer::VisuType)i).reset();
+               m_processor->removeListener(m_AudioVisualizers.at(type).get());
+            m_AudioVisualizers.at(type).reset();
+			m_AudioVisualizers.erase(type);
         }
         else if(add)
         {
-            switch(i)
+            switch(type)
             {
                 case AbstractAudioVisualizer::VisuType::MultiMeter:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<MultiMeterAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<MultiMeterAudioVisualizer>();
                     break;
                 case AbstractAudioVisualizer::VisuType::TwoDField:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<TwoDFieldAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<TwoDFieldAudioVisualizer>();
                     break;
                 case AbstractAudioVisualizer::VisuType::Rta:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<RtaAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<RtaAudioVisualizer>();
                     break;
                 case AbstractAudioVisualizer::VisuType::Waterfall:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<WaterfallAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<WaterfallAudioVisualizer>();
                     break;
                 case AbstractAudioVisualizer::VisuType::Waveform:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<WaveformAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<WaveformAudioVisualizer>();
                     break;
+				case AbstractAudioVisualizer::VisuType::Scope:
+					// intentionally no break to run into default
                 default:
-                    m_AudioVisualizers[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<ScopeAudioVisualizer>();
+                    m_AudioVisualizers[type] = std::make_unique<ScopeAudioVisualizer>();
                     break;
             }
-            addAndMakeVisible(m_AudioVisualizers.at((AbstractAudioVisualizer::VisuType)i).get());
+            addAndMakeVisible(m_AudioVisualizers.at(type).get());
            
             if(m_processor)
-                m_processor->addListener(m_AudioVisualizers.at((AbstractAudioVisualizer::VisuType)i).get());
+                m_processor->addListener(m_AudioVisualizers.at(type).get());
         }
     }
     
     resized();
+}
+
+const std::set<AbstractAudioVisualizer::VisuType> Body::getActiveVisuTypes()
+{
+	std::set<AbstractAudioVisualizer::VisuType> activeVisuTypes;
+
+	for (const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>>& p : m_AudioVisualizers)
+	{
+		activeVisuTypes.insert(p.first);
+	}
+
+	return activeVisuTypes;
 }

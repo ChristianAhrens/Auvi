@@ -29,10 +29,14 @@ VisuSelectComponent::VisuSelectComponent()
     }
 }
 
+VisuSelectComponent::VisuSelectComponent(std::set<AbstractAudioVisualizer::VisuType> visuTypes)
+	: VisuSelectComponent()
+{
+	setActiveVisuTypes(visuTypes);
+}
+
 VisuSelectComponent::~VisuSelectComponent()
 {
-    //Listener* acListener = dynamic_cast<Listener*>(getParentComponent());
-    //if (acListener)
     if(m_listener)
     {
         std::set<AbstractAudioVisualizer::VisuType> activeVisuTypes;
@@ -42,14 +46,25 @@ VisuSelectComponent::~VisuSelectComponent()
                 activeVisuTypes.insert(p.first);
         }
         
-        //acListener->onUpdateVisuTypes(activeVisuTypes);
         m_listener->onUpdateVisuTypes(activeVisuTypes);
     }
+}
+
+void VisuSelectComponent::setActiveVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes)
+{
+	for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>>& p : m_visuSelectButtons)
+	{
+		if(visuTypes.count(p.first) != 0)
+			p.second->setToggleState(true, dontSendNotification);
+	}
 }
 
 void VisuSelectComponent::addListener(Listener *l)
 {
     m_listener = l;
+
+	if (m_listener)
+		setActiveVisuTypes(m_listener->getActiveVisuTypes());
 }
 
 void VisuSelectComponent::paint (Graphics& g)
@@ -70,17 +85,15 @@ void VisuSelectComponent::resized()
     grid.templateColumns = { Track (1_fr), Track (1_fr), Track (1_fr) };
     for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>> &p : m_visuSelectButtons)
     {
-        grid.items.add(GridItem(p.second.get()));
+        grid.items.add(GridItem(p.second.get()).withMargin(juce::GridItem::Margin(5, 5, 5, 5)));
     }
-    grid.performLayout (getLocalBounds());
+    grid.performLayout(getLocalBounds().reduced(5));
 }
 
 void VisuSelectComponent::buttonClicked(Button* button)
 {
     if (/*m_audioConfigOpen && m_audioConfigOpen.get() ==*/ button)
     {
-        //Listener* acListener = dynamic_cast<Listener*>(getParentComponent());
-        //if (acListener)
         if(m_listener)
         {
         }

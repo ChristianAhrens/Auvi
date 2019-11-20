@@ -34,25 +34,26 @@ void Footer::paint (Graphics& g)
 
 void Footer::resized()
 {
-    auto isVertical = getWidth() < (110 + 10 + 10);
-    
-    auto buttonWidth = 110;
-    auto buttonHeight = 20;
+    auto buttonWidth = 140;
+    auto buttonHeight = 26;
+	auto margin = 7;
+
+	auto isVertical = getWidth() < (buttonWidth + margin + margin);
     
     m_visuConfigOpen->setSize(buttonWidth, buttonHeight);
     
     if (isVertical)
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - 10), 10.0f));
+        m_visuConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - margin), margin));
     else
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0).translated(10.0f, 10.0f));
+        m_visuConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin, margin));
 
 	Component* pc = getParentComponent();
 	if (m_visuConfigSelect && pc)
 	{
         if (isVertical)
-            m_visuConfigSelect->setBounds(Rectangle<int>(10, 10, pc->getWidth() - 2 * 10 - buttonHeight, pc->getHeight() - 2 * 10));
+            m_visuConfigSelect->setBounds(Rectangle<int>(margin, margin, pc->getWidth() - 2 * margin - buttonHeight, pc->getHeight() - 2 * margin));
         else
-            m_visuConfigSelect->setBounds(Rectangle<int>(10, 10, pc->getWidth() - 2 * 10, pc->getHeight() - 2 * 10 - buttonHeight));
+            m_visuConfigSelect->setBounds(Rectangle<int>(margin, margin, pc->getWidth() - 2 * margin, pc->getHeight() - 2 * margin - buttonHeight));
 	}
 }
 

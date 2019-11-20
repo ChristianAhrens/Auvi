@@ -34,7 +34,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     // calculate what we need for our center circle
     auto width = getWidth();
     auto height = getHeight();
-    auto outerMargin = 40;
+    auto outerMargin = 30;
     
     auto visuAreaWidth = (width < height ? width : height) - 2 * outerMargin;
     auto visuAreaHeight = (width < height ? width : height) - 2 * outerMargin;
