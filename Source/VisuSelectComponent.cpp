@@ -22,7 +22,9 @@ VisuSelectComponent::VisuSelectComponent()
     for(int i=AbstractAudioVisualizer::VisuType::InvalidFirst+1; i<AbstractAudioVisualizer::VisuType::InvalidLast; ++i)
     {
         m_visuSelectButtons[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<DrawableButton>(String(i), DrawableButton::ButtonStyle::ImageOnButtonBackground);
-        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i).get());
+        std::unique_ptr<Drawable> drawableImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
+        drawableImage->replaceColour(Colours::black, Colours::white);
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(drawableImage.get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setClickingTogglesState(true);
         addAndMakeVisible(m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->addListener(this);
