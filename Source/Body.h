@@ -32,6 +32,7 @@ public:
     void resized() override;
     
     void setProcessor(Processor *processor);
+    void setPortrait(bool portrait);
     
     //==============================================================================
     void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;
@@ -40,6 +41,7 @@ public:
 private:
     std::map<AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>>    m_AudioVisualizers;
     Processor *m_processor;
+    bool m_isPortrait;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Body)
 };

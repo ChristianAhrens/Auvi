@@ -25,7 +25,7 @@
 Body::Body()
 {
 	m_processor = 0;
-
+    m_isPortrait = true;
 }
 
 Body::~Body()
@@ -39,10 +39,23 @@ void Body::paint (Graphics& g)
 
 void Body::resized()
 {
-	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
+    int rowCount = 1;
+    int colCount = 1;
+    
     int visuCount = int(m_AudioVisualizers.size());
-    int rowCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? visuCount % 2 : 0), 1);
-    int colCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? 0 : visuCount % 2), 1);
+    
+    if(visuCount == 2)
+    {
+        rowCount = m_isPortrait ? 2 : 1;
+        colCount = m_isPortrait ? 1 : 2;
+    }
+    else if(visuCount != 1)
+    {
+        int halfVisuCount = int(0.5f * visuCount + 0.5f);
+        
+        rowCount = m_isPortrait ? halfVisuCount : 2;
+        colCount = m_isPortrait ? 2 : halfVisuCount;
+    }
     
 	Grid grid;
     using Track = Grid::TrackInfo;
@@ -59,18 +72,6 @@ void Body::resized()
     }
     
     grid.performLayout (getLocalBounds());
-
-	//FlexBox fb;
-	//fb.flexDirection = FlexBox::Direction::column;
-	//fb.flexWrap = FlexBox::Wrap::wrap;
-	//fb.justifyContent = FlexBox::JustifyContent::center;
-	//fb.alignContent = FlexBox::AlignContent::center;
-	//for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>> &p : m_AudioVisualizers)
-	//{
-	//	if(p.second)
-	//		fb.items.add(FlexItem(*p.second).withFlex(1));
-	//}
-	//fb.performLayout(getLocalBounds().toFloat());
 }
 
 void Body::setProcessor(Processor *processor)
@@ -79,6 +80,11 @@ void Body::setProcessor(Processor *processor)
 
 	std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{ AbstractAudioVisualizer::VisuType::MultiMeter };
 	onUpdateVisuTypes(defaultVisuTypes);
+}
+
+void Body::setPortrait(bool portrait)
+{
+    m_isPortrait = portrait;
 }
 
 void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes)

@@ -46,6 +46,8 @@ void MainComponent::resized()
 {
 	auto panelMaxSize = 40.0f;
 	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
+    if(m_body)
+        m_body->setPortrait(isPortrait);
 	
 	FlexBox fb;
 	if(isPortrait)

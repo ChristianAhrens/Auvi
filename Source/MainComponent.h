@@ -43,9 +43,6 @@ public:
 
 	//==============================================================================
 	AudioSelectComponent * onOpenAudioConfig() override;
-    
-    //==============================================================================
-    //void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;
 
 private:
     //==============================================================================
