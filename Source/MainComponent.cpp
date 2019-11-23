@@ -29,7 +29,7 @@ MainComponent::MainComponent()
 
     m_body->setProcessor(&m_processor);
 
-	setSize(500, 580);
+	setSize(500, 220);
 }
 
 MainComponent::~MainComponent()
