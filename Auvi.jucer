@@ -8,6 +8,18 @@
         <FILE id="y9CNR0" name="Auvi.png" compile="0" resource="1" file="Resources/Images/Auvi.png"/>
         <FILE id="sgyBt4" name="Auvi.xcf" compile="0" resource="1" file="Resources/Images/Auvi.xcf"/>
         <FILE id="LCX3QV" name="Auvi_radar.png" compile="0" resource="1" file="Resources/Images/Auvi_radar.png"/>
+        <FILE id="xXKbTx" name="equalizer-24px.svg" compile="0" resource="1"
+              file="Resources/Images/equalizer-24px.svg"/>
+        <FILE id="h6mrp8" name="flare-24px.svg" compile="0" resource="1" file="Resources/Images/flare-24px.svg"/>
+        <FILE id="ks3Ldy" name="gps_fixed-24px.svg" compile="0" resource="1"
+              file="Resources/Images/gps_fixed-24px.svg"/>
+        <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
+              file="Resources/Images/graphic_eq-24px.svg"/>
+        <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
+              file="Resources/Images/grid_on-24px.svg"/>
+        <FILE id="UjwnVc" name="track_changes-24px.svg" compile="0" resource="1"
+              file="Resources/Images/track_changes-24px.svg"/>
+        <FILE id="SyQmGq" name="waves-24px.svg" compile="0" resource="1" file="Resources/Images/waves-24px.svg"/>
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">

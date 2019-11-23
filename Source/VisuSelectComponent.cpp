@@ -21,8 +21,8 @@ VisuSelectComponent::VisuSelectComponent()
     
     for(int i=AbstractAudioVisualizer::VisuType::InvalidFirst+1; i<AbstractAudioVisualizer::VisuType::InvalidLast; ++i)
     {
-        m_visuSelectButtons[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<TextButton>();
-        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setButtonText(String(i));
+        m_visuSelectButtons[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<DrawableButton>(String(i), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setClickingTogglesState(true);
         addAndMakeVisible(m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->addListener(this);
@@ -40,7 +40,7 @@ VisuSelectComponent::~VisuSelectComponent()
     if(m_listener)
     {
         std::set<AbstractAudioVisualizer::VisuType> activeVisuTypes;
-        for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>> &p : m_visuSelectButtons)
+        for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<DrawableButton>> &p : m_visuSelectButtons)
         {
             if(p.second->getToggleState())
                 activeVisuTypes.insert(p.first);
@@ -50,9 +50,40 @@ VisuSelectComponent::~VisuSelectComponent()
     }
 }
 
+std::unique_ptr<Drawable> VisuSelectComponent::getVisuTypeDrawable(AbstractAudioVisualizer::VisuType type)
+{
+    std::unique_ptr<XmlElement> svg_xml;
+    switch(type)
+    {
+        case AbstractAudioVisualizer::VisuType::MultiMeter:
+            svg_xml = XmlDocument::parse(BinaryData::equalizer24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::Scope:
+            svg_xml = XmlDocument::parse(BinaryData::track_changes24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::Rta:
+            svg_xml = XmlDocument::parse(BinaryData::grid_on24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::Waveform:
+            svg_xml = XmlDocument::parse(BinaryData::graphic_eq24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::Waterfall:
+            svg_xml = XmlDocument::parse(BinaryData::waves24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::TwoDField:
+            svg_xml = XmlDocument::parse(BinaryData::grid_on24px_svg);
+            break;
+        case AbstractAudioVisualizer::VisuType::InvalidFirst:
+        case AbstractAudioVisualizer::VisuType::InvalidLast:
+        default:
+            break;
+    }
+    return Drawable::createFromSVG(*(svg_xml.get()));
+}
+
 void VisuSelectComponent::setActiveVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes)
 {
-	for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>>& p : m_visuSelectButtons)
+	for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<DrawableButton>>& p : m_visuSelectButtons)
 	{
 		if(visuTypes.count(p.first) != 0)
 			p.second->setToggleState(true, dontSendNotification);
@@ -83,7 +114,7 @@ void VisuSelectComponent::resized()
     using Track = Grid::TrackInfo;
     grid.templateRows    = { Track (1_fr), Track (1_fr) };
     grid.templateColumns = { Track (1_fr), Track (1_fr), Track (1_fr) };
-    for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>> &p : m_visuSelectButtons)
+    for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<DrawableButton>> &p : m_visuSelectButtons)
     {
         grid.items.add(GridItem(p.second.get()).withMargin(juce::GridItem::Margin(5, 5, 5, 5)));
     }

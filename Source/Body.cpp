@@ -41,10 +41,8 @@ void Body::resized()
 {
 	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
     int visuCount = int(m_AudioVisualizers.size());
-    //int rowCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? visuCount % 2 : 0), 1);
-    //int colCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? 0 : visuCount % 2), 1);
-	int rowCount = int(0.5f * visuCount + 0.5f);
-	int colCount = int(0.5f * visuCount + 0.5f);
+    int rowCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? visuCount % 2 : 0), 1);
+    int colCount = std::max(int(0.5f * visuCount + 0.5f) + int(isPortrait ? 0 : visuCount % 2), 1);
     
 	Grid grid;
     using Track = Grid::TrackInfo;

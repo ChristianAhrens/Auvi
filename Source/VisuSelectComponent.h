@@ -21,7 +21,7 @@
 /*
 */
 class VisuSelectComponent : public Component,
-                            public TextButton::Listener
+                            public DrawableButton::Listener
 {
 public:
     class Listener
@@ -47,7 +47,9 @@ public:
     void buttonClicked(Button* button) override;
 
 private:
-    std::map<AbstractAudioVisualizer::VisuType, std::unique_ptr<TextButton>> m_visuSelectButtons;
+    std::unique_ptr<Drawable> getVisuTypeDrawable(AbstractAudioVisualizer::VisuType type);
+    
+    std::map<AbstractAudioVisualizer::VisuType, std::unique_ptr<DrawableButton>> m_visuSelectButtons;
     Listener *m_listener;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (VisuSelectComponent)
