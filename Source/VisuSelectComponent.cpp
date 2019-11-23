@@ -64,7 +64,7 @@ std::unique_ptr<Drawable> VisuSelectComponent::getVisuTypeDrawable(AbstractAudio
             svg_xml = XmlDocument::parse(BinaryData::track_changes24px_svg);
             break;
         case AbstractAudioVisualizer::VisuType::Rta:
-            svg_xml = XmlDocument::parse(BinaryData::grid_on24px_svg);
+            svg_xml = XmlDocument::parse(BinaryData::show_chart24px_svg);
             break;
         case AbstractAudioVisualizer::VisuType::Waveform:
             svg_xml = XmlDocument::parse(BinaryData::graphic_eq24px_svg);
