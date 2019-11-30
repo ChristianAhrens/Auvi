@@ -78,18 +78,21 @@ private:
     void BroadcastData(AbstractProcessorData *data);
     
     /*dbg*/
-	ProcessorAudioSignalData PrepareNextSignalData();
-	float m_dummySignalCalcBase;
-	ProcessorAudioSignalData m_dummySignal;
-
-	ProcessorLevelData PrepareNextLevelData();
-    float m_dummyLevelCalcBase;
-    ProcessorLevelData m_dummyLevel;
+	//ProcessorAudioSignalData PrepareNextSignalData();
+	//float m_dummySignalCalcBase;
+	//ProcessorAudioSignalData m_dummySignal;
+	//
+	//ProcessorLevelData PrepareNextLevelData();
+    //float m_dummyLevelCalcBase;
+    //ProcessorLevelData m_dummyLevel;
 
 	ProcessorSpectrumData PrepareNextSpectrumData();
 	float m_dummySpectrumCalcBase;
 	ProcessorSpectrumData m_dummySpectrum;
     /*dbg*/
+
+	ProcessorAudioSignalData m_signal;
+	ProcessorLevelData m_level;
     
     String              m_Name;
     Array<Listener*>    m_callbackListeners;
@@ -99,9 +102,10 @@ private:
 	double m_sampleRate = 0;
 	int m_bufferSize = 0;
 	
-	float* m_channels[128];
-	const float* m_inputChans[128];
+	float* m_processorChannels[128];
 	AudioBuffer<float> m_buffer;
+
+	const float* inputChans[128]; // this is only a member to enshure it is not recreated on every function call
 
 	//float m_lastGain = 1.0f, m_gain = 1.0f;
     

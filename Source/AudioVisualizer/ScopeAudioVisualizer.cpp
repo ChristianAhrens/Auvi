@@ -148,13 +148,14 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         case AbstractProcessorData::AudioSignal:
         {
             ProcessorAudioSignalData* ld = static_cast<ProcessorAudioSignalData*>(data);
-            jassert(ld->GetChannelCount()>1);
-            if(ld->GetChannelCount()>1)
-            {
-                unsigned long iter = GetNextScopeTailPos();
-                m_scopeTailX[iter] = ld->GetAudioSignal(m_channelX);
-                m_scopeTailY[iter] = ld->GetAudioSignal(m_channelY);
-            }
+			if (ld->GetChannelCount() > 1)
+			{
+				unsigned long iter = GetNextScopeTailPos();
+				m_scopeTailX[iter] = ld->GetAudioSignal(m_channelX);
+				m_scopeTailY[iter] = ld->GetAudioSignal(m_channelY);
+			}
+			else
+				break;
             repaint();
             break;
         }
