@@ -59,7 +59,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
     for(unsigned long i=1; i<=m_levelData.GetChannelCount(); ++i)
     {
         auto rmsMeterHeight = meterMaxHeight * m_levelData.GetLevel(i).rms;
-        auto peakMeterHeight = rmsMeterHeight - (meterMaxHeight * m_levelData.GetLevel(i).peak);
+        auto peakMeterHeight = meterMaxHeight * m_levelData.GetLevel(i).peak;
 
         g.setColour(Colours::forestgreen);
         g.fillRect(Rectangle<float>(meterLeft, visuAreaOrigY - rmsMeterHeight, meterWidth, rmsMeterHeight));

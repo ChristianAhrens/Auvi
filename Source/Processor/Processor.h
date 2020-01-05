@@ -91,8 +91,8 @@ private:
 	ProcessorSpectrumData m_dummySpectrum;
     /*dbg*/
 
-	ProcessorAudioSignalData m_signal;
-	ProcessorLevelData m_level;
+    ProcessorAudioSignalData    m_centiSecondBuffer;
+	ProcessorLevelData          m_level;
     
     String              m_Name;
     Array<Listener*>    m_callbackListeners;
@@ -100,14 +100,14 @@ private:
 	//==============================================================================
 	CriticalSection m_readLock;
 	double m_sampleRate = 0;
+    double m_samplesPerCentiSecond = 0;
 	int m_bufferSize = 0;
 	
 	float* m_processorChannels[128];
-	AudioBuffer<float> m_buffer;
+    AudioBuffer<float> m_buffer;
+    int m_missingSamplesForCentiSecond;
 
 	const float* inputChans[128]; // this is only a member to enshure it is not recreated on every function call
-
-	//float m_lastGain = 1.0f, m_gain = 1.0f;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

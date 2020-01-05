@@ -41,8 +41,8 @@ private:
     unsigned long   m_channelY;
     unsigned long   m_scopeTailLength;
     unsigned long   m_scopeTailPos;
-    std::vector<ProcessorAudioSignalData::SignalVal>   m_scopeTailX;
-    std::vector<ProcessorAudioSignalData::SignalVal>   m_scopeTailY;
+    std::vector<std::pair<double, double>>   m_scopeTailX;
+    std::vector<std::pair<double, double>>   m_scopeTailY;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeAudioVisualizer)
 };

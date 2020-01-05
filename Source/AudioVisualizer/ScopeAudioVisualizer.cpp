@@ -16,8 +16,8 @@
 ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    m_channelX = 1;
-    m_channelY = 5;
+    m_channelX = 0;
+    m_channelY = 1;
     m_scopeTailLength = 50;
     m_scopeTailPos = 0;
     m_scopeTailX.resize(m_scopeTailLength);
@@ -100,8 +100,8 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
     
     // scope curve
-    Point<float> newPeakPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).peak, m_scopeTailY.at(m_scopeTailPos).peak, scopeRect);
-    Point<float> newRmsPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).rms, m_scopeTailY.at(m_scopeTailPos).rms, scopeRect);
+    Point<float> newPeakPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).second, m_scopeTailY.at(m_scopeTailPos).second, scopeRect);
+    Point<float> newRmsPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).first, m_scopeTailY.at(m_scopeTailPos).first, scopeRect);
     Path peakPath, rmsPath;
     peakPath.startNewSubPath(newPeakPoint);
     rmsPath.startNewSubPath(newRmsPoint);
@@ -115,9 +115,9 @@ void ScopeAudioVisualizer::paint (Graphics& g)
         else
             pos = 0;
         
-        newPeakPoint = MapValToRect(m_scopeTailX.at(pos).peak, m_scopeTailY.at(pos).peak, scopeRect);
+        newPeakPoint = MapValToRect(m_scopeTailX.at(pos).second, m_scopeTailY.at(pos).second, scopeRect);
         peakPath.lineTo(newPeakPoint);
-        newRmsPoint = MapValToRect(m_scopeTailX.at(pos).rms, m_scopeTailY.at(pos).rms, scopeRect);
+        newRmsPoint = MapValToRect(m_scopeTailX.at(pos).first, m_scopeTailY.at(pos).first, scopeRect);
         rmsPath.lineTo(newRmsPoint);
     }
     g.setColour(Colours::forestgreen.darker());
@@ -151,8 +151,8 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 			if (ld->GetChannelCount() > 1)
 			{
 				unsigned long iter = GetNextScopeTailPos();
-				m_scopeTailX[iter] = ld->GetAudioSignal(m_channelX);
-				m_scopeTailY[iter] = ld->GetAudioSignal(m_channelY);
+				m_scopeTailX[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelX, 0, ld->getNumSamples()), ld->getMagnitude(m_channelX, 0, ld->getNumSamples()));
+                m_scopeTailY[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelY, 0, ld->getNumSamples()), ld->getMagnitude(m_channelY, 0, ld->getNumSamples()));
 			}
 			else
 				break;

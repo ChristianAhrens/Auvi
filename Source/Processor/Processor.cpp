@@ -50,16 +50,20 @@ const String Processor::getName() const
 
 void Processor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
 {
-	/*dbg*/jassertfalse; // aktuell nicht erwartet
 	m_sampleRate = sampleRate;
+	m_samplesPerCentiSecond = sampleRate * 0.01f;
 	m_bufferSize = maximumExpectedSamplesPerBlock;
+	m_missingSamplesForCentiSecond = int(m_samplesPerCentiSecond + 0.5f);
+	m_centiSecondBuffer.setSize(2, m_missingSamplesForCentiSecond, false, true, false);
 }
 
 void Processor::releaseResources()
 {
-	/*dbg*/jassertfalse; // aktuell nicht erwartet
 	m_sampleRate = 0;
+	m_samplesPerCentiSecond = 0;
 	m_bufferSize = 0;
+	m_centiSecondBuffer.clear();
+	m_missingSamplesForCentiSecond = 0;
 }
 
 void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
@@ -67,29 +71,45 @@ void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessag
     ignoreUnused(midiMessages);
 
 	int numChannels = buffer.getNumChannels();
-	int numSamples = buffer.getNumSamples();
 
-	float rms = 0.0f;
-	float peak = 0.0f;
+	if (numChannels != m_centiSecondBuffer.getNumChannels())
+		m_centiSecondBuffer.setSize(numChannels, m_samplesPerCentiSecond, false, true, true);
 
-	for (int i = 0; i < numChannels; ++i)
+	int availableSamples = buffer.getNumSamples();
+
+	int readPos = 0;
+	int writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
+	while (availableSamples >= m_missingSamplesForCentiSecond)
 	{
-		const float *readBuffer = buffer.getReadPointer(i);
-
-		for (int j = 0; j < numSamples; ++j)
+		for (int i = 0; i < numChannels; ++i)
 		{
-			// das ist quatsch
-			peak = std::max(std::abs(readBuffer[j]), peak);
-			rms += std::abs(readBuffer[j]);
-		}
-		rms = rms / numSamples;
+			m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, m_missingSamplesForCentiSecond);
 
-		m_signal.SetAudioSignal(i + 1, ProcessorAudioSignalData::SignalVal(peak, rms));
-		m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(peak, rms));
+			m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
+		}
+		BroadcastData(&m_level);
+
+		BroadcastData(&m_centiSecondBuffer);
+
+		readPos += m_missingSamplesForCentiSecond;
+		availableSamples -= m_missingSamplesForCentiSecond;
+
+		m_missingSamplesForCentiSecond = m_samplesPerCentiSecond;
+
+		writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
+
+		if (availableSamples <= 0)
+			break;
+	}
+		
+	if (availableSamples > 0)
+	{
+		for (int i = 0; i < numChannels; ++i)
+		{
+			m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, availableSamples);
+		}
 	}
 
-	BroadcastData(&m_signal);
-	BroadcastData(&m_level);
 }
 
 double Processor::getTailLengthSeconds() const
@@ -217,76 +237,14 @@ void Processor::audioDeviceAboutToStart(AudioIODevice* device)
 {
 	if(device)
 	{
-		m_sampleRate = device->getCurrentSampleRate();
-		m_bufferSize = device->getCurrentBufferSizeSamples();
+		prepareToPlay(device->getCurrentSampleRate(), device->getCurrentBufferSizeSamples());
 	}
 }
 
 void Processor::audioDeviceStopped()
 {
-	m_sampleRate = 0;
-	m_bufferSize = 0;
+	releaseResources();
 }
-
-//ProcessorAudioSignalData Processor::PrepareNextSignalData()
-//{
-//	float nextPeak1Signal = sin(m_dummySignalCalcBase);
-//	float nextRms1Signal = 0.9f * nextPeak1Signal;
-//	m_dummySignal.SetAudioSignal(1, ProcessorAudioSignalData::SignalVal(nextPeak1Signal, nextRms1Signal));
-//	m_dummySignalCalcBase += 0.1f;
-//
-//	float nextPeak2Signal = sin(m_dummySignalCalcBase);
-//	float nextRms2Signal = 0.9f * nextPeak2Signal;
-//	m_dummySignal.SetAudioSignal(2, ProcessorAudioSignalData::SignalVal(nextPeak2Signal, nextRms2Signal));
-//	m_dummySignalCalcBase += 0.1f;
-//
-//	float nextPeak3Signal = sin(m_dummySignalCalcBase);
-//	float nextRms3Signal = 0.9f * nextPeak3Signal;
-//	m_dummySignal.SetAudioSignal(3, ProcessorAudioSignalData::SignalVal(nextPeak3Signal, nextRms3Signal));
-//	m_dummySignalCalcBase += 0.1f;
-//
-//	float nextPeak4Signal = sin(m_dummySignalCalcBase);
-//	float nextRms4Signal = 0.9f * nextPeak4Signal;
-//	m_dummySignal.SetAudioSignal(4, ProcessorAudioSignalData::SignalVal(nextPeak4Signal, nextRms4Signal));
-//	m_dummySignalCalcBase += 0.1f;
-//
-//	float nextPeak5Signal = sin(m_dummySignalCalcBase);
-//	float nextRms5Signal = 0.9f * nextPeak5Signal;
-//	m_dummySignal.SetAudioSignal(5, ProcessorAudioSignalData::SignalVal(nextPeak5Signal, nextRms5Signal));
-//	m_dummySignalCalcBase += 0.1f;
-//
-//	return m_dummySignal;
-//}
-//
-//ProcessorLevelData Processor::PrepareNextLevelData()
-//{
-//    float nextPeak1Level = 0.5f*(1+sin(m_dummyLevelCalcBase));
-//    float nextRms1Level = 0.9f*nextPeak1Level;
-//    m_dummyLevel.SetLevel(1, ProcessorLevelData::LevelVal(nextPeak1Level, nextRms1Level));
-//    m_dummyLevelCalcBase += 0.1f;
-//    
-//    float nextPeak2Level = 0.5f*(1+sin(m_dummyLevelCalcBase));
-//    float nextRms2Level = 0.9f*nextPeak2Level;
-//	m_dummyLevel.SetLevel(2, ProcessorLevelData::LevelVal(nextPeak2Level, nextRms2Level));
-//	m_dummyLevelCalcBase += 0.1f;
-//    
-//    float nextPeak3Level = 0.5f*(1+sin(m_dummyLevelCalcBase));
-//    float nextRms3Level = 0.9f*nextPeak3Level;
-//	m_dummyLevel.SetLevel(3, ProcessorLevelData::LevelVal(nextPeak3Level, nextRms3Level));
-//	m_dummyLevelCalcBase += 0.1f;
-//    
-//    float nextPeak4Level = 0.5f*(1+sin(m_dummyLevelCalcBase));
-//    float nextRms4Level = 0.9f*nextPeak4Level;
-//	m_dummyLevel.SetLevel(4, ProcessorLevelData::LevelVal(nextPeak4Level, nextRms4Level));
-//	m_dummyLevelCalcBase += 0.1f;
-//    
-//    float nextPeak5Level = 0.5f*(1+sin(m_dummyLevelCalcBase));
-//    float nextRms5Level = 0.9f*nextPeak5Level;
-//	m_dummyLevel.SetLevel(5, ProcessorLevelData::LevelVal(nextPeak5Level, nextRms5Level));
-//	m_dummyLevelCalcBase += 0.1f;
-//    
-//    return m_dummyLevel;
-//}
 
 ProcessorSpectrumData Processor::PrepareNextSpectrumData()
 {
