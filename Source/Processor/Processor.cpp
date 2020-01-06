@@ -74,6 +74,8 @@ void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessag
 
 	if (numChannels != m_centiSecondBuffer.getNumChannels())
 		m_centiSecondBuffer.setSize(numChannels, m_samplesPerCentiSecond, false, true, true);
+	if (m_sampleRate != m_centiSecondBuffer.GetSampleRate())
+		m_centiSecondBuffer.SetSampleRate(m_sampleRate);
 
 	int availableSamples = buffer.getNumSamples();
 
