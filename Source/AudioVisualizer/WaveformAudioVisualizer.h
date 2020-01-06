@@ -34,5 +34,8 @@ public:
     VisuType getType() override;
 
 private:
+    std::unique_ptr<AudioThumbnail>         m_thumbnail;
+    std::unique_ptr<AudioThumbnailCache>    m_thumbnailCache;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformAudioVisualizer)
 };
