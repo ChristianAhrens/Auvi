@@ -23,5 +23,11 @@ public:
     
     void SetChannelCount(unsigned long count) override;
     unsigned long GetChannelCount() override;
+
+    void SetSampleRate(unsigned long rate);
+    unsigned long GetSampleRate();
+
+private:
+    unsigned long m_sampleRate;
     
 };
