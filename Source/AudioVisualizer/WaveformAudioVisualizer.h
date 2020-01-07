@@ -37,5 +37,9 @@ private:
     std::unique_ptr<AudioThumbnail>         m_thumbnail;
     std::unique_ptr<AudioThumbnailCache>    m_thumbnailCache;
 
+    AudioBuffer<float>                      m_buffer;
+    int                                     m_bufferPos;
+    int                                     m_bufferTime;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformAudioVisualizer)
 };
