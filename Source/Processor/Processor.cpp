@@ -15,9 +15,13 @@
 #include "ProcessorSpectrumData.h"
 
 //==============================================================================
-Processor::Processor()
-    : AudioProcessor(), m_fwdFFT(fftOrder)
+Processor::Processor() :
+    AudioProcessor(), 
+	m_fwdFFT(fftOrder), 
+	m_windowF(fftSize, dsp::WindowingFunction<float>::hann)
 {
+	m_FFTdataPos = 0;
+	zeromem(m_FFTdata, sizeof(m_FFTdata));
 }
 
 Processor::~Processor()
@@ -84,20 +88,51 @@ void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessag
 			m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
 
 			// generate spectrum data
-			memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), m_samplesPerCentiSecond);
-			m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
-			ProcessorSpectrumData::SpectrumBands spectrumBands;
-			int spectrumStepWidth = m_samplesPerCentiSecond / ProcessorSpectrumData::SpectrumBands::count;
-			int spectrumPos = 0;
-			for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
 			{
-				float spectrumVal = 0;
-				for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
-					spectrumVal += m_FFTdata[spectrumPos];
-				spectrumVal = spectrumVal / spectrumStepWidth;
-				spectrumBands.bands[j] = spectrumVal;
+				int unprocessedSamples = 0;
+				if (m_FFTdataPos < fftSize)
+				{
+					int missingSamples = fftSize - m_FFTdataPos;
+					if (missingSamples < m_samplesPerCentiSecond)
+					{
+						memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), missingSamples);
+						m_FFTdataPos += missingSamples;
+						unprocessedSamples = m_samplesPerCentiSecond - missingSamples;
+					}
+					else
+					{
+						memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), m_samplesPerCentiSecond);
+						m_FFTdataPos += m_samplesPerCentiSecond;
+					}
+				}
+
+				if (m_FFTdataPos >= fftSize)
+				{
+					m_windowF.multiplyWithWindowingTable(m_FFTdata, fftSize);
+					m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
+					ProcessorSpectrumData::SpectrumBands spectrumBands;
+					int spectrumStepWidth = fftSize / ProcessorSpectrumData::SpectrumBands::count;
+					int spectrumPos = 0;
+					for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
+					{
+						float spectrumVal = 0;
+						for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
+							spectrumVal += m_FFTdata[spectrumPos];
+						spectrumVal = spectrumVal / spectrumStepWidth;
+						spectrumBands.bands[j] = spectrumVal;
+					}
+					m_spectrum.SetSpectrum(i, spectrumBands);
+
+					zeromem(m_FFTdata, sizeof(m_FFTdata));
+					m_FFTdataPos = 0;
+				}
+
+				if (unprocessedSamples != 0)
+				{
+					memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i, m_samplesPerCentiSecond - unprocessedSamples), unprocessedSamples);
+					m_FFTdataPos += unprocessedSamples;
+				}
 			}
-			m_spectrum.SetSpectrum(i, spectrumBands);
 		}
 
 		BroadcastData(&m_level);

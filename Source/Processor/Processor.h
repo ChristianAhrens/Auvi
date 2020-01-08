@@ -98,8 +98,10 @@ private:
         fftOrder = 10,
         fftSize = 1 << fftOrder
     };
-    dsp::FFT    m_fwdFFT;
-    float       m_FFTdata[2*fftSize];
+    dsp::FFT                        m_fwdFFT;
+    dsp::WindowingFunction<float>   m_windowF;
+    float                           m_FFTdata[2*fftSize];
+    int                             m_FFTdataPos = 0;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

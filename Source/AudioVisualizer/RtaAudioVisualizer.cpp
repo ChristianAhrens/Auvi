@@ -43,13 +43,8 @@ void RtaAudioVisualizer::paint (Graphics& g)
     auto visuAreaOrigX = float(outerMargin);
     auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
 
-    // draw a simple baseline
-    g.setColour(Colours::white);
-    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
-
-    // draw dummy curve
+    // draw rta curve
     g.setColour(Colours::forestgreen);
-    
     if (!m_plotPoints.empty())
     {
         float newPointX = visuAreaOrigX;
@@ -67,6 +62,10 @@ void RtaAudioVisualizer::paint (Graphics& g)
         }
         g.strokePath(path, PathStrokeType(3));
     }
+
+    // draw a simple baseline
+    g.setColour(Colours::white);
+    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
 }
 
 void RtaAudioVisualizer::resized()
@@ -91,10 +90,12 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     case AbstractProcessorData::Spectrum:
         {
         ProcessorSpectrumData spectrumData = *(static_cast<ProcessorSpectrumData*>(data));
-        jassert(spectrumData.GetChannelCount() > m_plotChannel);
+        if (spectrumData.GetChannelCount() < m_plotChannel)
+            break;
+
         if(m_plotPoints.size() != ProcessorSpectrumData::SpectrumBands::count)
             m_plotPoints.resize(ProcessorSpectrumData::SpectrumBands::count);
-        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel).bands[0], ProcessorSpectrumData::SpectrumBands::count);
+        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel).bands[0], ProcessorSpectrumData::SpectrumBands::count * sizeof(float));
         repaint(); 
         }
         break;
