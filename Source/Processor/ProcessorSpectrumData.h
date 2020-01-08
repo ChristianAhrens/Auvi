@@ -17,13 +17,17 @@ class ProcessorSpectrumData : public AbstractProcessorData
 public:
     struct SpectrumBands
     {
+        enum {
+            count = 64
+        };
+
         SpectrumBands()
         {
-            for(int i=0; i<64; ++i)
+            for (int i = 0; i < count; ++i)
                 bands[i] = 0.0f;
-        }
+        };
         
-        float   bands[64];
+        float   bands[count];
     };
     
 public:

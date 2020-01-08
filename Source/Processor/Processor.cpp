@@ -16,16 +16,8 @@
 
 //==============================================================================
 Processor::Processor()
-    : AudioProcessor()
+    : AudioProcessor(), m_fwdFFT(fftOrder)
 {
-    ///*dbg*/m_dummySignalCalcBase = 0.0f;
-	///*dbg*/m_dummyLevelCalcBase = 0.0f;
-	/*dbg*/m_dummySpectrumCalcBase = 0.0f;
-    
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
-    startTimer(100);
 }
 
 Processor::~Processor()
@@ -85,13 +77,32 @@ void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessag
 	{
 		for (int i = 0; i < numChannels; ++i)
 		{
+			// generate signal buffer data
 			m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, m_missingSamplesForCentiSecond);
 
+			// generate level data
 			m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
-		}
-		BroadcastData(&m_level);
 
+			// generate spectrum data
+			memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), m_samplesPerCentiSecond);
+			m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
+			ProcessorSpectrumData::SpectrumBands spectrumBands;
+			int spectrumStepWidth = m_samplesPerCentiSecond / ProcessorSpectrumData::SpectrumBands::count;
+			int spectrumPos = 0;
+			for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
+			{
+				float spectrumVal = 0;
+				for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
+					spectrumVal += m_FFTdata[spectrumPos];
+				spectrumVal = spectrumVal / spectrumStepWidth;
+				spectrumBands.bands[j] = spectrumVal;
+			}
+			m_spectrum.SetSpectrum(i, spectrumBands);
+		}
+
+		BroadcastData(&m_level);
 		BroadcastData(&m_centiSecondBuffer);
+		BroadcastData(&m_spectrum);
 
 		readPos += m_missingSamplesForCentiSecond;
 		availableSamples -= m_missingSamplesForCentiSecond;
@@ -246,23 +257,6 @@ void Processor::audioDeviceAboutToStart(AudioIODevice* device)
 void Processor::audioDeviceStopped()
 {
 	releaseResources();
-}
-
-ProcessorSpectrumData Processor::PrepareNextSpectrumData()
-{
-    return ProcessorSpectrumData();
-}
-
-void Processor::timerCallback()
-{
-	//ProcessorAudioSignalData signalData = PrepareNextSignalData();
-	//BroadcastData(&signalData);
-
-    //ProcessorLevelData levelData = PrepareNextLevelData();
-    //BroadcastData(&levelData);
-    
-    ProcessorSpectrumData spectrumData = PrepareNextSpectrumData();
-    BroadcastData(&spectrumData);
 }
 
 void Processor::BroadcastData(AbstractProcessorData *data)

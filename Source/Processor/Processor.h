@@ -20,8 +20,7 @@
 /*
 */
 class Processor :   public AudioProcessor,
-					public AudioIODeviceCallback,
-                    public Timer
+					public AudioIODeviceCallback
 {
 public:
     class Listener
@@ -70,29 +69,13 @@ public:
 		int numSamples) override;
 	void audioDeviceAboutToStart(AudioIODevice* device) override;
 	void audioDeviceStopped() override;
-    
-    //==============================================================================
-    void timerCallback() override;
 
 private:
     void BroadcastData(AbstractProcessorData *data);
-    
-    /*dbg*/
-	//ProcessorAudioSignalData PrepareNextSignalData();
-	//float m_dummySignalCalcBase;
-	//ProcessorAudioSignalData m_dummySignal;
-	//
-	//ProcessorLevelData PrepareNextLevelData();
-    //float m_dummyLevelCalcBase;
-    //ProcessorLevelData m_dummyLevel;
-
-	ProcessorSpectrumData PrepareNextSpectrumData();
-	float m_dummySpectrumCalcBase;
-	ProcessorSpectrumData m_dummySpectrum;
-    /*dbg*/
 
     ProcessorAudioSignalData    m_centiSecondBuffer;
 	ProcessorLevelData          m_level;
+    ProcessorSpectrumData       m_spectrum;
     
     String              m_Name;
     Array<Listener*>    m_callbackListeners;
@@ -108,6 +91,15 @@ private:
     int m_missingSamplesForCentiSecond;
 
 	const float* inputChans[128]; // this is only a member to enshure it is not recreated on every function call
+
+    //==============================================================================
+    enum
+    {
+        fftOrder = 10,
+        fftSize = 1 << fftOrder
+    };
+    dsp::FFT    m_fwdFFT;
+    float       m_FFTdata[2*fftSize];
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };
