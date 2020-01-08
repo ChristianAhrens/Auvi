@@ -25,7 +25,7 @@ void ProcessorSpectrumData::SetSpectrum(unsigned long channel, ProcessorSpectrum
     m_spectrumsMap[channel] = spectrum;
 }
 
-ProcessorSpectrumData::SpectrumBands ProcessorSpectrumData::GetSpectrum(unsigned long channel)
+const ProcessorSpectrumData::SpectrumBands& ProcessorSpectrumData::GetSpectrum(unsigned long channel)
 {
     if(m_spectrumsMap.count(channel))
         return m_spectrumsMap.at(channel);

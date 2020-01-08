@@ -35,7 +35,7 @@ public:
     ~ProcessorSpectrumData();
     
     void SetSpectrum(unsigned long channel, SpectrumBands spectrum);
-    SpectrumBands GetSpectrum(unsigned long channel);
+    const SpectrumBands& GetSpectrum(unsigned long channel);
     
     void SetChannelCount(unsigned long count) override;
     unsigned long GetChannelCount() override;
