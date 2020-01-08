@@ -34,5 +34,8 @@ public:
     VisuType getType() override;
 
 private:
+    int                 m_plotChannel;
+    std::vector<float>  m_plotPoints;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RtaAudioVisualizer)
 };

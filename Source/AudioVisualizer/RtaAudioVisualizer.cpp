@@ -15,9 +15,7 @@
 RtaAudioVisualizer::RtaAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+    m_plotChannel = 0;
 }
 
 RtaAudioVisualizer::~RtaAudioVisualizer()
@@ -52,26 +50,23 @@ void RtaAudioVisualizer::paint (Graphics& g)
     // draw dummy curve
     g.setColour(Colours::forestgreen);
     
-    std::vector<float> plotPoints;
-    for(int i=0; i<50; ++i)
+    if (!m_plotPoints.empty())
     {
-        plotPoints.push_back(float(rand()%100)*0.01f);
+        float newPointX = visuAreaOrigX;
+        float newPointY = visuAreaOrigY - m_plotPoints.front() * visuAreaHeight;
+        float plotStepWidth = m_plotPoints.size() > 0 ? float(visuAreaWidth) / float(m_plotPoints.size() - 1) : 1;
+
+        Path path;
+        path.startNewSubPath(Point<float>(newPointX, newPointY));
+        for (int i = 1; i < m_plotPoints.size(); ++i)
+        {
+            newPointX += plotStepWidth;
+            newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
+
+            path.lineTo(Point<float>(newPointX, newPointY));
+        }
+        g.strokePath(path, PathStrokeType(3));
     }
-    
-    float newPointX = visuAreaOrigX;
-    float newPointY = visuAreaOrigY - plotPoints.front()*visuAreaHeight;
-    float plotStepWidth = plotPoints.size()>0 ? float(visuAreaWidth)/float(plotPoints.size()-1) : 1;
-    
-    Path path;
-    path.startNewSubPath(Point<float>(newPointX, newPointY));
-    for(int i = 1; i < plotPoints.size(); ++i)
-    {
-        newPointX += plotStepWidth;
-        newPointY = visuAreaOrigY - plotPoints.at(i)*visuAreaHeight;
-        
-        path.lineTo(Point<float>(newPointX, newPointY));
-    }
-    g.strokePath(path, PathStrokeType(3));
 }
 
 void RtaAudioVisualizer::resized()
@@ -88,5 +83,25 @@ AbstractAudioVisualizer::VisuType RtaAudioVisualizer::getType()
 
 void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
-    ignoreUnused(data);
+    if (!data)
+        return;
+
+    switch (data->GetDataType())
+    {
+    case AbstractProcessorData::Spectrum:
+        {
+        ProcessorSpectrumData spectrumData = *(static_cast<ProcessorSpectrumData*>(data));
+        jassert(spectrumData.GetChannelCount() > m_plotChannel);
+        if(m_plotPoints.size() != ProcessorSpectrumData::SpectrumBands::count)
+            m_plotPoints.resize(ProcessorSpectrumData::SpectrumBands::count);
+        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel).bands[0], ProcessorSpectrumData::SpectrumBands::count);
+        repaint(); 
+        }
+        break;
+    case AbstractProcessorData::Level:
+    case AbstractProcessorData::AudioSignal:
+    case AbstractProcessorData::Invalid:
+    default:
+        break;
+    }
 }
