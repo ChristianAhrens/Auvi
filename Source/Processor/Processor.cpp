@@ -15,6 +15,22 @@
 #include "ProcessorSpectrumData.h"
 
 //==============================================================================
+AudioBufferMessage::AudioBufferMessage(AudioBuffer<float>& buffer)
+{
+	m_buffer = buffer;
+}
+
+AudioBufferMessage::~AudioBufferMessage()
+{
+
+}
+
+const AudioBuffer<float>& AudioBufferMessage::getAudioBuffer() const
+{
+	return m_buffer;
+}
+
+//==============================================================================
 Processor::Processor() :
     AudioProcessor(), 
 	m_fwdFFT(fftOrder), 
@@ -62,102 +78,111 @@ void Processor::releaseResources()
 	m_missingSamplesForCentiSecond = 0;
 }
 
-void Processor::processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
+void Processor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessages)
 {
-    ignoreUnused(midiMessages);
+	ignoreUnused(midiMessages);
 
-	int numChannels = buffer.getNumChannels();
+	postMessage(new AudioBufferMessage(buffer));
+}
 
-	if (numChannels != m_centiSecondBuffer.getNumChannels())
-		m_centiSecondBuffer.setSize(numChannels, m_samplesPerCentiSecond, false, true, true);
-	if (m_sampleRate != m_centiSecondBuffer.GetSampleRate())
-		m_centiSecondBuffer.SetSampleRate(m_sampleRate);
-
-	int availableSamples = buffer.getNumSamples();
-
-	int readPos = 0;
-	int writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
-	while (availableSamples >= m_missingSamplesForCentiSecond)
+void Processor::handleMessage(const Message& message)
+{
+	if (auto m = dynamic_cast<const AudioBufferMessage*> (&message))
 	{
-		for (int i = 0; i < numChannels; ++i)
+		auto buffer = m->getAudioBuffer();
+
+		int numChannels = buffer.getNumChannels();
+
+		if (numChannels != m_centiSecondBuffer.getNumChannels())
+			m_centiSecondBuffer.setSize(numChannels, m_samplesPerCentiSecond, false, true, true);
+		if (m_sampleRate != m_centiSecondBuffer.GetSampleRate())
+			m_centiSecondBuffer.SetSampleRate(m_sampleRate);
+
+		int availableSamples = buffer.getNumSamples();
+
+		int readPos = 0;
+		int writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
+		while (availableSamples >= m_missingSamplesForCentiSecond)
 		{
-			// generate signal buffer data
-			m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, m_missingSamplesForCentiSecond);
-
-			// generate level data
-			m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
-
-			// generate spectrum data
+			for (int i = 0; i < numChannels; ++i)
 			{
-				int unprocessedSamples = 0;
-				if (m_FFTdataPos < fftSize)
-				{
-					int missingSamples = fftSize - m_FFTdataPos;
-					if (missingSamples < m_samplesPerCentiSecond)
-					{
-						memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), missingSamples);
-						m_FFTdataPos += missingSamples;
-						unprocessedSamples = m_samplesPerCentiSecond - missingSamples;
-					}
-					else
-					{
-						memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), m_samplesPerCentiSecond);
-						m_FFTdataPos += m_samplesPerCentiSecond;
-					}
-				}
+				// generate signal buffer data
+				m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, m_missingSamplesForCentiSecond);
 
-				if (m_FFTdataPos >= fftSize)
+				// generate level data
+				m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
+
+				// generate spectrum data
 				{
-					m_windowF.multiplyWithWindowingTable(m_FFTdata, fftSize);
-					m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
-					ProcessorSpectrumData::SpectrumBands spectrumBands;
-					int spectrumStepWidth = fftSize / ProcessorSpectrumData::SpectrumBands::count;
-					int spectrumPos = 0;
-					for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
+					int unprocessedSamples = 0;
+					if (m_FFTdataPos < fftSize)
 					{
-						float spectrumVal = 0;
-						for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
-							spectrumVal += m_FFTdata[spectrumPos];
-						spectrumVal = spectrumVal / spectrumStepWidth;
-						spectrumBands.bands[j] = spectrumVal;
+						int missingSamples = fftSize - m_FFTdataPos;
+						if (missingSamples < m_samplesPerCentiSecond)
+						{
+							memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), missingSamples);
+							m_FFTdataPos += missingSamples;
+							unprocessedSamples = m_samplesPerCentiSecond - missingSamples;
+						}
+						else
+						{
+							memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i), m_samplesPerCentiSecond);
+							m_FFTdataPos += m_samplesPerCentiSecond;
+						}
 					}
-					m_spectrum.SetSpectrum(i, spectrumBands);
 
-					zeromem(m_FFTdata, sizeof(m_FFTdata));
-					m_FFTdataPos = 0;
-				}
+					if (m_FFTdataPos >= fftSize)
+					{
+						m_windowF.multiplyWithWindowingTable(m_FFTdata, fftSize);
+						m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
+						ProcessorSpectrumData::SpectrumBands spectrumBands;
+						int spectrumStepWidth = 0.5f * (fftSize / ProcessorSpectrumData::SpectrumBands::count);
+						int spectrumPos = 0;
+						for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
+						{
+							float spectrumVal = 0;
+							for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
+								spectrumVal += m_FFTdata[spectrumPos];
+							spectrumVal = spectrumVal / spectrumStepWidth;
+							spectrumBands.bands[j] = spectrumVal;
+						}
+						m_spectrum.SetSpectrum(i, spectrumBands);
 
-				if (unprocessedSamples != 0)
-				{
-					memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i, m_samplesPerCentiSecond - unprocessedSamples), unprocessedSamples);
-					m_FFTdataPos += unprocessedSamples;
+						zeromem(m_FFTdata, sizeof(m_FFTdata));
+						m_FFTdataPos = 0;
+					}
+
+					if (unprocessedSamples != 0)
+					{
+						memcpy(m_FFTdata, m_centiSecondBuffer.getReadPointer(i, m_samplesPerCentiSecond - unprocessedSamples), unprocessedSamples);
+						m_FFTdataPos += unprocessedSamples;
+					}
 				}
 			}
+
+			BroadcastData(&m_level);
+			BroadcastData(&m_centiSecondBuffer);
+			BroadcastData(&m_spectrum);
+
+			readPos += m_missingSamplesForCentiSecond;
+			availableSamples -= m_missingSamplesForCentiSecond;
+
+			m_missingSamplesForCentiSecond = m_samplesPerCentiSecond;
+
+			writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
+
+			if (availableSamples <= 0)
+				break;
 		}
 
-		BroadcastData(&m_level);
-		BroadcastData(&m_centiSecondBuffer);
-		BroadcastData(&m_spectrum);
-
-		readPos += m_missingSamplesForCentiSecond;
-		availableSamples -= m_missingSamplesForCentiSecond;
-
-		m_missingSamplesForCentiSecond = m_samplesPerCentiSecond;
-
-		writePos = m_samplesPerCentiSecond - m_missingSamplesForCentiSecond;
-
-		if (availableSamples <= 0)
-			break;
-	}
-		
-	if (availableSamples > 0)
-	{
-		for (int i = 0; i < numChannels; ++i)
+		if (availableSamples > 0)
 		{
-			m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, availableSamples);
+			for (int i = 0; i < numChannels; ++i)
+			{
+				m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, availableSamples);
+			}
 		}
 	}
-
 }
 
 double Processor::getTailLengthSeconds() const
@@ -296,7 +321,6 @@ void Processor::audioDeviceStopped()
 
 void Processor::BroadcastData(AbstractProcessorData *data)
 {
-	MessageManagerLock lock;
 
     for(Listener *l : m_callbackListeners)
         l->processingDataChanged(data);

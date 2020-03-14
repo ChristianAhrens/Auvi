@@ -19,8 +19,24 @@
 //==============================================================================
 /*
 */
+class AudioBufferMessage : public Message
+{
+public:
+    AudioBufferMessage(AudioBuffer<float>& buffer);
+    ~AudioBufferMessage();
+
+    const AudioBuffer<float>& getAudioBuffer() const;
+
+private:
+    AudioBuffer<float> m_buffer;
+};
+
+//==============================================================================
+/*
+*/
 class Processor :   public AudioProcessor,
-					public AudioIODeviceCallback
+					public AudioIODeviceCallback,
+                    public MessageListener
 {
 public:
     class Listener
@@ -69,6 +85,9 @@ public:
 		int numSamples) override;
 	void audioDeviceAboutToStart(AudioIODevice* device) override;
 	void audioDeviceStopped() override;
+
+    //==============================================================================
+    void handleMessage(const Message& message) override;
 
 private:
     void BroadcastData(AbstractProcessorData *data);
