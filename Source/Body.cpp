@@ -78,7 +78,7 @@ void Body::setProcessor(Processor *processor)
 {
     m_processor = processor;
 
-	std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{ AbstractAudioVisualizer::VisuType::MultiMeter, AbstractAudioVisualizer::VisuType::TwoDField };
+	std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{ AbstractAudioVisualizer::VisuType::Waveform };
 	onUpdateVisuTypes(defaultVisuTypes);
 }
 
