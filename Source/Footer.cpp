@@ -13,8 +13,9 @@
 #include "AudioVisualizer/AbstractAudioVisualizer.h"
 
 //==============================================================================
-Footer::Footer()
+Footer::Footer(int noGoAreaBottom, int noGoAreaLeft)
 {
+    setNoGoArea(noGoAreaBottom, noGoAreaLeft);
     m_visuConfigSelect = nullptr;
 
 	m_visuConfigOpen = std::make_unique<TextButton>();
@@ -25,6 +26,12 @@ Footer::Footer()
 
 Footer::~Footer()
 {
+}
+
+void Footer::setNoGoArea(int noGoAreaBottom, int noGoAreaLeft)
+{
+    m_noGoAreaBottom = noGoAreaBottom;
+    m_noGoAreaLeft = noGoAreaLeft;
 }
 
 void Footer::paint (Graphics& g)
@@ -43,9 +50,9 @@ void Footer::resized()
     m_visuConfigOpen->setSize(buttonWidth, buttonHeight);
     
     if (isVertical)
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - margin), margin));
+        m_visuConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - (margin + m_noGoAreaLeft)), margin));
     else
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin, margin));
+        m_visuConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin + m_noGoAreaLeft, margin));
 
 	Component* pc = getParentComponent();
 	if (m_visuConfigSelect && pc)

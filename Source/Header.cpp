@@ -12,8 +12,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //==============================================================================
-Header::Header()
+Header::Header(int noGoAreaTop, int noGoAreaLeft)
 {
+    setNoGoArea(noGoAreaTop, noGoAreaLeft);
 	m_audioConfigSelect = nullptr;
 
 	m_audioConfigOpen = std::make_unique<TextButton>();
@@ -24,6 +25,12 @@ Header::Header()
 
 Header::~Header()
 {
+}
+
+void Header::setNoGoArea(int noGoAreaTop, int noGoAreaLeft)
+{
+    m_noGoAreaTop = noGoAreaTop;
+    m_noGoAreaLeft = noGoAreaLeft;
 }
 
 void Header::paint (Graphics& g)
@@ -42,9 +49,9 @@ void Header::resized()
 	m_audioConfigOpen->setSize(buttonWidth, buttonHeight);
 
 	if (isVertical)
-		m_audioConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - margin), margin));
+		m_audioConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - (margin + m_noGoAreaLeft)), margin + m_noGoAreaTop));
 	else
-		m_audioConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin, margin));
+		m_audioConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin + m_noGoAreaLeft, margin + m_noGoAreaTop));
 
 	Component* pc = getParentComponent();
 	if (m_audioConfigSelect && pc)

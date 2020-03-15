@@ -30,17 +30,20 @@ public:
     };
     
 public:
-    Footer();
+    Footer(int noGoAreaBottom = 0, int noGoAreaLeft = 0);
     ~Footer();
 
     void paint (Graphics&) override;
     void resized() override;
     
 	void buttonClicked(Button* button) override;
+    void setNoGoArea(int noGoAreaBottom, int noGoAreaLeft);
 
 private:
     std::unique_ptr<TextButton> m_visuConfigOpen;
 	VisuSelectComponent*        m_visuConfigSelect;
+    int                         m_noGoAreaBottom;
+    int                         m_noGoAreaLeft;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Footer)
 };

@@ -68,6 +68,9 @@ void MainComponent::resized()
 	FlexBox fb;
 	if(isPortrait)
 	{
+        m_header->setNoGoArea(topSafety, 0);
+        m_footer->setNoGoArea(bottomSafety, 0);
+        
 		fb.flexDirection = FlexBox::Direction::column;
 		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize+topSafety),
             FlexItem(*m_body.get()).withFlex(4),
@@ -75,6 +78,9 @@ void MainComponent::resized()
 	}
 	else
 	{
+        m_header->setNoGoArea(topSafety, 0);
+        m_footer->setNoGoArea(bottomSafety, 0);
+        
 		fb.flexDirection = FlexBox::Direction::row;
 		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize+topSafety),
             FlexItem(*m_body.get()).withFlex(4),
