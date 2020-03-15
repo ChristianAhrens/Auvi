@@ -48,23 +48,41 @@ void MainComponent::resized()
 	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
     if(m_body)
         m_body->setPortrait(isPortrait);
+    
+    auto topSafety = 0.0f;
+    auto bottomSafety = 0.0f;
+    switch(SystemStats::getOperatingSystemType())
+    {
+        case SystemStats::OperatingSystemType::Android:
+        case SystemStats::OperatingSystemType::iOS:
+            // special required?
+            topSafety = 30.0f;
+            bottomSafety = 20.0f;
+        case SystemStats::OperatingSystemType::MacOSX:
+        case SystemStats::OperatingSystemType::Windows:
+        case SystemStats::OperatingSystemType::Linux:
+        default:
+            break;
+    }
 	
 	FlexBox fb;
 	if(isPortrait)
 	{
 		fb.flexDirection = FlexBox::Direction::column;
-		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize),
-						    FlexItem(*m_body.get()).withFlex(4),
-							FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelMaxSize) });
+		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize+topSafety),
+            FlexItem(*m_body.get()).withFlex(4),
+            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelMaxSize+bottomSafety) });
 	}
 	else
 	{
 		fb.flexDirection = FlexBox::Direction::row;
-		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize),
-					        FlexItem(*m_body.get()).withFlex(4),
-							FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelMaxSize) });
+		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize+topSafety),
+            FlexItem(*m_body.get()).withFlex(4),
+            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelMaxSize+bottomSafety) });
 	}
-	fb.performLayout(getLocalBounds().toFloat());
+
+    fb.performLayout(getLocalBounds().toFloat());
+
 }
 
 AudioSelectComponent* MainComponent::onOpenAudioConfig()
