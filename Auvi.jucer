@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" jucerVersion="5.4.5">
+<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" jucerVersion="5.4.7">
   <MAINGROUP id="wsXNhp" name="Auvi">
     <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="Documentation"/>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
