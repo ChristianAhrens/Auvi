@@ -12,9 +12,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //==============================================================================
-Header::Header(int noGoAreaTop, int noGoAreaLeft)
+Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
-    setNoGoArea(noGoAreaTop, noGoAreaLeft);
+    setNoGoArea(noGoAreaTop, noGoAreaBottom, noGoAreaLeft, noGoAreaRight);
 	m_audioConfigSelect = nullptr;
 
 	m_audioConfigOpen = std::make_unique<TextButton>();
@@ -27,10 +27,12 @@ Header::~Header()
 {
 }
 
-void Header::setNoGoArea(int noGoAreaTop, int noGoAreaLeft)
+void Header::setNoGoArea(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
     m_noGoAreaTop = noGoAreaTop;
+    m_noGoAreaBottom = noGoAreaBottom;
     m_noGoAreaLeft = noGoAreaLeft;
+    m_noGoAreaRight = noGoAreaRight;
 }
 
 void Header::paint (Graphics& g)

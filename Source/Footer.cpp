@@ -13,9 +13,9 @@
 #include "AudioVisualizer/AbstractAudioVisualizer.h"
 
 //==============================================================================
-Footer::Footer(int noGoAreaBottom, int noGoAreaLeft)
+Footer::Footer(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
-    setNoGoArea(noGoAreaBottom, noGoAreaLeft);
+    setNoGoArea(noGoAreaTop, noGoAreaBottom, noGoAreaLeft, noGoAreaRight);
     m_visuConfigSelect = nullptr;
 
 	m_visuConfigOpen = std::make_unique<TextButton>();
@@ -28,10 +28,12 @@ Footer::~Footer()
 {
 }
 
-void Footer::setNoGoArea(int noGoAreaBottom, int noGoAreaLeft)
+void Footer::setNoGoArea(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
+    m_noGoAreaTop = noGoAreaTop;
     m_noGoAreaBottom = noGoAreaBottom;
     m_noGoAreaLeft = noGoAreaLeft;
+    m_noGoAreaRight = noGoAreaRight;
 }
 
 void Footer::paint (Graphics& g)
