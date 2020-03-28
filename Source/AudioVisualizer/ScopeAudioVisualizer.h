@@ -35,7 +35,7 @@ public:
 
 private:
     unsigned long GetNextScopeTailPos();
-    Point<float> MapValToRect(float x, float y, Rectangle<float> rectF);
+    juce::Point<float> MapValToRect(float x, float y, Rectangle<float> rectF);
     
     unsigned long   m_channelX;
     unsigned long   m_channelY;

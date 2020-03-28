@@ -40,7 +40,7 @@ unsigned long ScopeAudioVisualizer::GetNextScopeTailPos()
     return m_scopeTailPos;
 }
 
-Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangle<float> rectF)
+juce::Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangle<float> rectF)
 {
 	float angle = (x != 0) ? atanf(fabs(y) / fabs(x)) * (180 / float_Pi) : 0;
 	float corr = (1 - (fabs(angle - 45.0f)/45.0f)) * 0.70710678f; // 0.70710678f=2/sqrt(2*2+2*2)
@@ -48,7 +48,7 @@ Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangle<floa
 	float pointX = corr * (0.5f * rectF.getWidth()) * x;
 	float pointY = corr * (0.5f * rectF.getHeight()) * y;
 
-	return Point<float>(rectF.getCentre() + Point<float>(pointX, pointY));
+	return juce::Point<float>(rectF.getCentre() + juce::Point<float>(pointX, pointY));
 }
 
 void ScopeAudioVisualizer::paint (Graphics& g)
@@ -100,8 +100,8 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 							scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
     
     // scope curve
-    Point<float> newPeakPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).second, m_scopeTailY.at(m_scopeTailPos).second, scopeRect);
-    Point<float> newRmsPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).first, m_scopeTailY.at(m_scopeTailPos).first, scopeRect);
+    juce::Point<float> newPeakPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).second, m_scopeTailY.at(m_scopeTailPos).second, scopeRect);
+    juce::Point<float> newRmsPoint = MapValToRect(m_scopeTailX.at(m_scopeTailPos).first, m_scopeTailY.at(m_scopeTailPos).first, scopeRect);
     Path peakPath, rmsPath;
     peakPath.startNewSubPath(newPeakPoint);
     rmsPath.startNewSubPath(newRmsPoint);

@@ -52,13 +52,13 @@ void RtaAudioVisualizer::paint (Graphics& g)
         float plotStepWidth = m_plotPoints.size() > 0 ? float(visuAreaWidth) / float(m_plotPoints.size() - 1) : 1;
 
         Path path;
-        path.startNewSubPath(Point<float>(newPointX, newPointY));
+        path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
         for (int i = 1; i < m_plotPoints.size(); ++i)
         {
             newPointX += plotStepWidth;
             newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
 
-            path.lineTo(Point<float>(newPointX, newPointY));
+            path.lineTo(juce::Point<float>(newPointX, newPointY));
         }
         g.strokePath(path, PathStrokeType(3));
     }

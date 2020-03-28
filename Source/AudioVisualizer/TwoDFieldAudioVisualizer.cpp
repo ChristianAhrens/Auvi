@@ -62,12 +62,12 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.drawDashedLine(Line<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight, visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight), dparam, 2);
     
     // draw level indication lines
-    Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
-    Point<float> leftMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight);
-    Point<float> centerMax = levelOrig - Point<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight);
-    Point<float> rightMax = levelOrig - Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight);
-    Point<float> rightSurroundMax = levelOrig - Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
-    Point<float> leftSurroundMax = levelOrig - Point<float>(visuAreaOrigX, visuAreaOrigY);
+    juce::Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
+    juce::Point<float> leftMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight);
+    juce::Point<float> centerMax = levelOrig - juce::Point<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight);
+    juce::Point<float> rightMax = levelOrig - juce::Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight);
+    juce::Point<float> rightSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
+    juce::Point<float> leftSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY);
     
     float peakLevelL = m_levelData.GetLevel(m_channelL).peak;
     float peakLevelC = m_levelData.GetLevel(m_channelC).peak;
