@@ -46,7 +46,7 @@ void MainComponent::resized()
 {
 	auto panelDefaultSize = 40.0f;
     auto orientation = Desktop::getInstance().getCurrentOrientation();
-    auto isPortrait = (orientation == Desktop::upright) || (orientation == Desktop::upsideDown);
+    auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
     if(m_body)
         m_body->setPortrait(isPortrait);
     
