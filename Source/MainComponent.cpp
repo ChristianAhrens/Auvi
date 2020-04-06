@@ -60,12 +60,12 @@ void MainComponent::resized()
             // special required?
             if(isPortrait)
             {
-              topSafety = 30.0f;
+              topSafety = 35.0f;
               bottomSafety = 20.0f;
             }
             else
             {
-              leftSafety = 30.0f;
+              leftSafety = 35.0f;
               rightSafety = 20.0f;
             }
             break;
