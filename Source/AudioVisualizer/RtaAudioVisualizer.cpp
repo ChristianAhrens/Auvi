@@ -33,6 +33,8 @@ void RtaAudioVisualizer::paint (Graphics& g)
     auto outerMargin = 20;
     auto visuAreaWidth = width - 2 * outerMargin;
     auto visuAreaHeight = height - 2 * outerMargin;
+    auto maxFreq = 20000;
+    auto minFreq = 10;
 
     Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
 
@@ -47,15 +49,17 @@ void RtaAudioVisualizer::paint (Graphics& g)
     g.setColour(Colours::forestgreen);
     if (!m_plotPoints.empty())
     {
-        float newPointX = visuAreaOrigX;
-        float newPointY = visuAreaOrigY - m_plotPoints.front() * visuAreaHeight;
-        float plotStepWidth = m_plotPoints.size() > 0 ? float(visuAreaWidth) / float(m_plotPoints.size() - 1) : 1;
+        auto plotStepFraction = m_plotPoints.size() > 0 ? 1.0f / float(m_plotPoints.size()) : 1.0f;
+        auto plotStepWidth = float(visuAreaWidth) * plotStepFraction;
 
-        Path path;
+        auto path = Path{};
+        auto newPointX = visuAreaOrigX;
+        auto newPointY = visuAreaOrigY - m_plotPoints.front() * visuAreaHeight;
         path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
         for (int i = 1; i < m_plotPoints.size(); ++i)
         {
-            newPointX += plotStepWidth;
+            auto plotPointFreq = maxFreq * plotStepFraction * i;
+            newPointX = visuAreaOrigX + visuAreaWidth * (log10(plotPointFreq)/log10(maxFreq));
             newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
 
             path.lineTo(juce::Point<float>(newPointX, newPointY));
@@ -63,9 +67,21 @@ void RtaAudioVisualizer::paint (Graphics& g)
         g.strokePath(path, PathStrokeType(3));
     }
 
-    // draw a simple baseline
     g.setColour(Colours::white);
-    g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
+    // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz
+    auto quarterVisuArea = visuAreaWidth * 0.25f;
+    for(int i=0; i<4; ++i)
+    {
+        auto quarterOrig = visuAreaOrigX + (quarterVisuArea * i);
+        for (int j = 1; j < 11; ++j)
+        {
+            auto quarterOffset = quarterVisuArea * log10(j);
+            g.drawLine(Line<float>( quarterOrig + quarterOffset, visuAreaOrigY,
+                                    quarterOrig + quarterOffset, visuAreaOrigY - visuAreaHeight));
+        }
+    }
+    // draw an outline around the visu area
+    g.drawRect(visuArea, 1);
 }
 
 void RtaAudioVisualizer::resized()
