@@ -46,23 +46,49 @@ void Header::resized()
 	auto buttonHeight = 26;
 	auto margin = 7;
 
-	auto isVertical = getWidth() < (buttonWidth + margin + margin);
+	auto isVerticalButton = getWidth() < (buttonWidth + margin + margin);
 
 	m_audioConfigOpen->setSize(buttonWidth, buttonHeight);
 
-	if (isVertical)
-		m_audioConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - (margin + m_noGoAreaLeft)), margin + m_noGoAreaTop));
-	else
-		m_audioConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin + m_noGoAreaLeft, margin + m_noGoAreaTop));
+    // rotate and position the button to open config
+    auto rotation = 0.0f;
+    auto translation = std::pair<int, int>{};
+    if (isVerticalButton)
+    {
+        rotation = 0.5f * float_Pi;
+        translation = std::make_pair(float(getWidth() - margin),
+                                     margin + m_noGoAreaTop);
+    }
+    else
+    {
+        rotation = 0.0f;
+        translation = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin + m_noGoAreaTop);
+    }
+    m_audioConfigOpen->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
 
-	Component* pc = getParentComponent();
-	if (m_audioConfigSelect && pc)
-	{
-		if (isVertical)
-			m_audioConfigSelect->setBounds(Rectangle<int>(margin + buttonHeight, margin, pc->getWidth() - 2 * margin - buttonHeight, pc->getHeight() - 2 * margin));
-		else
-			m_audioConfigSelect->setBounds(Rectangle<int>(margin, margin + buttonHeight, pc->getWidth() - 2 * margin, pc->getHeight() - 2 * margin - buttonHeight));
-	}
+    // position the config selection component itself
+    auto pc = getParentComponent();
+    if (m_audioConfigSelect && pc)
+    {
+        auto topLeft = std::pair<int, int>{};
+        auto size = std::pair<int, int>{};
+        if (isVerticalButton)
+        {
+            topLeft = std::make_pair(margin + m_noGoAreaLeft + buttonHeight,
+                                     margin + m_noGoAreaTop);
+            size = std::make_pair(pc->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
+                                  pc->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
+        }
+        else
+        {
+            topLeft = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin + m_noGoAreaTop + buttonHeight);
+            size = std::make_pair(pc->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
+                                  pc->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
+        }
+        m_audioConfigSelect->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
+    }
 }
 
 void Header::buttonClicked(Button* button)

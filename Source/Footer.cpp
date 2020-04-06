@@ -47,22 +47,48 @@ void Footer::resized()
     auto buttonHeight = 26;
 	auto margin = 7;
 
-	auto isVertical = getWidth() < (buttonWidth + margin + margin);
+	auto isVerticalButton = getWidth() < (buttonWidth + margin + margin);
     
     m_visuConfigOpen->setSize(buttonWidth, buttonHeight);
     
-    if (isVertical)
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0.5f * float_Pi).translated(float(getWidth() - (margin + m_noGoAreaLeft)), margin));
+    // rotate and position the button to open config
+    auto rotation = 0.0f;
+    auto translation = std::pair<int, int>{};
+    if (isVerticalButton)
+    {
+        rotation = 0.5f * float_Pi;
+        translation = std::make_pair(float(getWidth() - margin - m_noGoAreaRight),
+                                     margin + m_noGoAreaTop);
+    }
     else
-        m_visuConfigOpen->setTransform(AffineTransform::rotation(0).translated(margin + m_noGoAreaLeft, margin));
+    {
+        rotation = 0.0f;
+        translation = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin);
+    }
+    m_visuConfigOpen->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
 
-	Component* pc = getParentComponent();
+    // position the config selection component itself
+	auto pc = getParentComponent();
 	if (m_visuConfigSelect && pc)
 	{
-        if (isVertical)
-            m_visuConfigSelect->setBounds(Rectangle<int>(margin, margin, pc->getWidth() - 2 * margin - buttonHeight, pc->getHeight() - 2 * margin));
+        auto topLeft = std::pair<int, int>{};
+        auto size = std::pair<int, int>{};
+        if (isVerticalButton)
+        {
+            topLeft = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin + m_noGoAreaTop);
+            size = std::make_pair(pc->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
+                                  pc->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
+        }
         else
-            m_visuConfigSelect->setBounds(Rectangle<int>(margin, margin, pc->getWidth() - 2 * margin, pc->getHeight() - 2 * margin - buttonHeight));
+        {
+            topLeft = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin + m_noGoAreaTop);
+            size = std::make_pair(pc->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
+                                  pc->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
+        }
+        m_visuConfigSelect->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
 	}
 }
 
@@ -70,7 +96,7 @@ void Footer::buttonClicked(Button* button)
 {
 	if (m_visuConfigOpen && m_visuConfigOpen.get() == button)
 	{
-		Listener* acListener = dynamic_cast<Listener*>(getParentComponent());
+		auto acListener = dynamic_cast<Listener*>(getParentComponent());
 		if (acListener)
 		{
 			if (m_visuConfigSelect)

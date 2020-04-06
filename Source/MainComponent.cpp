@@ -51,13 +51,24 @@ void MainComponent::resized()
     
     auto topSafety = 0.0f;
     auto bottomSafety = 0.0f;
+    auto leftSafety = 0.0f;
+    auto rightSafety = 0.0f;
     switch(SystemStats::getOperatingSystemType())
     {
         case SystemStats::OperatingSystemType::Android:
         case SystemStats::OperatingSystemType::iOS:
             // special required?
-            topSafety = 30.0f;
-            bottomSafety = 20.0f;
+            if(isPortrait)
+            {
+              topSafety = 30.0f;
+              bottomSafety = 20.0f;
+            }
+            else
+            {
+              leftSafety = 30.0f;
+              rightSafety = 20.0f;
+            }
+            break;
         case SystemStats::OperatingSystemType::MacOSX:
         case SystemStats::OperatingSystemType::Windows:
         case SystemStats::OperatingSystemType::Linux:
@@ -68,23 +79,25 @@ void MainComponent::resized()
 	FlexBox fb;
 	if(isPortrait)
 	{
-        m_header->setNoGoArea(topSafety, 0, 0, 0);
-        m_footer->setNoGoArea(bottomSafety, 0, 0, 0);
+        m_header->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
+        m_footer->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
         
 		fb.flexDirection = FlexBox::Direction::column;
-		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize+topSafety),
+		fb.items.addArray({
+            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize + topSafety),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelMaxSize+bottomSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelMaxSize + bottomSafety) });
 	}
 	else
 	{
-        m_header->setNoGoArea(topSafety, 0, 0, 0);
-        m_footer->setNoGoArea(bottomSafety, 0, 0, 0);
+        m_header->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
+        m_footer->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
         
 		fb.flexDirection = FlexBox::Direction::row;
-		fb.items.addArray({ FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize+topSafety),
+		fb.items.addArray({
+            FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize + leftSafety),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelMaxSize+bottomSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelMaxSize + rightSafety) });
 	}
 
     fb.performLayout(getLocalBounds().toFloat());
