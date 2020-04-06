@@ -44,8 +44,9 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-	auto panelMaxSize = 40.0f;
-	auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
+	auto panelDefaultSize = 40.0f;
+    auto orientation = Desktop::getInstance().getCurrentOrientation();
+    auto isPortrait = (orientation == Desktop::upright) || (orientation == Desktop::upsideDown);
     if(m_body)
         m_body->setPortrait(isPortrait);
     
@@ -57,16 +58,30 @@ void MainComponent::resized()
     {
         case SystemStats::OperatingSystemType::Android:
         case SystemStats::OperatingSystemType::iOS:
-            // special required?
-            if(isPortrait)
             {
-              topSafety = 35.0f;
-              bottomSafety = 20.0f;
-            }
-            else
-            {
-              leftSafety = 35.0f;
-              rightSafety = 20.0f;
+                auto displayNotch = 35.0f;
+                auto displaySlideBar = 20.0f;
+                switch(orientation)
+                {
+                    case Desktop::upright:
+                        topSafety = displayNotch;
+                        bottomSafety = displaySlideBar;
+                        break;
+                    case Desktop::upsideDown:
+                        topSafety = displaySlideBar;
+                        bottomSafety = displayNotch;
+                        break;
+                    case Desktop::rotatedAntiClockwise:
+                        leftSafety = displayNotch;
+                        rightSafety = displaySlideBar;
+                        break;
+                    case Desktop::rotatedClockwise:
+                        leftSafety = displaySlideBar;
+                        rightSafety = displayNotch;
+                        break;
+                    default:
+                        break;
+                }
             }
             break;
         case SystemStats::OperatingSystemType::MacOSX:
@@ -84,9 +99,9 @@ void MainComponent::resized()
         
 		fb.flexDirection = FlexBox::Direction::column;
 		fb.items.addArray({
-            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelMaxSize + topSafety),
+            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + topSafety),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelMaxSize + bottomSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + bottomSafety) });
 	}
 	else
 	{
@@ -95,9 +110,9 @@ void MainComponent::resized()
         
 		fb.flexDirection = FlexBox::Direction::row;
 		fb.items.addArray({
-            FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelMaxSize + leftSafety),
+            FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelDefaultSize + leftSafety),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelMaxSize + rightSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelDefaultSize + rightSafety) });
 	}
 
     fb.performLayout(getLocalBounds().toFloat());
