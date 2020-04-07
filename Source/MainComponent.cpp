@@ -26,6 +26,11 @@ MainComponent::MainComponent()
 	addAndMakeVisible(m_footer.get());
     
     m_deviceManager.initialiseWithDefaultDevices(2, 0);
+#if JUCE_IOS
+    auto currentSetup = m_deviceManager.getAudioDeviceSetup();
+    currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to not sample data being delivered?
+    m_deviceManager.setAudioDeviceSetup(currentSetup, false);
+#endif
     m_deviceManager.addAudioCallback(&m_processor);
 
     m_body->setProcessor(&m_processor);
