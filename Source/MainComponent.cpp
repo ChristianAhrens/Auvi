@@ -8,6 +8,7 @@
 
 #include "MainComponent.h"
 
+#include "utils.hpp"
 #include "Header.h"
 #include "Footer.h"
 #include "Processor/Processor.h"
@@ -45,74 +46,34 @@ void MainComponent::paint (Graphics& g)
 void MainComponent::resized()
 {
 	auto panelDefaultSize = 40.0f;
-    auto orientation = Desktop::getInstance().getCurrentOrientation();
     auto isPortrait = getLocalBounds().getHeight() > getLocalBounds().getWidth();
     if(m_body)
         m_body->setPortrait(isPortrait);
     
-    auto topSafety = 0.0f;
-    auto bottomSafety = 0.0f;
-    auto leftSafety = 0.0f;
-    auto rightSafety = 0.0f;
-    switch(SystemStats::getOperatingSystemType())
-    {
-        case SystemStats::OperatingSystemType::Android:
-        case SystemStats::OperatingSystemType::iOS:
-            {
-                auto displayNotch = 35.0f;
-                auto displaySlideBar = 20.0f;
-                switch(orientation)
-                {
-                    case Desktop::upright:
-                        topSafety = displayNotch;
-                        bottomSafety = displaySlideBar;
-                        break;
-                    case Desktop::upsideDown:
-                        topSafety = displaySlideBar;
-                        bottomSafety = displayNotch;
-                        break;
-                    case Desktop::rotatedAntiClockwise:
-                        leftSafety = displayNotch;
-                        rightSafety = displaySlideBar;
-                        break;
-                    case Desktop::rotatedClockwise:
-                        leftSafety = displaySlideBar;
-                        rightSafety = displayNotch;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            break;
-        case SystemStats::OperatingSystemType::MacOSX:
-        case SystemStats::OperatingSystemType::Windows:
-        case SystemStats::OperatingSystemType::Linux:
-        default:
-            break;
-    }
+    auto safety = getDeviceSafetyMargins();
 	
 	FlexBox fb;
 	if(isPortrait)
 	{
-        m_header->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
-        m_footer->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
+        m_header->setNoGoArea(safety._top, safety._bottom, safety._left, safety._right);
+        m_footer->setNoGoArea(safety._top, safety._bottom, safety._left, safety._right);
         
 		fb.flexDirection = FlexBox::Direction::column;
 		fb.items.addArray({
-            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + topSafety),
+            FlexItem(*m_header.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._top),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + bottomSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxHeight(panelDefaultSize + safety._bottom) });
 	}
 	else
 	{
-        m_header->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
-        m_footer->setNoGoArea(topSafety, bottomSafety, leftSafety, rightSafety);
+        m_header->setNoGoArea(safety._top, safety._bottom, safety._left, safety._right);
+        m_footer->setNoGoArea(safety._top, safety._bottom, safety._left, safety._right);
         
 		fb.flexDirection = FlexBox::Direction::row;
 		fb.items.addArray({
-            FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelDefaultSize + leftSafety),
+            FlexItem(*m_header.get()).withFlex(1).withMaxWidth(panelDefaultSize + safety._left),
             FlexItem(*m_body.get()).withFlex(4),
-            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelDefaultSize + rightSafety) });
+            FlexItem(*m_footer.get()).withFlex(1).withMaxWidth(panelDefaultSize + safety._right) });
 	}
 
     fb.performLayout(getLocalBounds().toFloat());
