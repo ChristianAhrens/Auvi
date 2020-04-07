@@ -8,10 +8,10 @@
 */
 struct SafetyMargin
 {
-    double _top;
-    double _bottom;
-    double _left;
-    double _right;
+    int _top;
+    int _bottom;
+    int _left;
+    int _right;
 };
 
 enum KnownDevices
@@ -230,9 +230,9 @@ KnownDevices getGenericDeviceType()
     }
 };
 
-double const getDeviceDisplayNotchIndent()
+int const getDeviceDisplayNotchIndent()
 {
-    double displayNotchIndent{};
+    int displayNotchIndent{};
     switch(getDeviceType())
     {
         case iPhone:
@@ -252,7 +252,7 @@ double const getDeviceDisplayNotchIndent()
         case iPhone7Plus:
         case iPhone8:
         case iPhone8Plus:
-            displayNotchIndent = 0.0f;
+            displayNotchIndent = 0;
             break;
         case iPhoneX:
         case iPhoneXR:
@@ -262,7 +262,7 @@ double const getDeviceDisplayNotchIndent()
         case iPhone11Pro:
         case iPhone11ProMax:
         case GenericiPhone:
-            displayNotchIndent = 35.0f;
+            displayNotchIndent = 35;
             break;
         case iPad:
         case iPad2:
@@ -289,16 +289,16 @@ double const getDeviceDisplayNotchIndent()
         case GenericAndroidPhone:
         case InvalidDevice:
         default:
-            displayNotchIndent = 0.0f;
+            displayNotchIndent = 0;
             break;
     };
     
     return displayNotchIndent;
 };
 
-double const getDeviceDisplaySlideBarIndent()
+int const getDeviceDisplaySlideBarIndent()
 {
-    double slideBarIndent{};
+    int slideBarIndent{};
     switch(getDeviceType())
     {
         case iPhone:
@@ -318,7 +318,7 @@ double const getDeviceDisplaySlideBarIndent()
         case iPhone7Plus:
         case iPhone8:
         case iPhone8Plus:
-            slideBarIndent = 0.0f;
+            slideBarIndent = 0;
             break;
         case iPhoneX:
         case iPhoneXR:
@@ -327,7 +327,7 @@ double const getDeviceDisplaySlideBarIndent()
         case iPhone11:
         case iPhone11Pro:
         case iPhone11ProMax:
-            slideBarIndent = 20.0f;
+            slideBarIndent = 20;
             break;
         case iPad:
         case iPad2:
@@ -354,7 +354,7 @@ double const getDeviceDisplaySlideBarIndent()
         case GenericAndroidPhone:
         case InvalidDevice:
         default:
-            slideBarIndent = 0.0f;
+            slideBarIndent = 0;
             break;
     };
     

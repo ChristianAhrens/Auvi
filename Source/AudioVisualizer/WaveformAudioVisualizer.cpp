@@ -59,7 +59,7 @@ void WaveformAudioVisualizer::paint (Graphics& g)
     if (m_bufferTime > 0)
     {
         g.setColour(Colours::white);
-        int cursorPos = double(visuArea.getWidth()) * (float(m_bufferPos) / float(m_bufferTime));
+        auto cursorPos = visuArea.getWidth() * (float(m_bufferPos) / float(m_bufferTime));
         g.drawRect(Rectangle<int>(visuArea.getX() + cursorPos, visuArea.getY(), 1, visuArea.getHeight()));
     }
 

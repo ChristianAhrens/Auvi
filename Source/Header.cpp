@@ -56,7 +56,7 @@ void Header::resized()
     if (isVerticalButton)
     {
         rotation = 0.5f * float_Pi;
-        translation = std::make_pair(float(getWidth() - margin),
+        translation = std::make_pair(getWidth() - margin,
                                      margin + m_noGoAreaTop);
     }
     else

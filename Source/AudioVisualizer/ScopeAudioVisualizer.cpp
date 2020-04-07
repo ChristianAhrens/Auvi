@@ -106,7 +106,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
     peakPath.startNewSubPath(newPeakPoint);
     rmsPath.startNewSubPath(newRmsPoint);
     unsigned long pos = m_scopeTailPos+1;
-    for(int i = 0; i < m_scopeTailLength; ++i)
+    for(unsigned long i = 0; i < m_scopeTailLength; ++i)
     {
         if(pos < m_scopeTailLength-1)
             pos++;

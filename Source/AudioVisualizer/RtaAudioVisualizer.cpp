@@ -33,7 +33,7 @@ void RtaAudioVisualizer::paint (Graphics& g)
     auto outerMargin = 20;
     auto visuAreaWidth = width - 2 * outerMargin;
     auto visuAreaHeight = height - 2 * outerMargin;
-    auto maxFreq = 20000;
+    auto maxFreq = 20000.0f;
     auto minFreq = 10;
 
     Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);

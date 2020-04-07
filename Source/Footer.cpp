@@ -57,7 +57,7 @@ void Footer::resized()
     if (isVerticalButton)
     {
         rotation = 0.5f * float_Pi;
-        translation = std::make_pair(float(getWidth() - margin - m_noGoAreaRight),
+        translation = std::make_pair(getWidth() - margin - m_noGoAreaRight,
                                      margin + m_noGoAreaTop);
     }
     else
