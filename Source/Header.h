@@ -25,6 +25,7 @@ public:
     public:
         virtual ~Listener(){};
         virtual AudioSelectComponent * onOpenAudioConfig() = 0;
+        virtual void onPauseProcessing(bool pause) = 0;
     };
     
 public:
@@ -39,6 +40,7 @@ public:
 
 private:
 	std::unique_ptr<TextButton>	m_audioConfigOpen;
+    std::unique_ptr<DrawableButton>	m_stopProcessing;
 	AudioSelectComponent*		m_audioConfigSelect;
     int                         m_noGoAreaTop;
     int                         m_noGoAreaBottom;

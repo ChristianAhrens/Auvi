@@ -21,6 +21,17 @@ Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
 	m_audioConfigOpen->setButtonText("Audio Configuration");
 	addAndMakeVisible(m_audioConfigOpen.get());
 	m_audioConfigOpen->addListener(this);
+
+    m_stopProcessing = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+    m_stopProcessing->setClickingTogglesState(true);
+    std::unique_ptr<XmlElement> Pause_svg_xml = XmlDocument::parse(BinaryData::pause24px_svg);
+    std::unique_ptr<juce::Drawable> drawablePauseImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseImage->replaceColour(Colours::black, Colours::white);
+    std::unique_ptr<juce::Drawable> drawableOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawableOnImage->replaceColour(Colours::black, Colours::red);
+    m_stopProcessing->setImages(drawablePauseImage.get(), nullptr, nullptr, nullptr, drawableOnImage.get(), nullptr, nullptr, nullptr);
+    addAndMakeVisible(m_stopProcessing.get());
+    m_stopProcessing->addListener(this);
 }
 
 Header::~Header()
@@ -49,10 +60,26 @@ void Header::resized()
 	auto isVerticalButton = getWidth() < (buttonWidth + margin + margin);
 
 	m_audioConfigOpen->setSize(buttonWidth, buttonHeight);
+    m_stopProcessing->setSize(buttonHeight, buttonHeight);
 
-    // rotate and position the button to open config
+    // rotate and position the button to pause processing
     auto rotation = 0.0f;
     auto translation = std::pair<int, int>{};
+    if (isVerticalButton)
+    {
+        translation = std::make_pair(margin + m_noGoAreaLeft,
+                                     margin + m_noGoAreaTop + margin + buttonWidth);
+    }
+    else
+    {
+        translation = std::make_pair(margin + m_noGoAreaLeft + buttonWidth + margin,
+                                     margin + m_noGoAreaTop);
+    }
+    m_stopProcessing->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
+
+    // rotate and position the button to open config
+    rotation = 0.0f;
+    translation = std::pair<int, int>{};
     if (isVerticalButton)
     {
         rotation = 0.5f * float_Pi;
@@ -95,7 +122,7 @@ void Header::buttonClicked(Button* button)
 {
 	if (m_audioConfigOpen && m_audioConfigOpen.get() == button)
 	{
-		Listener* acListener = dynamic_cast<Listener*>(getParentComponent());
+		auto acListener = dynamic_cast<Listener*>(getParentComponent());
 		if (acListener)
 		{
 			if (m_audioConfigSelect)
@@ -107,4 +134,12 @@ void Header::buttonClicked(Button* button)
 			resized();
 		}
 	}
+    else if (m_stopProcessing && m_stopProcessing.get() == button)
+    {
+        auto acListener = dynamic_cast<Listener*>(getParentComponent());
+        if (acListener)
+        {
+            acListener->onPauseProcessing(m_stopProcessing->getToggleState());
+        }
+    }
 }

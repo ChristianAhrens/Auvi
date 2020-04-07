@@ -38,10 +38,16 @@ Processor::Processor() :
 {
 	m_FFTdataPos = 0;
 	zeromem(m_FFTdata, sizeof(m_FFTdata));
+	m_pauseProcessing = false;
 }
 
 Processor::~Processor()
 {
+}
+
+void Processor::setPauseProcessing(bool pause)
+{
+	m_pauseProcessing = pause;
 }
 
 void Processor::addListener(Listener *listener)
@@ -87,6 +93,9 @@ void Processor::processBlock(AudioBuffer<float>& buffer, MidiBuffer& midiMessage
 
 void Processor::handleMessage(const Message& message)
 {
+	if (m_pauseProcessing)
+		return;
+
 	if (auto m = dynamic_cast<const AudioBufferMessage*> (&message))
 	{
 		auto buffer = m->getAudioBuffer();

@@ -26,8 +26,7 @@ class Processor;
 */
 class MainComponent   : public Component,
                         public Header::Listener,
-                        public Footer::Listener//,
-                        //public VisuSelectComponent::Listener
+                        public Footer::Listener
 {
 public:
     //==============================================================================
@@ -43,6 +42,7 @@ public:
 
 	//==============================================================================
 	AudioSelectComponent * onOpenAudioConfig() override;
+    void onPauseProcessing(bool pause) override;
 
 private:
     //==============================================================================

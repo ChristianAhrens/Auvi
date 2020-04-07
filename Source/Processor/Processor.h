@@ -50,6 +50,9 @@ public:
 public:
     Processor();
     ~Processor();
+
+    //==============================================================================
+    void setPauseProcessing(bool pause);
     
     //==============================================================================
     void addListener(Listener *listener);
@@ -120,7 +123,9 @@ private:
     dsp::FFT                        m_fwdFFT;
     dsp::WindowingFunction<float>   m_windowF;
     float                           m_FFTdata[2*fftSize];
-    int                             m_FFTdataPos = 0;
+    int                             m_FFTdataPos;
+
+    bool                            m_pauseProcessing;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

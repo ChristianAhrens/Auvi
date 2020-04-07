@@ -80,6 +80,11 @@ void MainComponent::resized()
 
 }
 
+void MainComponent::onPauseProcessing(bool pause)
+{
+	m_processor.setPauseProcessing(pause);
+}
+
 AudioSelectComponent* MainComponent::onOpenAudioConfig()
 {
 	if (!m_audioConfig)
