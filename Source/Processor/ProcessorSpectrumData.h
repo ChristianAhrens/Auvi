@@ -18,7 +18,7 @@ public:
     struct SpectrumBands
     {
         enum {
-            count = 64
+            count = 256
         };
 
         SpectrumBands()
