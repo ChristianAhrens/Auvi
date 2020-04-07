@@ -69,17 +69,22 @@ void RtaAudioVisualizer::paint (Graphics& g)
 
     g.setColour(Colours::white);
     // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz
-    auto quarterVisuArea = visuAreaWidth * 0.25f;
-    for(int i=0; i<4; ++i)
+    auto visuAreaLogscalePart = visuAreaWidth / (3 + log10(2));
+    for(int i=0; i<3; ++i)
     {
-        auto quarterOrig = visuAreaOrigX + (quarterVisuArea * i);
+        auto partOrig = visuAreaOrigX + (visuAreaLogscalePart * i);
         for (int j = 1; j < 11; ++j)
         {
-            auto quarterOffset = quarterVisuArea * log10(j);
-            g.drawLine(Line<float>( quarterOrig + quarterOffset, visuAreaOrigY,
-                                    quarterOrig + quarterOffset, visuAreaOrigY - visuAreaHeight));
+            auto partOffset = visuAreaLogscalePart * log10(j);
+            g.drawLine(Line<float>( partOrig + partOffset, visuAreaOrigY,
+                                    partOrig + partOffset, visuAreaOrigY - visuAreaHeight));
         }
     }
+    g.drawText("10", Rectangle<float>(visuAreaOrigX - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("100", Rectangle<float>(visuAreaOrigX - 20.0f + visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("1k", Rectangle<float>(visuAreaOrigX - 20.0f + 2 * visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("10k", Rectangle<float>(visuAreaOrigX - 20.0f + 3 * visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("20k", Rectangle<float>(visuAreaOrigX - 20.0f + visuAreaWidth, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
     // draw an outline around the visu area
     g.drawRect(visuArea, 1);
 }
