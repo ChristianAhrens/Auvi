@@ -96,6 +96,8 @@ KnownDevices getDeviceType()
         return KnownDevices::iPhone6s;
     if(deviceDescription == "iPhone 6s Plus")
         return KnownDevices::iPhone6sPlus;
+    if(deviceDescription == "iPhone SE")
+        return KnownDevices::iPhoneSE;
     if(deviceDescription == "iPhone8,4")
         return KnownDevices::iPhoneSE;
     if(deviceDescription == "iPhone 7")
