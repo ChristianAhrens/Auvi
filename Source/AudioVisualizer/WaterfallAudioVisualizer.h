@@ -16,6 +16,8 @@
 
 namespace Auvi
 {
+#include "RingBuffer.h"
+#include "Spectrum.h"
 
 //==============================================================================
 /*
@@ -38,6 +40,9 @@ public:
     void processChangedChannelMapping() override;
 
 private:
+    std::unique_ptr<RingBuffer> m_buffer;
+    std::unique_ptr<Spectrum>   m_3Dspectrum;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaterfallAudioVisualizer)
 };
 

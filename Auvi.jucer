@@ -87,6 +87,7 @@
               resource="0" file="Source/AudioVisualizer/MultiMeterAudioVisualizer.cpp"/>
         <FILE id="T0yWsQ" name="MultiMeterAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/MultiMeterAudioVisualizer.h"/>
+        <FILE id="Zh3Qqk" name="RingBuffer.h" compile="0" resource="0" file="Source/AudioVisualizer/RingBuffer.h"/>
         <FILE id="ViI2uj" name="RtaAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/RtaAudioVisualizer.cpp"/>
         <FILE id="tApziv" name="RtaAudioVisualizer.h" compile="0" resource="0"
@@ -95,6 +96,7 @@
               file="Source/AudioVisualizer/ScopeAudioVisualizer.cpp"/>
         <FILE id="RRJxwc" name="ScopeAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/ScopeAudioVisualizer.h"/>
+        <FILE id="ApDzwL" name="Spectrum.h" compile="0" resource="0" file="Source/AudioVisualizer/Spectrum.h"/>
         <FILE id="mnwzGj" name="TwoDFieldAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/TwoDFieldAudioVisualizer.cpp"/>
         <FILE id="GmYCJH" name="TwoDFieldAudioVisualizer.h" compile="0" resource="0"

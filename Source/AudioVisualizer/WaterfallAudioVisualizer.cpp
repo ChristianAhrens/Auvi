@@ -17,9 +17,9 @@ namespace Auvi
 WaterfallAudioVisualizer::WaterfallAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+    m_buffer = std::make_unique<RingBuffer>(0,0);
+    m_3Dspectrum = std::make_unique<Spectrum>(m_buffer.get());
+    addAndMakeVisible(m_3Dspectrum.get());
 }
 
 WaterfallAudioVisualizer::~WaterfallAudioVisualizer()
