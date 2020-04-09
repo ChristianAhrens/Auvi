@@ -36,12 +36,17 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
+
+    //==============================================================================
+    void mouseDown(const MouseEvent& event) override;
     
     //==============================================================================
-    VisuSelectComponent * onOpenVisuConfig() override;
+    VisuSelectComponent * onOpenVisuConfigSelect() override;
+    VisuSelectComponent* getVisuConfigSelect() override;
 
 	//==============================================================================
-	AudioSelectComponent * onOpenAudioConfig() override;
+	AudioSelectComponent * onOpenAudioConfigSelect() override;
+    AudioSelectComponent* getAudioConfigSelect() override;
     void onPauseProcessing(bool pause) override;
 
 private:

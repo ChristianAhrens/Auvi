@@ -15,14 +15,15 @@
 Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
     setNoGoArea(noGoAreaTop, noGoAreaBottom, noGoAreaLeft, noGoAreaRight);
-	m_audioConfigSelect = nullptr;
 
 	m_audioConfigOpen = std::make_unique<TextButton>();
+    m_audioConfigOpen->setComponentID(AUDIO_CONFIG_OPEN_ID);
 	m_audioConfigOpen->setButtonText("Audio Configuration");
 	addAndMakeVisible(m_audioConfigOpen.get());
 	m_audioConfigOpen->addListener(this);
 
     m_stopProcessing = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+    m_stopProcessing->setComponentID(STOP_PROCESSING_ID);
     m_stopProcessing->setClickingTogglesState(true);
     std::unique_ptr<XmlElement> Pause_svg_xml = XmlDocument::parse(BinaryData::pause24px_svg);
     std::unique_ptr<juce::Drawable> drawablePauseImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
@@ -95,8 +96,9 @@ void Header::resized()
     m_audioConfigOpen->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
 
     // position the config selection component itself
-    auto pc = getParentComponent();
-    if (m_audioConfigSelect && pc)
+    auto parentComponent = getParentComponent();
+    auto parentListener = dynamic_cast<Listener*>(parentComponent);
+    if (parentComponent && parentListener)
     {
         auto topLeft = std::pair<int, int>{};
         auto size = std::pair<int, int>{};
@@ -104,17 +106,19 @@ void Header::resized()
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft + buttonHeight,
                                      margin + m_noGoAreaTop);
-            size = std::make_pair(pc->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
-                                  pc->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
+                                  parentComponent->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
         }
         else
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft,
                                      margin + m_noGoAreaTop + buttonHeight);
-            size = std::make_pair(pc->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
-                                  pc->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
+                                  parentComponent->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
         }
-        m_audioConfigSelect->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
+
+        if(parentListener && parentListener->getAudioConfigSelect())
+            parentListener->getAudioConfigSelect()->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
     }
 }
 
@@ -122,24 +126,25 @@ void Header::buttonClicked(Button* button)
 {
 	if (m_audioConfigOpen && m_audioConfigOpen.get() == button)
 	{
-		auto acListener = dynamic_cast<Listener*>(getParentComponent());
-		if (acListener)
+		auto parentListener = dynamic_cast<Listener*>(getParentComponent());
+		if (parentListener)
 		{
-			if (m_audioConfigSelect)
-				m_audioConfigSelect->setVisible(false);
-			m_audioConfigSelect = acListener->onOpenAudioConfig();
-			if (m_audioConfigSelect)
-				m_audioConfigSelect->setVisible(true);
+            auto asc = parentListener->getAudioConfigSelect();
+			if (asc)
+                asc->setVisible(false);
+			asc = parentListener->onOpenAudioConfigSelect();
+			if (asc)
+                asc->setVisible(true);
 
 			resized();
 		}
 	}
     else if (m_stopProcessing && m_stopProcessing.get() == button)
     {
-        auto acListener = dynamic_cast<Listener*>(getParentComponent());
-        if (acListener)
+        auto parentListener = dynamic_cast<Listener*>(getParentComponent());
+        if (parentListener)
         {
-            acListener->onPauseProcessing(m_stopProcessing->getToggleState());
+            parentListener->onPauseProcessing(m_stopProcessing->getToggleState());
         }
     }
 }

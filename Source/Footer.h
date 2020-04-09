@@ -26,8 +26,11 @@ public:
     {
     public:
         virtual ~Listener(){};
-        virtual VisuSelectComponent * onOpenVisuConfig() = 0;
+        virtual VisuSelectComponent* onOpenVisuConfigSelect() = 0;
+        virtual VisuSelectComponent* getVisuConfigSelect() = 0;
     };
+
+    static constexpr const char* VISU_CONFIG_OPEN_ID = "VISU_CONFIG_OPEN_ID";
     
 public:
     Footer(int noGoAreaTop = 0, int noGoAreaBottom = 0, int noGoAreaLeft = 0, int noGoAreaRight = 0);
@@ -41,7 +44,6 @@ public:
 
 private:
     std::unique_ptr<TextButton> m_visuConfigOpen;
-	VisuSelectComponent*        m_visuConfigSelect;
     int                         m_noGoAreaTop;
     int                         m_noGoAreaBottom;
     int                         m_noGoAreaLeft;

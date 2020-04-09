@@ -24,9 +24,13 @@ public:
     {
     public:
         virtual ~Listener(){};
-        virtual AudioSelectComponent * onOpenAudioConfig() = 0;
+        virtual AudioSelectComponent* onOpenAudioConfigSelect() = 0;
+        virtual AudioSelectComponent* getAudioConfigSelect() = 0;
         virtual void onPauseProcessing(bool pause) = 0;
     };
+
+    static constexpr const char* AUDIO_CONFIG_OPEN_ID = "AUDIO_CONFIG_OPEN_ID";
+    static constexpr const char* STOP_PROCESSING_ID = "STOP_PROCESSING_ID";
     
 public:
     Header(int noGoAreaTop = 0, int noGoAreaBottom = 0, int noGoAreaLeft = 0, int noGoAreaRight = 0);
@@ -41,7 +45,6 @@ public:
 private:
 	std::unique_ptr<TextButton>	m_audioConfigOpen;
     std::unique_ptr<DrawableButton>	m_stopProcessing;
-	AudioSelectComponent*		m_audioConfigSelect;
     int                         m_noGoAreaTop;
     int                         m_noGoAreaBottom;
     int                         m_noGoAreaLeft;

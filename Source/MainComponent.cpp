@@ -35,6 +35,8 @@ MainComponent::MainComponent()
 
     m_body->setProcessor(&m_processor);
 
+	addMouseListener(this, true);
+
 	setSize(500, 220);
 }
 
@@ -85,12 +87,24 @@ void MainComponent::resized()
 
 }
 
+void MainComponent::mouseDown(const MouseEvent& event)
+{
+	// if audio config currently is opened and a click is performed outside of it, close it
+	if (m_audioConfig && (event.eventComponent->getComponentID() != String(Header::AUDIO_CONFIG_OPEN_ID)) && !m_audioConfig->getBounds().contains(event.getEventRelativeTo(this).getMouseDownPosition()))
+		onOpenAudioConfigSelect();
+	// if visu config currently is opened and a click is performed outside of it, close it
+	if (m_visuConfig && (event.eventComponent->getComponentID() != String(Footer::VISU_CONFIG_OPEN_ID)) && !m_visuConfig->getBounds().contains(event.getEventRelativeTo(this).getMouseDownPosition()))
+		onOpenVisuConfigSelect();
+
+	Component::mouseDown(event);
+}
+
 void MainComponent::onPauseProcessing(bool pause)
 {
 	m_processor.setPauseProcessing(pause);
 }
 
-AudioSelectComponent* MainComponent::onOpenAudioConfig()
+AudioSelectComponent* MainComponent::onOpenAudioConfigSelect()
 {
 	if (!m_audioConfig)
 	{
@@ -126,7 +140,15 @@ AudioSelectComponent* MainComponent::onOpenAudioConfig()
     }
 }
 
-VisuSelectComponent* MainComponent::onOpenVisuConfig()
+AudioSelectComponent* MainComponent::getAudioConfigSelect()
+{
+	if (m_audioConfig)
+		return m_audioConfig.get();
+	else
+		return nullptr;
+}
+
+VisuSelectComponent* MainComponent::onOpenVisuConfigSelect()
 {
 	if (!m_visuConfig)
 	{
@@ -144,4 +166,12 @@ VisuSelectComponent* MainComponent::onOpenVisuConfig()
 
         return nullptr;
     }
+}
+
+VisuSelectComponent* MainComponent::getVisuConfigSelect()
+{
+	if (m_visuConfig)
+		return m_visuConfig.get();
+	else
+		return nullptr;
 }
