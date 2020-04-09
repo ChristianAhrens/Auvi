@@ -96,9 +96,9 @@ void Header::resized()
     m_audioConfigOpen->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
 
     // position the config selection component itself
-    auto parentComponent = getParentComponent();
-    auto parentListener = dynamic_cast<Listener*>(parentComponent);
-    if (parentComponent && parentListener)
+    auto parentCpnt = getParentComponent();
+    auto parentLstnr = dynamic_cast<Listener*>(parentCpnt);
+    if (parentCpnt && parentLstnr)
     {
         auto topLeft = std::pair<int, int>{};
         auto size = std::pair<int, int>{};
@@ -106,19 +106,19 @@ void Header::resized()
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft + buttonHeight,
                                      margin + m_noGoAreaTop);
-            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
-                                  parentComponent->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentCpnt->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
+                parentCpnt->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
         }
         else
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft,
                                      margin + m_noGoAreaTop + buttonHeight);
-            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
-                                  parentComponent->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentCpnt->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
+                parentCpnt->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
         }
 
-        if(parentListener && parentListener->getAudioConfigSelect())
-            parentListener->getAudioConfigSelect()->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
+        if(parentLstnr && parentLstnr->getAudioConfigSelect())
+            parentLstnr->getAudioConfigSelect()->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
     }
 }
 

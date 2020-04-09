@@ -36,10 +36,14 @@ public:
     Header(int noGoAreaTop = 0, int noGoAreaBottom = 0, int noGoAreaLeft = 0, int noGoAreaRight = 0);
     ~Header();
 
+    //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
 
+    //==============================================================================
 	void buttonClicked(Button* button) override;
+
+    //==============================================================================
     void setNoGoArea(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight);
 
 private:

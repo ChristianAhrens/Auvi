@@ -69,9 +69,9 @@ void Footer::resized()
     m_visuConfigOpen->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
 
     // position the config selection component itself
-    auto parentComponent = getParentComponent();
-    auto parentListener = dynamic_cast<Listener*>(parentComponent);
-    if (parentComponent && parentListener)
+    auto parentCpnt = getParentComponent();
+    auto parentLstnr = dynamic_cast<Listener*>(parentCpnt);
+    if (parentCpnt && parentLstnr)
 	{
         auto topLeft = std::pair<int, int>{};
         auto size = std::pair<int, int>{};
@@ -79,19 +79,19 @@ void Footer::resized()
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft,
                                      margin + m_noGoAreaTop);
-            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
-                                  parentComponent->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentCpnt->getWidth() - (2 * margin) - buttonHeight - m_noGoAreaLeft - m_noGoAreaRight,
+                parentCpnt->getHeight() - (2 * margin) - m_noGoAreaTop - m_noGoAreaBottom);
         }
         else
         {
             topLeft = std::make_pair(margin + m_noGoAreaLeft,
                                      margin + m_noGoAreaTop);
-            size = std::make_pair(parentComponent->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
-                                  parentComponent->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
+            size = std::make_pair(parentCpnt->getWidth() - (2 * margin) - m_noGoAreaLeft - m_noGoAreaRight,
+                parentCpnt->getHeight() - (2 * margin) - buttonHeight - m_noGoAreaTop - m_noGoAreaBottom);
         }
 
-        if(parentListener && parentListener->getVisuConfigSelect())
-            parentListener->getVisuConfigSelect()->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
+        if(parentLstnr && parentLstnr->getVisuConfigSelect())
+            parentLstnr->getVisuConfigSelect()->setBounds(Rectangle<int>(topLeft.first, topLeft.second, size.first, size.second));
 	}
 }
 
