@@ -35,6 +35,8 @@ WaveformAudioVisualizer::~WaveformAudioVisualizer()
 
 void WaveformAudioVisualizer::paint (Graphics& g)
 {
+    AbstractAudioVisualizer::paint(g);
+
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
     Rectangle<int> visuArea = getLocalBounds().reduced(20);
@@ -70,9 +72,7 @@ void WaveformAudioVisualizer::paint (Graphics& g)
 
 void WaveformAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType WaveformAudioVisualizer::getType()

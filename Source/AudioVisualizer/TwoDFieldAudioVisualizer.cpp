@@ -15,6 +15,8 @@
 TwoDFieldAudioVisualizer::TwoDFieldAudioVisualizer()
     : AbstractAudioVisualizer()
 {
+    showConfigButton(true);
+
     m_channelL = 1;
     m_channelC = 2;
     m_channelR = 3;
@@ -28,6 +30,8 @@ TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
 
 void TwoDFieldAudioVisualizer::paint (Graphics& g)
 {
+    AbstractAudioVisualizer::paint(g);
+
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
@@ -111,9 +115,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
 
 void TwoDFieldAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()

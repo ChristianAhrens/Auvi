@@ -17,7 +17,29 @@
 //==============================================================================
 /*
 */
-class AbstractAudioVisualizer : public Component, public Processor::Listener
+class AbstractAudioVisualizerConfig : public Component, public DrawableButton::Listener
+{
+public:
+    AbstractAudioVisualizerConfig();
+    ~AbstractAudioVisualizerConfig();
+
+    //==============================================================================
+    void paint(Graphics&) override;
+    void resized() override;
+
+    //==============================================================================
+    void buttonClicked(Button* button) override;
+
+private:
+
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AbstractAudioVisualizerConfig)
+};
+
+//==============================================================================
+/*
+*/
+class AbstractAudioVisualizer : public Component, public Processor::Listener, public DrawableButton::Listener
 {
 public:
     enum VisuType
@@ -31,21 +53,34 @@ public:
         Waveform,
         InvalidLast
     };
-    
+
+    static constexpr const char* VISUALIZER_CONFIG_OPEN_ID = "VISUALIZER_CONFIG_OPEN_ID";
+
 public:
     AbstractAudioVisualizer();
     ~AbstractAudioVisualizer();
+
+    void showConfigButton(bool enable);
     
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
+
+    //==============================================================================
+    void buttonClicked(Button* button) override;
     
     //==============================================================================
     virtual VisuType getType() = 0;
+    virtual std::unique_ptr<AbstractAudioVisualizerConfig> openAudioVisualizerConfig();
     
     //==============================================================================
     static std::string VisuTypeToString(VisuType type);
 
 private:
+    void onOpenConfigClicked();
+
+    std::unique_ptr<DrawableButton>	m_openConfig;
+    std::unique_ptr<AbstractAudioVisualizerConfig> m_visualizerConfig;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AbstractAudioVisualizer)
 };

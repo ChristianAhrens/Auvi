@@ -15,6 +15,8 @@
 RtaAudioVisualizer::RtaAudioVisualizer()
     : AbstractAudioVisualizer()
 {
+    showConfigButton(true);
+
     m_plotChannel = 0;
 }
 
@@ -24,6 +26,8 @@ RtaAudioVisualizer::~RtaAudioVisualizer()
 
 void RtaAudioVisualizer::paint (Graphics& g)
 {
+    AbstractAudioVisualizer::paint(g);
+
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
@@ -91,9 +95,7 @@ void RtaAudioVisualizer::paint (Graphics& g)
 
 void RtaAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType RtaAudioVisualizer::getType()

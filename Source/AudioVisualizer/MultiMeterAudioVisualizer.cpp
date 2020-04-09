@@ -24,6 +24,8 @@ MultiMeterAudioVisualizer::~MultiMeterAudioVisualizer()
 
 void MultiMeterAudioVisualizer::paint(Graphics& g)
 {
+    AbstractAudioVisualizer::paint(g);
+
 	// (Our component is opaque, so we must completely fill the background with a solid colour)
 	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 
@@ -74,9 +76,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 
 void MultiMeterAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType MultiMeterAudioVisualizer::getType()

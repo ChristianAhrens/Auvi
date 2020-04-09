@@ -16,6 +16,8 @@
 ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
+    showConfigButton(true);
+
     m_channelX = 0;
     m_channelY = 1;
     m_scopeTailLength = 50;
@@ -53,6 +55,8 @@ juce::Point<float> ScopeAudioVisualizer::MapValToRect(float x, float y, Rectangl
 
 void ScopeAudioVisualizer::paint (Graphics& g)
 {
+    AbstractAudioVisualizer::paint(g);
+
 	// fill the background as starting point
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
 
@@ -132,9 +136,7 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 
 void ScopeAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()

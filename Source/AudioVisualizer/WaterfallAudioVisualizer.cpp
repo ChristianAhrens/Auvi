@@ -26,12 +26,7 @@ WaterfallAudioVisualizer::~WaterfallAudioVisualizer()
 
 void WaterfallAudioVisualizer::paint (Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
+    AbstractAudioVisualizer::paint(g);
 
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
 
@@ -46,9 +41,7 @@ void WaterfallAudioVisualizer::paint (Graphics& g)
 
 void WaterfallAudioVisualizer::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    AbstractAudioVisualizer::resized();
 }
 
 AbstractAudioVisualizer::VisuType WaterfallAudioVisualizer::getType()
