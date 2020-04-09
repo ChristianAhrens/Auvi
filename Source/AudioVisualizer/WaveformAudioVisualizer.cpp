@@ -38,8 +38,10 @@ void WaveformAudioVisualizer::paint (Graphics& g)
     AbstractAudioVisualizer::paint(g);
 
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
+    
+    auto outerMargin = 20.0f;
 
-    Rectangle<int> visuArea = getLocalBounds().reduced(20);
+    Rectangle<int> visuArea = getLocalBounds().reduced(outerMargin);
 
     // fill our visualization area background
     g.setColour(getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
@@ -68,6 +70,21 @@ void WaveformAudioVisualizer::paint (Graphics& g)
     // draw an outline around the visu area
     g.setColour(Colours::white);
     g.drawRect(visuArea, 1);
+    
+    // draw legend, simply number the waveforms from 1..n
+    if(m_thumbnail->getNumChannels()>0)
+    {
+        g.setFont(14.0f);
+        auto thumbWaveHeight = visuArea.getHeight() / m_thumbnail->getNumChannels();
+        auto yPos = outerMargin/2 + thumbWaveHeight/2;
+        for(unsigned long i=1; i<=m_thumbnail->getNumChannels(); ++i)
+        {
+            g.setColour(Colours::white);
+            g.drawText(String(i), juce::Rectangle<float>(0, yPos, outerMargin, outerMargin), Justification::centred, true);
+
+            yPos += thumbWaveHeight;
+        }
+    }
 }
 
 void WaveformAudioVisualizer::resized()
