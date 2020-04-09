@@ -79,6 +79,10 @@ void ScopeAudioVisualizer::paint (Graphics& g)
 	g.drawLine(Line<float>(getWidth() * 0.5f, (getHeight() - scopeDiameter) * 0.5f - outerMargin,
 		getWidth() * 0.5f, getHeight() * 0.5f + scopeDiameter * 0.5f + outerMargin), 2); // vertical crosshair
 
+    // crosshair legend
+    g.drawText("X", Rectangle<float>((getWidth() - scopeDiameter) * 0.5f - outerMargin, getHeight() * 0.5f, float(outerMargin), float(outerMargin)), Justification::centred, true);
+    g.drawText("Y", Rectangle<float>(getWidth() * 0.5f, (getHeight() - scopeDiameter) * 0.5f - outerMargin, float(outerMargin), float(outerMargin)), Justification::centred, true);
+
 	// horizontal legend marker lines
 	g.drawLine(Line<float>(	scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
 							scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
