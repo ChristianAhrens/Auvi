@@ -11,6 +11,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "RingBuffer.h"
 
+#define RING_BUFFER_READ_SIZE 256
+
 /** Frequency Spectrum visualizer. Uses basic shaders, and calculates all points
     on the CPU as opposed to the OScilloscope3D which calculates points on the
     GPU.
@@ -23,7 +25,7 @@ class Spectrum :    public Component,
 public:
     Spectrum (RingBuffer<GLfloat> * ringBuffer)
     :   readBuffer (2, RING_BUFFER_READ_SIZE),
-        forwardFFT (fftOrder, false)
+        forwardFFT(fftOrder)
     {
         // Sets the version to 3.2
         openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
@@ -106,8 +108,10 @@ public:
         openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, yVBO);
         openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * numVertices, yVertices, GL_STREAM_DRAW);
         
+#ifdef JUCE_OPENGL3
         openGLContext.extensions.glGenVertexArrays(1, &VAO);
         openGLContext.extensions.glBindVertexArray(VAO);
+#endif
         openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, xzVBO);
         openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
         openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, yVBO);
@@ -221,7 +225,9 @@ public:
         }
 
         // Draw the points
+#ifdef JUCE_OPENGL3
         openGLContext.extensions.glBindVertexArray(VAO);
+#endif
         glDrawArrays (GL_POINTS, 0, numVertices);
         
         
@@ -428,7 +434,7 @@ private:
     // Audio Structures
     RingBuffer<GLfloat> * ringBuffer;
     AudioBuffer<GLfloat> readBuffer;    // Stores data read from ring buffer
-    FFT forwardFFT;
+    dsp::FFT forwardFFT;
     GLfloat * fftData;
     
     // This is so that we can initialize fowardFFT in the constructor with the order

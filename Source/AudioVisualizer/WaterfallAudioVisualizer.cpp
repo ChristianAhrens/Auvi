@@ -17,7 +17,7 @@ namespace Auvi
 WaterfallAudioVisualizer::WaterfallAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    m_buffer = std::make_unique<RingBuffer>(0,0);
+    m_buffer = std::make_unique<RingBuffer<GLfloat>>(0,0);
     m_3Dspectrum = std::make_unique<Spectrum>(m_buffer.get());
     addAndMakeVisible(m_3Dspectrum.get());
 }
@@ -30,20 +30,21 @@ void WaterfallAudioVisualizer::paint (Graphics& g)
 {
     AbstractAudioVisualizer::paint(g);
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (Colours::white);
-    g.setFont (14.0f);
-    g.drawText ("WaterfallAudioVisualizer", getLocalBounds(),
-                Justification::centred, true);   // draw some placeholder text
+    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
 }
 
 void WaterfallAudioVisualizer::resized()
 {
     AbstractAudioVisualizer::resized();
+
+    // calculate what we need for our center circle
+    auto width = getWidth();
+    auto height = getHeight();
+    auto outerMargin = 20;
+    auto visuAreaWidth = width - 2 * outerMargin;
+    auto visuAreaHeight = height - 2 * outerMargin;
+    m_3Dspectrum->setBounds(juce::Rectangle<int>(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight));
 }
 
 AbstractAudioVisualizer::VisuType WaterfallAudioVisualizer::getType()
