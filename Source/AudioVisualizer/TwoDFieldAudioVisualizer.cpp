@@ -66,9 +66,9 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.drawDashedLine(Line<float>(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight, visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - visuAreaHeight), dparam, 2);
 
     // draw L C R LS RS legend
-    g.drawText("L", Rectangle<float>(visuAreaOrigX - 20.0f, 0.0f, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("C", Rectangle<float>(visuAreaOrigX + 0.5f*visuAreaWidth - 20.0f, 0.0f, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("R", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 20.0f, 0.0f, 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("L", Rectangle<float>(visuAreaOrigX - 20.0f, visuAreaOrigY - visuAreaHeight - float(outerMargin), 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("C", Rectangle<float>(visuAreaOrigX + 0.5f*visuAreaWidth - 20.0f, visuAreaOrigY - visuAreaHeight - float(outerMargin), 40.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText("R", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 20.0f, visuAreaOrigY - visuAreaHeight - float(outerMargin), 40.0f, float(outerMargin)), Justification::centred, true);
     g.drawText("LS", Rectangle<float>(visuAreaOrigX - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
     g.drawText("RS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
 
