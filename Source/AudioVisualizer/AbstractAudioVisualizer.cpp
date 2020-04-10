@@ -87,6 +87,15 @@ void AbstractAudioVisualizer::resized()
     }
 }
 
+void AbstractAudioVisualizer::mouseDown(const MouseEvent& event)
+{
+    // if visualizer config currently is opened and a click is performed outside of it, close it
+    if (m_visualizerConfig && (event.eventComponent->getComponentID() != String(VISUALIZER_CONFIG_OPEN_ID)) && !m_visualizerConfig->getBounds().contains(event.getEventRelativeTo(this).getMouseDownPosition()))
+        onOpenConfigClicked();
+
+    Component::mouseDown(event);
+}
+
 void AbstractAudioVisualizer::buttonClicked(Button* button)
 {
     if (m_openConfig && m_openConfig.get() == button)
