@@ -27,10 +27,10 @@ void ProcessorSpectrumData::SetSpectrum(unsigned long channel, ProcessorSpectrum
 
 const ProcessorSpectrumData::SpectrumBands& ProcessorSpectrumData::GetSpectrum(unsigned long channel)
 {
-    if(m_spectrumsMap.count(channel))
-        return m_spectrumsMap.at(channel);
-    else
-        return ProcessorSpectrumData::SpectrumBands();
+    if(m_spectrumsMap.count(channel) == 0)
+        m_spectrumsMap.insert(std::pair<unsigned long, SpectrumBands>(channel, ProcessorSpectrumData::SpectrumBands{}));
+
+    return m_spectrumsMap.at(channel);
 }
 
 void ProcessorSpectrumData::SetChannelCount(unsigned long count)
