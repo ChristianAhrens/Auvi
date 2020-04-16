@@ -26,11 +26,22 @@ Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
     m_stopProcessing->setComponentID(STOP_PROCESSING_ID);
     m_stopProcessing->setClickingTogglesState(true);
     std::unique_ptr<XmlElement> Pause_svg_xml = XmlDocument::parse(BinaryData::pause24px_svg);
-    std::unique_ptr<juce::Drawable> drawablePauseImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseImage->replaceColour(Colours::black, Colours::white);
-    std::unique_ptr<juce::Drawable> drawableOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawableOnImage->replaceColour(Colours::black, Colours::red);
-    m_stopProcessing->setImages(drawablePauseImage.get(), nullptr, nullptr, nullptr, drawableOnImage.get(), nullptr, nullptr, nullptr);
+
+    std::unique_ptr<juce::Drawable> drawablePauseNormalImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseNormalImage->replaceColour(Colours::black, Colours::white);
+    std::unique_ptr<juce::Drawable> drawablePauseOverImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseOverImage->replaceColour(Colours::black, Colours::lightgrey);
+    std::unique_ptr<juce::Drawable> drawablePauseDownImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseDownImage->replaceColour(Colours::black, Colours::grey);
+
+    std::unique_ptr<juce::Drawable> drawablePauseNormalOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseNormalOnImage->replaceColour(Colours::black, Colours::red);
+    std::unique_ptr<juce::Drawable> drawablePauseOverOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseOverOnImage->replaceColour(Colours::black, Colours::indianred);
+    std::unique_ptr<juce::Drawable> drawablePauseDownOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
+    drawablePauseDownOnImage->replaceColour(Colours::black, Colours::darkred);
+
+    m_stopProcessing->setImages(drawablePauseNormalImage.get(), drawablePauseOverImage.get(), drawablePauseDownImage.get(), nullptr, drawablePauseNormalOnImage.get(), drawablePauseOverOnImage.get(), drawablePauseDownOnImage.get(), nullptr);
     addAndMakeVisible(m_stopProcessing.get());
     m_stopProcessing->addListener(this);
 }

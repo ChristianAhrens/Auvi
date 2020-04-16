@@ -99,9 +99,15 @@ AbstractAudioVisualizer::AbstractAudioVisualizer()
     m_openConfig->setComponentID(VISUALIZER_CONFIG_OPEN_ID);
     m_openConfig->setClickingTogglesState(true);
     std::unique_ptr<XmlElement> Settings_svg_xml = XmlDocument::parse(BinaryData::settings24px_svg);
+
     std::unique_ptr<juce::Drawable> drawableSettingsNormalImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
     drawableSettingsNormalImage->replaceColour(Colours::black, Colours::white);
-    m_openConfig->setImages(drawableSettingsNormalImage.get(), nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+    std::unique_ptr<juce::Drawable> drawableSettingsOverImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
+    drawableSettingsOverImage->replaceColour(Colours::black, Colours::lightgrey);
+    std::unique_ptr<juce::Drawable> drawableSettingsDownImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
+    drawableSettingsDownImage->replaceColour(Colours::black, Colours::grey);
+
+    m_openConfig->setImages(drawableSettingsNormalImage.get(), drawableSettingsOverImage.get(), drawableSettingsDownImage.get(), nullptr, nullptr, nullptr, nullptr, nullptr);
     addAndMakeVisible(m_openConfig.get());
     m_openConfig->addListener(this);
 

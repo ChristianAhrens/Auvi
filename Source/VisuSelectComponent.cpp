@@ -22,9 +22,15 @@ VisuSelectComponent::VisuSelectComponent()
     for(int i=AbstractAudioVisualizer::VisuType::InvalidFirst+1; i<AbstractAudioVisualizer::VisuType::InvalidLast; ++i)
     {
         m_visuSelectButtons[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<DrawableButton>(String(i), DrawableButton::ButtonStyle::ImageOnButtonBackground);
-        std::unique_ptr<Drawable> drawableImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
-        drawableImage->replaceColour(Colours::black, Colours::white);
-        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(drawableImage.get());
+
+        std::unique_ptr<juce::Drawable> drawableVisuTypeNormalImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
+        drawableVisuTypeNormalImage->replaceColour(Colours::black, Colours::white);
+        std::unique_ptr<juce::Drawable> drawableVisuTypeOverImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
+        drawableVisuTypeOverImage->replaceColour(Colours::black, Colours::lightgrey);
+        std::unique_ptr<juce::Drawable> drawableVisuTypeDownImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
+        drawableVisuTypeDownImage->replaceColour(Colours::black, Colours::grey);
+
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(drawableVisuTypeNormalImage.get(), drawableVisuTypeOverImage.get(), drawableVisuTypeDownImage.get(), nullptr, nullptr, nullptr, nullptr, nullptr);
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setClickingTogglesState(true);
         addAndMakeVisible(m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->addListener(this);
