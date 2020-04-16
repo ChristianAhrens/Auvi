@@ -32,11 +32,11 @@ public:
      */
     RingBuffer (int numChannels, int bufferSize)
     {
-        this->bufferSize = bufferSize;
-        this->numChannels = numChannels;
+        m_bufferSize = bufferSize;
+        m_numChannels = numChannels;
         
-        audioBuffer = new AudioBuffer<Type> (numChannels, bufferSize);
-        writePosition = 0;
+        m_audioBuffer = new AudioBuffer<Type> (numChannels, bufferSize);
+        m_writePosition = 0;
     }
     
     
@@ -52,32 +52,35 @@ public:
      */
     void writeSamples (AudioBuffer<Type> & newAudioData, int startSample, int numSamples)
     {
-        for (int i = 0; i < numChannels; ++i)
+        if (m_numChannels != newAudioData.getNumChannels())
+            return;
+
+        for (int i = 0; i < m_numChannels; ++i)
         {
-            const int curWritePosition = writePosition.get();
+            const int curWritePosition = m_writePosition.get();
             
             // If we need to loop around the ring
-            if (curWritePosition + numSamples > bufferSize - 1)
+            if (curWritePosition + numSamples > m_bufferSize - 1)
             {
-                int samplesToEdgeOfBuffer = bufferSize - curWritePosition;
+                int samplesToEdgeOfBuffer = m_bufferSize - curWritePosition;
                 
-                audioBuffer->copyFrom (i, curWritePosition, newAudioData, i,
+                m_audioBuffer->copyFrom (i, curWritePosition, newAudioData, i,
                                        startSample, samplesToEdgeOfBuffer);
                 
-                audioBuffer->copyFrom (i, 0, newAudioData, i,
+                m_audioBuffer->copyFrom (i, 0, newAudioData, i,
                                        startSample + samplesToEdgeOfBuffer,
                                        numSamples - samplesToEdgeOfBuffer);
             }
             // If we stay inside the ring
             else
             {
-                audioBuffer->copyFrom (i, curWritePosition, newAudioData, i,
+                m_audioBuffer->copyFrom (i, curWritePosition, newAudioData, i,
                                        startSample, numSamples);
             }
         }
         
-        writePosition += numSamples;
-        writePosition = writePosition.get() % bufferSize;
+        m_writePosition += numSamples;
+        m_writePosition = m_writePosition.get() % m_bufferSize;
         
         /*
             Although it would seem that the above two lines could cause a
@@ -116,7 +119,7 @@ public:
     void readSamples (AudioBuffer<Type> & bufferToFill, int readSize)
     {
         // Ensure readSize does not exceed bufferSize
-        jassert (readSize < bufferSize);
+        jassert (readSize < m_bufferSize);
         
         /*
             Further, as stated in the class comment, it is also bad to have a
@@ -128,39 +131,39 @@ public:
          */
         
         // Calculate readPosition based on writePosition
-        int readPosition = (writePosition.get() % bufferSize) - readSize;
+        int readPosition = (m_writePosition.get() % m_bufferSize) - readSize;
         
         // If read position goes into negative bounds, loop it around the ring
         if (readPosition < 0)
-            readPosition = bufferSize + readPosition;
+            readPosition = m_bufferSize + readPosition;
         
-        for (int i = 0; i < numChannels; ++i)
+        for (int i = 0; i < m_numChannels; ++i)
         {
             // If we need to loop around the ring
-            if (readPosition + readSize > bufferSize - 1)
+            if (readPosition + readSize > m_bufferSize - 1)
             {
-                int samplesToEdgeOfBuffer = bufferSize - readPosition;
+                int samplesToEdgeOfBuffer = m_bufferSize - readPosition;
                 
-                bufferToFill.copyFrom (i, 0, *(audioBuffer.get()), i, readPosition,
+                bufferToFill.copyFrom (i, 0, *(m_audioBuffer.get()), i, readPosition,
                                        samplesToEdgeOfBuffer);
                 
-                bufferToFill.copyFrom (i, samplesToEdgeOfBuffer, *(audioBuffer.get()),
+                bufferToFill.copyFrom (i, samplesToEdgeOfBuffer, *(m_audioBuffer.get()),
                                        i, readPosition + samplesToEdgeOfBuffer,
                                        readSize - samplesToEdgeOfBuffer);
             }
             // If we stay inside the ring
             else
             {
-                bufferToFill.copyFrom (i, 0, *(audioBuffer.get()), i, readPosition, readSize);
+                bufferToFill.copyFrom (i, 0, *(m_audioBuffer.get()), i, readPosition, readSize);
             }
         }
     }
     
 private:
-    int bufferSize;
-    int numChannels;
-    ScopedPointer<AudioBuffer<Type>> audioBuffer;
-    Atomic<int> writePosition; // This must be atomic so the conumer does
+    int m_bufferSize;
+    int m_numChannels;
+    ScopedPointer<AudioBuffer<Type>> m_audioBuffer;
+    Atomic<int> m_writePosition; // This must be atomic so the conumer does
                                // not read it in a torn state as it is being
                                // changed.
     

@@ -17,7 +17,7 @@ namespace Auvi
 WaterfallAudioVisualizer::WaterfallAudioVisualizer()
     : AbstractAudioVisualizer()
 {
-    m_buffer = std::make_unique<RingBuffer<GLfloat>>(0,0);
+    m_buffer = std::make_unique<RingBuffer<GLfloat>>(2,441);
     m_3Dspectrum = std::make_unique<Spectrum>(m_buffer.get());
     addAndMakeVisible(m_3Dspectrum.get());
 }
@@ -60,14 +60,24 @@ void WaterfallAudioVisualizer::processChangedChannelMapping()
 void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
     if (!data)
-        if (!data)
-            return;
+        return;
 
     switch (data->GetDataType())
     {
     case AbstractProcessorData::AudioSignal:
+    {
+        ProcessorAudioSignalData *ld = static_cast<ProcessorAudioSignalData*>(data);
+        if (ld && ld->GetChannelCount() > 0)
+        {
+            juce::AudioSampleBuffer* b = static_cast<juce::AudioSampleBuffer*>(ld);
+            m_buffer->writeSamples(*b, 0, b->getNumSamples());
+        }
+        break;
+    }
     case AbstractProcessorData::Level:
+        break;
     case AbstractProcessorData::Spectrum:
+        break;
     case AbstractProcessorData::Invalid:
     default:
         break;

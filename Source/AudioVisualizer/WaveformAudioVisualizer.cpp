@@ -23,7 +23,7 @@ WaveformAudioVisualizer::WaveformAudioVisualizer()
     AudioFormatManager formatManager;
     formatManager.registerFormat(new WavAudioFormat, true);
 
-    m_thumbnailCache = std::make_unique<AudioThumbnailCache>(THUMB_RES*1000);
+    m_thumbnailCache = std::make_unique<AudioThumbnailCache>(THUMB_RES * 1000);
     m_thumbnail = std::make_unique<AudioThumbnail>(THUMB_RES, formatManager, *m_thumbnailCache.get());
 
     m_buffer.clear();
@@ -37,12 +37,12 @@ WaveformAudioVisualizer::~WaveformAudioVisualizer()
 {
 }
 
-void WaveformAudioVisualizer::paint (Graphics& g)
+void WaveformAudioVisualizer::paint(Graphics& g)
 {
     AbstractAudioVisualizer::paint(g);
 
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));   // clear the background
-    
+    g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
+
     auto outerMargin = 20.0f;
 
     Rectangle<int> visuArea = getLocalBounds().reduced(outerMargin);
@@ -74,14 +74,14 @@ void WaveformAudioVisualizer::paint (Graphics& g)
     // draw an outline around the visu area
     g.setColour(Colours::white);
     g.drawRect(visuArea, 1);
-    
+
     // draw legend, simply number the waveforms from 1..n
-    if(m_thumbnail->getNumChannels()>0)
+    if (m_thumbnail->getNumChannels() > 0)
     {
         g.setFont(14.0f);
         auto thumbWaveHeight = visuArea.getHeight() / m_thumbnail->getNumChannels();
-        auto yPos = outerMargin/2 + thumbWaveHeight/2;
-        for(unsigned long i=1; i<=m_thumbnail->getNumChannels(); ++i)
+        auto yPos = outerMargin / 2 + thumbWaveHeight / 2;
+        for (unsigned long i = 1; i <= m_thumbnail->getNumChannels(); ++i)
         {
             g.setColour(Colours::white);
             g.drawText(String(i), juce::Rectangle<float>(0, yPos, outerMargin, outerMargin), Justification::centred, true);
@@ -106,7 +106,7 @@ void WaveformAudioVisualizer::processChangedChannelMapping()
 
 }
 
-void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
+void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
 {
     if (!data)
         if (!data)
@@ -128,7 +128,7 @@ void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 
             for (int i = 0; i < m_buffer.getNumChannels(); ++i)
             {
-                m_buffer.copyFrom(i, m_bufferPos,  *sd, i, 0, sd->getNumSamples());
+                m_buffer.copyFrom(i, m_bufferPos, *sd, i, 0, sd->getNumSamples());
             }
             m_bufferPos += sd->getNumSamples();
 

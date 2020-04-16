@@ -24,40 +24,40 @@ class Spectrum :    public Component,
     
 public:
     Spectrum (RingBuffer<GLfloat> * ringBuffer)
-    :   readBuffer (2, RING_BUFFER_READ_SIZE),
-        forwardFFT(fftOrder)
+    :   m_readBuffer (2, RING_BUFFER_READ_SIZE),
+        m_forwardFFT(fftOrder)
     {
         // Sets the version to 3.2
-        openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
+        m_openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
      
-        this->ringBuffer = ringBuffer;
+        m_ringBuffer = ringBuffer;
         
         // Set default 3D orientation
-        draggableOrientation.reset(Vector3D<float>(0.0, 1.0, 0.0));
+        m_draggableOrientation.reset(Vector3D<float>(0.0, 1.0, 0.0));
         
         // Allocate FFT data
-        fftData = new GLfloat [2 * fftSize];
+        m_fftData = new GLfloat [2 * fftSize];
         
         // Attach the OpenGL context but do not start [ see start() ]
-        openGLContext.setRenderer(this);
-        openGLContext.attachTo(*this);
+        m_openGLContext.setRenderer(this);
+        m_openGLContext.attachTo(*this);
         
         // Setup GUI Overlay Label: Status of Shaders, compiler errors, etc.
-        addAndMakeVisible (statusLabel);
-        statusLabel.setJustificationType (Justification::topLeft);
-        statusLabel.setFont (Font (14.0f));
+        addAndMakeVisible (m_statusLabel);
+        m_statusLabel.setJustificationType (Justification::topLeft);
+        m_statusLabel.setFont (Font (14.0f));
     }
     
     ~Spectrum()
     {
         // Turn off OpenGL
-        openGLContext.setContinuousRepainting (false);
-        openGLContext.detach();
+        m_openGLContext.setContinuousRepainting (false);
+        m_openGLContext.detach();
         
-        delete [] fftData;
+        delete [] m_fftData;
         
         // Detach ringBuffer
-        ringBuffer = nullptr;
+        m_ringBuffer = nullptr;
     }
     
     //==========================================================================
@@ -65,12 +65,12 @@ public:
     
     void start()
     {
-        openGLContext.setContinuousRepainting (true);
+        m_openGLContext.setContinuousRepainting (true);
     }
     
     void stop()
     {
-        openGLContext.setContinuousRepainting (false);
+        m_openGLContext.setContinuousRepainting (false);
     }
     
     
@@ -84,13 +84,13 @@ public:
     void newOpenGLContextCreated() override
     {
         // Setup Sizing Variables
-        xFreqWidth = 3.0f;
-        yAmpHeight = 1.0f;
-        zTimeDepth = 3.0f;
-        xFreqResolution = 50;
-        zTimeResolution = 60;
+        m_xFreqWidth = 3.0f;
+        m_yAmpHeight = 1.0f;
+        m_zTimeDepth = 3.0f;
+        m_xFreqResolution = 50;
+        m_zTimeResolution = 60;
 
-        numVertices = xFreqResolution * zTimeResolution;
+        m_numVertices = m_xFreqResolution * m_zTimeResolution;
         
         // Initialize XZ Vertices
         initializeXZVertices();
@@ -99,26 +99,26 @@ public:
         initializeYVertices();
         
         // Setup Buffer Objects
-        openGLContext.extensions.glGenBuffers (1, &xzVBO); // Vertex Buffer Object
-        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, xzVBO);
-        openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * numVertices * 2, xzVertices, GL_STATIC_DRAW);
+        m_openGLContext.extensions.glGenBuffers (1, &m_xzVBO); // Vertex Buffer Object
+        m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
+        m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 2, m_xzVertices, GL_STATIC_DRAW);
         
         
-        openGLContext.extensions.glGenBuffers (1, &yVBO);
-        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, yVBO);
-        openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * numVertices, yVertices, GL_STREAM_DRAW);
+        m_openGLContext.extensions.glGenBuffers (1, &m_yVBO);
+        m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+        m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
         
 #ifdef JUCE_OPENGL3
-        openGLContext.extensions.glGenVertexArrays(1, &VAO);
-        openGLContext.extensions.glBindVertexArray(VAO);
+        m_openGLContext.extensions.glGenVertexArrays(1, &VAO);
+        m_openGLContext.extensions.glBindVertexArray(VAO);
 #endif
-        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, xzVBO);
-        openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, yVBO);
-        openGLContext.extensions.glVertexAttribPointer (1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), NULL);
+        m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
+        m_openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+        m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+        m_openGLContext.extensions.glVertexAttribPointer (1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), NULL);
         
-        openGLContext.extensions.glEnableVertexAttribArray (0);
-        openGLContext.extensions.glEnableVertexAttribArray (1);
+        m_openGLContext.extensions.glEnableVertexAttribArray (0);
+        m_openGLContext.extensions.glEnableVertexAttribArray (1);
         
         glPointSize (6.0f);
         
@@ -131,12 +131,13 @@ public:
      */
     void openGLContextClosing() override
     {
-        shader->release();
-        shader = nullptr;
-        uniforms = nullptr;
+        if(m_shader)
+            m_shader->release();
+        m_shader = nullptr;
+        m_uniforms = nullptr;
         
-        delete [] xzVertices;
-        delete [] yVertices;
+        delete [] m_xzVertices;
+        delete [] m_yVertices;
     }
     
     
@@ -145,9 +146,11 @@ public:
     void renderOpenGL() override
     {
         jassert (OpenGLHelpers::isContextActive());
+        if (!m_shader)
+            return;
         
         // Setup Viewport
-        const float renderingScale = (float) openGLContext.getRenderingScale();
+        const float renderingScale = (float)m_openGLContext.getRenderingScale();
         glViewport (0, 0, roundToInt (renderingScale * getWidth()), roundToInt (renderingScale * getHeight()));
         
         // Set background Color
@@ -158,13 +161,11 @@ public:
         glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         // Use Shader Program that's been defined
-        shader->use();
-        
+        m_shader->use();
         
         // Copy data from ring buffer into FFT
-        
-        ringBuffer->readSamples (readBuffer, RING_BUFFER_READ_SIZE);
-        FloatVectorOperations::clear (fftData, RING_BUFFER_READ_SIZE);
+        m_ringBuffer->readSamples (m_readBuffer, RING_BUFFER_READ_SIZE);
+        FloatVectorOperations::clear (m_fftData, RING_BUFFER_READ_SIZE);
         
         /** Future Feature:
             Instead of summing channels below, keep the channels seperate and
@@ -174,53 +175,53 @@ public:
         // Sum channels together
         for (int i = 0; i < 2; ++i)
         {
-            FloatVectorOperations::add (fftData, readBuffer.getReadPointer(i, 0), RING_BUFFER_READ_SIZE);
+            FloatVectorOperations::add (m_fftData, m_readBuffer.getReadPointer(i, 0), RING_BUFFER_READ_SIZE);
         }
         
         // Calculate FFT Crap
-        forwardFFT.performFrequencyOnlyForwardTransform (fftData);
+        m_forwardFFT.performFrequencyOnlyForwardTransform (m_fftData);
         
         // Find the range of values produced, so we can scale our rendering to
         // show up the detail clearly
-        Range<float> maxFFTLevel = FloatVectorOperations::findMinAndMax (fftData, fftSize / 2);
+        Range<float> maxFFTLevel = FloatVectorOperations::findMinAndMax (m_fftData, fftSize / 2);
         
         // Calculate new y values and shift old y values back
-        for (int i = numVertices; i >= 0; --i)
+        for (int i = m_numVertices; i >= 0; --i)
         {
             // For the first row of points, render the new height via the FFT
-            if (i < xFreqResolution)
+            if (i < m_xFreqResolution)
             {
-                const float skewedProportionY = 1.0f - std::exp (std::log (i / ((float) xFreqResolution - 1.0f)) * 0.2f);
+                const float skewedProportionY = 1.0f - std::exp (std::log (i / ((float)m_xFreqResolution - 1.0f)) * 0.2f);
                 const int fftDataIndex = jlimit (0, fftSize / 2, (int) (skewedProportionY * fftSize / 2));
                 float level = 0.0f;
                 
                 if (maxFFTLevel.getEnd() != 0.0f)
-                    level = jmap (fftData[fftDataIndex], 0.0f, maxFFTLevel.getEnd(), 0.0f, yAmpHeight);
+                    level = jmap (m_fftData[fftDataIndex], 0.0f, maxFFTLevel.getEnd(), 0.0f, m_yAmpHeight);
                 
-                yVertices[i] = level;
+                m_yVertices[i] = level;
             }
             else // For the subsequent rows, shift back
             {
-                yVertices[i] = yVertices[i - xFreqResolution];
+                m_yVertices[i] = m_yVertices[i - m_xFreqResolution];
             }
         }
         
-        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, yVBO);
-        openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * numVertices, yVertices, GL_STREAM_DRAW);
+        m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+        m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
         
         
         // Setup the Uniforms for use in the Shader
-        if (uniforms->projectionMatrix != nullptr)
-            uniforms->projectionMatrix->setMatrix4 (getProjectionMatrix().mat, 1, false);
+        if (m_uniforms->projectionMatrix != nullptr)
+            m_uniforms->projectionMatrix->setMatrix4 (getProjectionMatrix().mat, 1, false);
         
-        if (uniforms->viewMatrix != nullptr)
+        if (m_uniforms->viewMatrix != nullptr)
         {
             Matrix3D<float> scale;
             scale.mat[0] = 2.0;
             scale.mat[5] = 2.0;
             scale.mat[10] = 2.0;
             Matrix3D<float> finalMatrix = scale * getViewMatrix();
-            uniforms->viewMatrix->setMatrix4 (finalMatrix.mat, 1, false);
+            m_uniforms->viewMatrix->setMatrix4 (finalMatrix.mat, 1, false);
             
         }
 
@@ -228,11 +229,11 @@ public:
 #ifdef JUCE_OPENGL3
         openGLContext.extensions.glBindVertexArray(VAO);
 #endif
-        glDrawArrays (GL_POINTS, 0, numVertices);
+        glDrawArrays (GL_POINTS, 0, m_numVertices);
         
         
         // Zero Out FFT for next use
-        zeromem (fftData, sizeof (GLfloat) * 2 * fftSize);
+        zeromem (m_fftData, sizeof (GLfloat) * 2 * fftSize);
         
         // Reset the element buffers so child Components draw correctly
 //        openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, 0);
@@ -248,18 +249,18 @@ public:
     
     void resized () override
     {
-        draggableOrientation.setViewport (getLocalBounds());
-        statusLabel.setBounds (getLocalBounds().reduced (4).removeFromTop (75));
+        m_draggableOrientation.setViewport (getLocalBounds());
+        m_statusLabel.setBounds (getLocalBounds().reduced (4).removeFromTop (75));
     }
     
     void mouseDown (const MouseEvent& e) override
     {
-        draggableOrientation.mouseDown (e.getPosition());
+        m_draggableOrientation.mouseDown (e.getPosition());
     }
     
     void mouseDrag (const MouseEvent& e) override
     {
-        draggableOrientation.mouseDrag (e.getPosition());
+        m_draggableOrientation.mouseDrag (e.getPosition());
     }
     
 private:
@@ -271,16 +272,16 @@ private:
     void initializeXZVertices()
     {
         
-        int numFloatsXZ = numVertices * 2;
+        int numFloatsXZ = m_numVertices * 2;
         
-        xzVertices = new GLfloat [numFloatsXZ];
+        m_xzVertices = new GLfloat [numFloatsXZ];
         
         // Variables when setting x and z
-        int numFloatsPerRow = xFreqResolution * 2;
-        GLfloat xOffset = xFreqWidth / ((GLfloat) xFreqResolution - 1.0f);
-        GLfloat zOffset = zTimeDepth / ((GLfloat) zTimeResolution - 1.0f);
-        GLfloat xStart = -(xFreqWidth / 2.0f);
-        GLfloat zStart = -(zTimeDepth / 2.0f);
+        int numFloatsPerRow = m_xFreqResolution * 2;
+        GLfloat xOffset = m_xFreqWidth / ((GLfloat) m_xFreqResolution - 1.0f);
+        GLfloat zOffset = m_zTimeDepth / ((GLfloat) m_zTimeResolution - 1.0f);
+        GLfloat xStart = -(m_xFreqWidth / 2.0f);
+        GLfloat zStart = -(m_zTimeDepth / 2.0f);
         
         // Set all X and Z values
         for (int i = 0; i < numFloatsXZ; i += 2)
@@ -290,8 +291,8 @@ private:
             int zTimeIndex = floor (i / numFloatsPerRow);
             
             // Set X Vertex
-            xzVertices[i] = xStart + xOffset * xFreqIndex;
-            xzVertices[i + 1] = zStart + zOffset * zTimeIndex;
+            m_xzVertices[i] = xStart + xOffset * xFreqIndex;
+            m_xzVertices[i + 1] = zStart + zOffset * zTimeIndex;
         }
     }
     
@@ -299,8 +300,8 @@ private:
     void initializeYVertices()
     {
         // Set all Y values to 0.0
-        yVertices = new GLfloat [numVertices];
-        memset(yVertices, 0.0f, sizeof(GLfloat) * xFreqResolution * zTimeResolution);
+        m_yVertices = new GLfloat [m_numVertices];
+        memset(m_yVertices, 0.0f, sizeof(GLfloat) * m_xFreqResolution * m_zTimeResolution);
     }
     
     
@@ -321,7 +322,7 @@ private:
     Matrix3D<float> getViewMatrix() const
     {
         Matrix3D<float> viewMatrix (Vector3D<float> (0.0f, 0.0f, -10.0f));
-        Matrix3D<float> rotationMatrix = draggableOrientation.getRotationMatrix();
+        Matrix3D<float> rotationMatrix = m_draggableOrientation.getRotationMatrix();
         
         return rotationMatrix * viewMatrix;
     }
@@ -330,7 +331,7 @@ private:
      */
     void createShaders()
     {
-        vertexShader =
+        m_vertexShader =
         "#version 330 core\n"
         "layout (location = 0) in vec2 xzPos;\n"
         "layout (location = 1) in float yPos;\n"
@@ -345,7 +346,7 @@ private:
    
         
         // Base Shader
-        fragmentShader =
+        m_fragmentShader =
         "#version 330 core\n"
         "out vec4 color;\n"
         "void main()\n"
@@ -354,19 +355,19 @@ private:
         "}\n";
         
 
-        ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (openGLContext));
+        ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (m_openGLContext));
         String statusText;
         
-        if (newShader->addVertexShader ((vertexShader))
-            && newShader->addFragmentShader ((fragmentShader))
+        if (newShader->addVertexShader ((m_vertexShader))
+            && newShader->addFragmentShader ((m_fragmentShader))
             && newShader->link())
         {
-            uniforms = nullptr;
+            m_uniforms = nullptr;
             
-            shader = newShader;
-            shader->use();
+            m_shader = newShader;
+            m_shader->use();
             
-            uniforms   = new Uniforms (openGLContext, *shader);
+            m_uniforms   = new Uniforms (m_openGLContext, *m_shader);
             
             statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);
         }
@@ -375,7 +376,7 @@ private:
             statusText = newShader->getLastError();
         }
         
-        statusLabel.setText (statusText, dontSendNotification);
+        //m_statusLabel.setText (statusText, dontSendNotification);
     }
     
     //==============================================================================
@@ -404,38 +405,38 @@ private:
     };
 
     // Visualizer Variables
-    GLfloat xFreqWidth;
-    GLfloat yAmpHeight;
-    GLfloat zTimeDepth;
-    int xFreqResolution;
-    int zTimeResolution;
+    GLfloat m_xFreqWidth;
+    GLfloat m_yAmpHeight;
+    GLfloat m_zTimeDepth;
+    int m_xFreqResolution;
+    int m_zTimeResolution;
     
-    int numVertices;
-    GLfloat * xzVertices;
-    GLfloat * yVertices;
+    int m_numVertices;
+    GLfloat * m_xzVertices;
+    GLfloat * m_yVertices;
     
     
     // OpenGL Variables
-    OpenGLContext openGLContext;
-    GLuint xzVBO;
-    GLuint yVBO;
-    GLuint VAO;/*, EBO;*/
+    OpenGLContext m_openGLContext;
+    GLuint m_xzVBO;
+    GLuint m_yVBO;
+    GLuint m_VAO;/*, EBO;*/
     
-    ScopedPointer<OpenGLShaderProgram> shader;
-    ScopedPointer<Uniforms> uniforms;
+    ScopedPointer<OpenGLShaderProgram> m_shader;
+    ScopedPointer<Uniforms> m_uniforms;
     
-    const char* vertexShader;
-    const char* fragmentShader;
+    const char* m_vertexShader;
+    const char* m_fragmentShader;
     
     
     // GUI Interaction
-    Draggable3DOrientation draggableOrientation;
+    Draggable3DOrientation m_draggableOrientation;
     
     // Audio Structures
-    RingBuffer<GLfloat> * ringBuffer;
-    AudioBuffer<GLfloat> readBuffer;    // Stores data read from ring buffer
-    dsp::FFT forwardFFT;
-    GLfloat * fftData;
+    RingBuffer<GLfloat> * m_ringBuffer;
+    AudioBuffer<GLfloat> m_readBuffer;    // Stores data read from ring buffer
+    dsp::FFT m_forwardFFT;
+    GLfloat * m_fftData;
     
     // This is so that we can initialize fowardFFT in the constructor with the order
     enum
@@ -445,7 +446,7 @@ private:
     };
     
     // Overlay GUI
-    Label statusLabel;
+    Label m_statusLabel;
     
     /** DEV NOTE
         If I wanted to optionally have an interchangeable shader system,
