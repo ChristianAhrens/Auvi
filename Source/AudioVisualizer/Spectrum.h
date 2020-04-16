@@ -109,8 +109,8 @@ public:
         m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
         
 #ifdef JUCE_OPENGL3
-        m_openGLContext.extensions.glGenVertexArrays(1, &VAO);
-        m_openGLContext.extensions.glBindVertexArray(VAO);
+        m_openGLContext.extensions.glGenVertexArrays(1, &m_VAO);
+        m_openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
         m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
         m_openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
@@ -227,7 +227,7 @@ public:
 
         // Draw the points
 #ifdef JUCE_OPENGL3
-        openGLContext.extensions.glBindVertexArray(VAO);
+        m_openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
         glDrawArrays (GL_POINTS, 0, m_numVertices);
         
