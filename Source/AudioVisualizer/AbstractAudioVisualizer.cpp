@@ -12,15 +12,15 @@
 #include "AbstractAudioVisualizer.h"
 
 //==============================================================================
-AbstractAudioVisualizerConfig::AbstractAudioVisualizerConfig()
+AudioVisualizerConfigBase::AudioVisualizerConfigBase()
 {
 }
 
-AbstractAudioVisualizerConfig::~AbstractAudioVisualizerConfig()
+AudioVisualizerConfigBase::~AudioVisualizerConfigBase()
 {
 }
 
-void AbstractAudioVisualizerConfig::paint(Graphics& g)
+void AudioVisualizerConfigBase::paint(Graphics& g)
 {
     g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));   // clear the background
 
@@ -33,11 +33,11 @@ void AbstractAudioVisualizerConfig::paint(Graphics& g)
         Justification::centred, true);   // draw some placeholder text
 }
 
-void AbstractAudioVisualizerConfig::resized()
+void AudioVisualizerConfigBase::resized()
 {
 }
 
-void AbstractAudioVisualizerConfig::buttonClicked(Button* button)
+void AudioVisualizerConfigBase::buttonClicked(Button* button)
 {
 }
 
@@ -116,9 +116,9 @@ void AbstractAudioVisualizer::onOpenConfigClicked()
     }
 }
 
-std::unique_ptr<AbstractAudioVisualizerConfig> AbstractAudioVisualizer::openAudioVisualizerConfig()
+std::unique_ptr<AudioVisualizerConfigBase> AbstractAudioVisualizer::openAudioVisualizerConfig()
 {
-    return std::make_unique<AbstractAudioVisualizerConfig>();
+    return std::make_unique<AudioVisualizerConfigBase>();
 }
 
 std::string AbstractAudioVisualizer::VisuTypeToString(VisuType type)

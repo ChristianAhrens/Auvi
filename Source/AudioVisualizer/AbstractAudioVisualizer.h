@@ -17,11 +17,11 @@
 //==============================================================================
 /*
 */
-class AbstractAudioVisualizerConfig : public Component, public DrawableButton::Listener
+class AudioVisualizerConfigBase : public Component, public DrawableButton::Listener
 {
 public:
-    AbstractAudioVisualizerConfig();
-    ~AbstractAudioVisualizerConfig();
+    AudioVisualizerConfigBase();
+    ~AudioVisualizerConfigBase();
 
     //==============================================================================
     void paint(Graphics&) override;
@@ -33,7 +33,7 @@ public:
 private:
 
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AbstractAudioVisualizerConfig)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };
 
 //==============================================================================
@@ -72,7 +72,7 @@ public:
     
     //==============================================================================
     virtual VisuType getType() = 0;
-    virtual std::unique_ptr<AbstractAudioVisualizerConfig> openAudioVisualizerConfig();
+    virtual std::unique_ptr<AudioVisualizerConfigBase> openAudioVisualizerConfig();
     
     //==============================================================================
     static std::string VisuTypeToString(VisuType type);
@@ -81,7 +81,7 @@ private:
     void onOpenConfigClicked();
 
     std::unique_ptr<DrawableButton>	m_openConfig;
-    std::unique_ptr<AbstractAudioVisualizerConfig> m_visualizerConfig;
+    std::unique_ptr<AudioVisualizerConfigBase> m_visualizerConfig;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AbstractAudioVisualizer)
 };
