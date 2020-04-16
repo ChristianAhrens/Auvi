@@ -32,6 +32,7 @@ public:
     
     //==============================================================================
     VisuType getType() override;
+    void processChangedChannelMapping() override;
 
 private:
     std::unique_ptr<AudioThumbnail>         m_thumbnail;

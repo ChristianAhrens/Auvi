@@ -17,7 +17,8 @@ RtaAudioVisualizer::RtaAudioVisualizer()
 {
     showConfigButton(true);
 
-    m_plotChannel = 0;
+    m_plotChannel = 1;
+    m_channelMapping = { {"Analyzer channel", m_plotChannel}, };
 }
 
 RtaAudioVisualizer::~RtaAudioVisualizer()
@@ -103,6 +104,11 @@ AbstractAudioVisualizer::VisuType RtaAudioVisualizer::getType()
     return AbstractAudioVisualizer::VisuType::Rta;
 }
 
+void RtaAudioVisualizer::processChangedChannelMapping()
+{
+    m_plotChannel = m_channelMapping.at("Analyzer channel");
+}
+
 void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
     if (!data)
@@ -113,12 +119,12 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     case AbstractProcessorData::Spectrum:
         {
         ProcessorSpectrumData spectrumData = *(static_cast<ProcessorSpectrumData*>(data));
-        if (spectrumData.GetChannelCount() < m_plotChannel)
+        if (spectrumData.GetChannelCount() < (m_plotChannel - 1))
             break;
 
         if(m_plotPoints.size() != ProcessorSpectrumData::SpectrumBands::count)
             m_plotPoints.resize(ProcessorSpectrumData::SpectrumBands::count);
-        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel).bands[0], ProcessorSpectrumData::SpectrumBands::count * sizeof(float));
+        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel - 1).bands[0], ProcessorSpectrumData::SpectrumBands::count * sizeof(float));
         repaint(); 
         }
         break;

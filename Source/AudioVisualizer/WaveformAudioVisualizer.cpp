@@ -97,6 +97,11 @@ AbstractAudioVisualizer::VisuType WaveformAudioVisualizer::getType()
     return AbstractAudioVisualizer::VisuType::Waveform;
 }
 
+void WaveformAudioVisualizer::processChangedChannelMapping()
+{
+
+}
+
 void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
     if (!data)

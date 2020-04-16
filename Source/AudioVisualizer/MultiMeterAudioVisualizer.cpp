@@ -84,6 +84,11 @@ AbstractAudioVisualizer::VisuType MultiMeterAudioVisualizer::getType()
     return AbstractAudioVisualizer::VisuType::MultiMeter;
 }
 
+void MultiMeterAudioVisualizer::processChangedChannelMapping()
+{
+
+}
+
 void MultiMeterAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
     if(!data)

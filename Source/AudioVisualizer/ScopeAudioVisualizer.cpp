@@ -18,8 +18,11 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
 {
     showConfigButton(true);
 
-    m_channelX = 0;
-    m_channelY = 1;
+    m_channelX = 1;
+    m_channelY = 2;
+
+    m_channelMapping = { {"X", m_channelX}, {"Y", m_channelY}, };
+
     m_scopeTailLength = 50;
     m_scopeTailPos = 0;
     m_scopeTailX.resize(m_scopeTailLength);
@@ -144,6 +147,12 @@ AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
     return AbstractAudioVisualizer::VisuType::Scope;
 }
 
+void ScopeAudioVisualizer::processChangedChannelMapping()
+{
+    m_channelX = m_channelMapping.at("X");
+    m_channelY = m_channelMapping.at("Y");
+}
+
 void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
     if(!data)
@@ -157,8 +166,8 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 			if (ld->GetChannelCount() > 1)
 			{
 				unsigned long iter = GetNextScopeTailPos();
-				m_scopeTailX[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelX, 0, ld->getNumSamples()), ld->getMagnitude(m_channelX, 0, ld->getNumSamples()));
-                m_scopeTailY[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelY, 0, ld->getNumSamples()), ld->getMagnitude(m_channelY, 0, ld->getNumSamples()));
+				m_scopeTailX[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelX - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelX - 1, 0, ld->getNumSamples()));
+                m_scopeTailY[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelY - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelY - 1, 0, ld->getNumSamples()));
 			}
 			else
 				break;

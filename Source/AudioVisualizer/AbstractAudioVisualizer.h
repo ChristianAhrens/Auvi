@@ -17,10 +17,10 @@
 //==============================================================================
 /*
 */
-class AudioVisualizerConfigBase : public Component, public DrawableButton::Listener
+class AudioVisualizerConfigBase : public Component
 {
 public:
-    AudioVisualizerConfigBase();
+    AudioVisualizerConfigBase(std::map<std::string, int> mapping = std::map<std::string, int>{});
     ~AudioVisualizerConfigBase();
 
     //==============================================================================
@@ -28,10 +28,12 @@ public:
     void resized() override;
 
     //==============================================================================
-    void buttonClicked(Button* button) override;
+    void setChannelMapping(std::map<std::string, int> mapping);
+    std::map<std::string, int> const getChannelMapping();
 
 private:
-
+    std::map<std::string, std::unique_ptr<Label>>       m_visualizerMappingLabels;
+    std::map<std::string, std::unique_ptr<ComboBox>>    m_visualizerMappingSelects;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };
@@ -72,10 +74,15 @@ public:
     
     //==============================================================================
     virtual VisuType getType() = 0;
+    virtual void processChangedChannelMapping() = 0;
     virtual std::unique_ptr<AudioVisualizerConfigBase> openAudioVisualizerConfig();
+    virtual void closeAudioVisualizerConfig();
     
     //==============================================================================
     static std::string VisuTypeToString(VisuType type);
+
+protected:
+    std::map<std::string, int> m_channelMapping;
 
 private:
     void onOpenConfigClicked();

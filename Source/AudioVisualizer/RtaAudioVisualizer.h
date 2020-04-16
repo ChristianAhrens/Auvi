@@ -32,6 +32,7 @@ public:
     
     //==============================================================================
     VisuType getType() override;
+    void processChangedChannelMapping() override;
 
 private:
     int                 m_plotChannel;
