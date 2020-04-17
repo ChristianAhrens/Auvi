@@ -34,6 +34,7 @@ enum KnownDevices
     iPhone6s,
     iPhone6sPlus,
     iPhoneSE,
+    iPhoneSE2,
     iPhone7,
     iPhone7Plus,
     iPhone8,
@@ -98,6 +99,8 @@ KnownDevices getDeviceType()
         return KnownDevices::iPhone6sPlus;
     if(deviceDescription == "iPhone SE")
         return KnownDevices::iPhoneSE;
+    if(deviceDescription == "iPhone SE (2nd generation)")
+        return KnownDevices::iPhoneSE2;
     if(deviceDescription == "iPhone8,4")
         return KnownDevices::iPhoneSE;
     if(deviceDescription == "iPhone 7")
@@ -250,6 +253,7 @@ int const getDeviceDisplayNotchIndent()
         case iPhone6s:
         case iPhone6sPlus:
         case iPhoneSE:
+        case iPhoneSE2:
         case iPhone7:
         case iPhone7Plus:
         case iPhone8:
@@ -316,6 +320,7 @@ int const getDeviceDisplaySlideBarIndent()
         case iPhone6s:
         case iPhone6sPlus:
         case iPhoneSE:
+        case iPhoneSE2:
         case iPhone7:
         case iPhone7Plus:
         case iPhone8:
