@@ -20,6 +20,8 @@ Footer::Footer(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
 	m_visuConfigOpen = std::make_unique<TextButton>();
     m_visuConfigOpen->setComponentID(VISU_CONFIG_OPEN_ID);
 	m_visuConfigOpen->setButtonText("Visu Configuration");
+    m_visuConfigOpen->setColour(TextButton::ColourIds::buttonColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
+    m_visuConfigOpen->setColour(TextButton::ColourIds::buttonOnColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
 	addAndMakeVisible(m_visuConfigOpen.get());
 	m_visuConfigOpen->addListener(this);
 }
