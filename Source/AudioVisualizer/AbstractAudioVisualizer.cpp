@@ -95,7 +95,7 @@ AbstractAudioVisualizer::AbstractAudioVisualizer()
 {
     m_channelMapping = std::map<std::string, int>{};
 
-    m_openConfig = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+    m_openConfig = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
     m_openConfig->setComponentID(VISUALIZER_CONFIG_OPEN_ID);
     m_openConfig->setClickingTogglesState(true);
     std::unique_ptr<XmlElement> Settings_svg_xml = XmlDocument::parse(BinaryData::settings24px_svg);

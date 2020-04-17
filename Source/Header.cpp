@@ -22,7 +22,7 @@ Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
 	addAndMakeVisible(m_audioConfigOpen.get());
 	m_audioConfigOpen->addListener(this);
 
-    m_stopProcessing = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+    m_stopProcessing = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
     m_stopProcessing->setComponentID(STOP_PROCESSING_ID);
     m_stopProcessing->setClickingTogglesState(true);
     std::unique_ptr<XmlElement> Pause_svg_xml = XmlDocument::parse(BinaryData::pause24px_svg);
