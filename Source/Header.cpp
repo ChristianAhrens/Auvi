@@ -84,11 +84,11 @@ void Header::resized()
     if (isVerticalButton)
     {
         translation = std::make_pair(margin + m_noGoAreaLeft,
-                                     margin + m_noGoAreaTop + margin + buttonWidth);
+                                    getHeight() - margin - m_noGoAreaRight - buttonHeight);
     }
     else
     {
-        translation = std::make_pair(margin + m_noGoAreaLeft + buttonWidth + margin,
+        translation = std::make_pair(getWidth() - margin - m_noGoAreaRight - buttonHeight,
                                      margin + m_noGoAreaTop);
     }
     m_stopProcessing->setTransform(AffineTransform::rotation(rotation).translated(translation.first, translation.second));
