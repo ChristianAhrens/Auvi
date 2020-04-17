@@ -42,6 +42,10 @@ CustomLookAndFeel::CustomLookAndFeel()
 
 	setColour(DrawableButton::ColourIds::backgroundColourId, Colours::darkgrey);
 	setColour(DrawableButton::ColourIds::backgroundOnColourId, Colours::darkgrey);
+    
+    setColour(ListBox::ColourIds::backgroundColourId, Colours::darkgrey);
+    setColour(ListBox::ColourIds::outlineColourId, Colours::lightgrey);
+    setColour(ListBox::ColourIds::textColourId, Colours::white);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
