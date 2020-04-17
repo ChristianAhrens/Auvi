@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "MainComponent.h"
+#include "CustomLookAndFeel.h"
 
 //==============================================================================
 class AuviApplication  : public JUCEApplication
@@ -64,6 +65,9 @@ public:
                                                                           .findColour (ResizableWindow::backgroundColourId),
                                                     DocumentWindow::allButtons)
         {
+            m_customLookAndFeel = std::unique_ptr<LookAndFeel>(new CustomLookAndFeel);
+            Desktop::getInstance().setDefaultLookAndFeel(m_customLookAndFeel.get());
+
             setUsingNativeTitleBar (true);
             setContentOwned (new MainComponent(), true);
 
@@ -93,6 +97,8 @@ public:
         */
 
     private:
+        std::unique_ptr<LookAndFeel>	m_customLookAndFeel; // our own look and feel implementation instance
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainWindow)
     };
 

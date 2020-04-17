@@ -27,6 +27,10 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/CustomLookAndFeel.cpp"/>
+      <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
+            file="Source/CustomLookAndFeel.h"/>
       <FILE id="b4qqBj" name="utils.hpp" compile="1" resource="0" file="Source/utils.hpp"/>
       <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{A4FA5224-B995-2116-2C5E-65302BD4192F}" name="Processor">
