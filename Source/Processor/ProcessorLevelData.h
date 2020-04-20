@@ -21,15 +21,32 @@ public:
         {
             peak = 0.0f;
             rms = 0.0f;
+            peakdB = 0.0f;
+            rmsdB = 0.0f;
         }
-        LevelVal(float p, float r)
+        LevelVal(float p, float r, float infdb = -100.0f)
         {
             peak = p;
             rms = r;
+            peakdB = Decibels::gainToDecibels(peak, infdb);
+            rmsdB = Decibels::gainToDecibels(rms, infdb);
+            minusInfdb = infdb;
+        }
+
+        float GetFactorRMSdB()
+        {
+            return (-1 * minusInfdb + rmsdB) / (-1 * minusInfdb);
+        }
+        float GetFactorPEAKdB()
+        {
+            return (-1 * minusInfdb + peakdB) / (-1 * minusInfdb);
         }
         
         float   peak;
         float   rms;
+        float   peakdB;
+        float   rmsdB;
+        float   minusInfdb;
     };
     
 public:

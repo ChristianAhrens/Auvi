@@ -160,19 +160,19 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     
     switch(data->GetDataType())
     {
-        case AbstractProcessorData::AudioSignal:
+        case AbstractProcessorData::Level:
         {
-            ProcessorAudioSignalData* ld = static_cast<ProcessorAudioSignalData*>(data);
-			if (ld->GetChannelCount() > 1)
-			{
-				unsigned long iter = GetNextScopeTailPos();
-				m_scopeTailX[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelX - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelX - 1, 0, ld->getNumSamples()));
-                m_scopeTailY[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelY - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelY - 1, 0, ld->getNumSamples()));
+            ProcessorLevelData* ld = static_cast<ProcessorLevelData*>(data);
+            if (ld->GetChannelCount() > 1)
+            {
+                unsigned long iter = GetNextScopeTailPos();
+                m_scopeTailX[iter] = std::make_pair<double, double>(ld->GetLevel(m_channelX).GetFactorRMSdB(), ld->GetLevel(m_channelX).GetFactorPEAKdB());
+                m_scopeTailY[iter] = std::make_pair<double, double>(ld->GetLevel(m_channelY).GetFactorRMSdB(), ld->GetLevel(m_channelY).GetFactorPEAKdB());
                 notifyChanges();
-			}
+            }
             break;
         }
-		case AbstractProcessorData::Level:
+        case AbstractProcessorData::AudioSignal:
         case AbstractProcessorData::Spectrum:
         case AbstractProcessorData::Invalid:
         default:
