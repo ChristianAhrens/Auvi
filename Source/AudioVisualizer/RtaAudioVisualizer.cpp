@@ -124,7 +124,7 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         if(m_plotPoints.size() != ProcessorSpectrumData::SpectrumBands::count)
             m_plotPoints.resize(ProcessorSpectrumData::SpectrumBands::count);
         memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel - 1).bands[0], ProcessorSpectrumData::SpectrumBands::count * sizeof(float));
-        repaint(); 
+        notifyChanges();
         }
         break;
     case AbstractProcessorData::Level:

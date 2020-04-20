@@ -143,10 +143,10 @@ void TwoDFieldAudioVisualizer::processingDataChanged(AbstractProcessorData *data
     {
         case AbstractProcessorData::Level:
             m_levelData = *(static_cast<ProcessorLevelData*>(data));
-            repaint();
+            notifyChanges();
             break;
+        case AbstractProcessorData::AudioSignal:
         case AbstractProcessorData::Spectrum:
-            break;
         case AbstractProcessorData::Invalid:
         default:
             break;

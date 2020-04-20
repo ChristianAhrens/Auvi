@@ -56,5 +56,17 @@ void WaterfallAudioVisualizer::processChangedChannelMapping()
 
 void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 {
-    ignoreUnused(data);
+    if (!data)
+        if (!data)
+            return;
+
+    switch (data->GetDataType())
+    {
+    case AbstractProcessorData::AudioSignal:
+    case AbstractProcessorData::Level:
+    case AbstractProcessorData::Spectrum:
+    case AbstractProcessorData::Invalid:
+    default:
+        break;
+    }
 }

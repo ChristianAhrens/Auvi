@@ -168,16 +168,12 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
 				unsigned long iter = GetNextScopeTailPos();
 				m_scopeTailX[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelX - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelX - 1, 0, ld->getNumSamples()));
                 m_scopeTailY[iter] = std::make_pair<double, double>(ld->getRMSLevel(m_channelY - 1, 0, ld->getNumSamples()), ld->getMagnitude(m_channelY - 1, 0, ld->getNumSamples()));
+                notifyChanges();
 			}
-			else
-				break;
-            repaint();
             break;
         }
 		case AbstractProcessorData::Level:
-			break;
         case AbstractProcessorData::Spectrum:
-            break;
         case AbstractProcessorData::Invalid:
         default:
             break;

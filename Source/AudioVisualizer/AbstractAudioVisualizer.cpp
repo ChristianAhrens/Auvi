@@ -93,6 +93,8 @@ std::map<std::string, int> const AudioVisualizerConfigBase::getChannelMapping()
 //==============================================================================
 AbstractAudioVisualizer::AbstractAudioVisualizer()
 {
+    m_changesPending = false;
+
     m_channelMapping = std::map<std::string, int>{};
 
     m_openConfig = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
@@ -208,5 +210,20 @@ std::string AbstractAudioVisualizer::VisuTypeToString(VisuType type)
         case InvalidLast:
         default:
             return "Invalid";
+    }
+}
+
+void AbstractAudioVisualizer::notifyChanges()
+{
+    m_changesPending = true;
+    processChanges();
+}
+
+void AbstractAudioVisualizer::processChanges()
+{
+    if (m_changesPending)
+    {
+        m_changesPending = false;
+        repaint();
     }
 }

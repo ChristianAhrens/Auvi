@@ -135,13 +135,11 @@ void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         }
         else
             break;
-        repaint();
+        notifyChanges();
         break;
     }
     case AbstractProcessorData::Level:
-        break;
     case AbstractProcessorData::Spectrum:
-        break;
     case AbstractProcessorData::Invalid:
     default:
         break;

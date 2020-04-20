@@ -63,6 +63,8 @@ public:
     ~AbstractAudioVisualizer();
 
     void showConfigButton(bool enable);
+    void notifyChanges();
+    void processChanges();
     
     //==============================================================================
     void paint (Graphics&) override;
@@ -89,6 +91,7 @@ private:
 
     std::unique_ptr<DrawableButton>	m_openConfig;
     std::unique_ptr<AudioVisualizerConfigBase> m_visualizerConfig;
+    bool m_changesPending;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AbstractAudioVisualizer)
 };
