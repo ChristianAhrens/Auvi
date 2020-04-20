@@ -28,6 +28,8 @@ public:
         };
         
         float   bands[count];
+        float   mindB;
+        float   maxdB;
     };
     
 public:

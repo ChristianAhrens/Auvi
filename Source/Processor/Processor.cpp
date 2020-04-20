@@ -145,16 +145,21 @@ void Processor::handleMessage(const Message& message)
 						m_windowF.multiplyWithWindowingTable(m_FFTdata, fftSize);
 						m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
 						ProcessorSpectrumData::SpectrumBands spectrumBands;
-						int spectrumStepWidth = 0.5f * (fftSize / ProcessorSpectrumData::SpectrumBands::count);
-						int spectrumPos = 0;
-						for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
+
+						spectrumBands.mindB = -100.0f;
+						spectrumBands.maxdB = 0.0f;
+
+						for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count; ++j)
 						{
-							float spectrumVal = 0;
-							for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
-								spectrumVal += m_FFTdata[spectrumPos];
-							spectrumVal = spectrumVal / spectrumStepWidth;
-							spectrumBands.bands[j] = spectrumVal;
+							auto skewedProportionX = 1.0f - std::exp(std::log(1.0f - j / (float)ProcessorSpectrumData::SpectrumBands::count) * 0.2f);
+							auto fftDataIndex = jlimit(0, fftSize / 2, (int)(skewedProportionX * fftSize / 2));
+							auto level = jmap(jlimit(spectrumBands.mindB, spectrumBands.maxdB, Decibels::gainToDecibels(m_FFTdata[fftDataIndex])
+								- Decibels::gainToDecibels((float)fftSize)),
+								spectrumBands.mindB, spectrumBands.maxdB, 0.0f, 1.0f);
+
+							spectrumBands.bands[j] = level;
 						}
+
 						m_spectrum.SetSpectrum(i, spectrumBands);
 
 						zeromem(m_FFTdata, sizeof(m_FFTdata));

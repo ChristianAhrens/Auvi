@@ -63,8 +63,7 @@ void RtaAudioVisualizer::paint (Graphics& g)
         path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
         for (int i = 1; i < m_plotPoints.size(); ++i)
         {
-            auto plotPointFreq = maxFreq * plotStepFraction * i;
-            newPointX = visuAreaOrigX + visuAreaWidth * (log10(plotPointFreq)/log10(maxFreq));
+            newPointX = visuAreaOrigX + plotStepWidth * i;
             newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
 
             path.lineTo(juce::Point<float>(newPointX, newPointY));
