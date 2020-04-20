@@ -82,11 +82,11 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     juce::Point<float> rightSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
     juce::Point<float> leftSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY);
     
-    float peakLevelL = m_levelData.GetLevel(m_channelL).peak;
-    float peakLevelC = m_levelData.GetLevel(m_channelC).peak;
-    float peakLevelR = m_levelData.GetLevel(m_channelR).peak;
-    float peakLevelLS = m_levelData.GetLevel(m_channelLS).peak;
-    float peakLevelRS = m_levelData.GetLevel(m_channelRS).peak;
+    float peakLevelL = m_levelData.GetLevel(m_channelL).GetFactorPEAKdB();
+    float peakLevelC = m_levelData.GetLevel(m_channelC).GetFactorPEAKdB();
+    float peakLevelR = m_levelData.GetLevel(m_channelR).GetFactorPEAKdB();
+    float peakLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorPEAKdB();
+    float peakLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorPEAKdB();
 
     g.setColour(Colours::forestgreen.darker());
     Path peakPath;
@@ -98,11 +98,11 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     peakPath.lineTo(levelOrig - leftMax * peakLevelL);
     g.strokePath(peakPath, PathStrokeType(3));
     
-    float rmsLevelL = m_levelData.GetLevel(m_channelL).rms;
-    float rmsLevelC = m_levelData.GetLevel(m_channelC).rms;
-    float rmsLevelR = m_levelData.GetLevel(m_channelR).rms;
-    float rmsLevelLS = m_levelData.GetLevel(m_channelLS).rms;
-    float rmsLevelRS = m_levelData.GetLevel(m_channelRS).rms;
+    float rmsLevelL = m_levelData.GetLevel(m_channelL).GetFactorRMSdB();
+    float rmsLevelC = m_levelData.GetLevel(m_channelC).GetFactorRMSdB();
+    float rmsLevelR = m_levelData.GetLevel(m_channelR).GetFactorRMSdB();
+    float rmsLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorRMSdB();
+    float rmsLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorRMSdB();
 
     g.setColour(Colours::forestgreen);
     Path rmsPath;
