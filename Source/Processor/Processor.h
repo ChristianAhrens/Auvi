@@ -117,7 +117,7 @@ private:
     //==============================================================================
     enum
     {
-        fftOrder = 10,
+        fftOrder = 11,
         fftSize = 1 << fftOrder
     };
     dsp::FFT                        m_fwdFFT;
