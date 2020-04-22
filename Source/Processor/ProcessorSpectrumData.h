@@ -25,11 +25,19 @@ public:
         {
             for (int i = 0; i < count; ++i)
                 bands[i] = 0.0f;
+            mindB = 0.0f;
+            maxdB = 0.0f;
+            minFreq = 0.0f;
+            maxFreq = 0.0f;
+            freqRes = 0.0f;
         };
         
         float   bands[count];
         float   mindB;
         float   maxdB;
+        float   minFreq;
+        float   maxFreq;
+        float   freqRes;
     };
     
 public:

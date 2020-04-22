@@ -121,9 +121,25 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         if (spectrumData.GetChannelCount() < (m_plotChannel - 1))
             break;
 
-        if(m_plotPoints.size() != ProcessorSpectrumData::SpectrumBands::count)
-            m_plotPoints.resize(ProcessorSpectrumData::SpectrumBands::count);
-        memcpy(&m_plotPoints[0], &spectrumData.GetSpectrum(m_plotChannel - 1).bands[0], ProcessorSpectrumData::SpectrumBands::count * sizeof(float));
+        auto spectrum = spectrumData.GetSpectrum(m_plotChannel - 1);
+        if (spectrum.freqRes <= 0)
+            break;
+
+        // we want to statically use 10Hz - 20kHz frequency range, therefor we need to prepare the fft spectrum accordingly
+        auto lowestBandInRange = static_cast<int>(10 / spectrum.freqRes);
+        auto highestBandInRange = static_cast<int>(20000 / spectrum.freqRes);
+
+        if (lowestBandInRange < 0)
+            lowestBandInRange = 0;
+        if (highestBandInRange >= spectrum.count)
+            highestBandInRange = spectrum.count - 1;
+
+        auto spectrumBandsInRange = highestBandInRange - lowestBandInRange;
+
+        if(m_plotPoints.size() != spectrumBandsInRange)
+            m_plotPoints.resize(spectrumBandsInRange);
+        memcpy(&m_plotPoints[0], &spectrum.bands[lowestBandInRange], spectrumBandsInRange * sizeof(float));
+
         notifyChanges();
         }
         break;

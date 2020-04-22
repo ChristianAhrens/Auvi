@@ -149,12 +149,15 @@ void Processor::handleMessage(const Message& message)
 						spectrumBands.mindB = -100.0f;
 						spectrumBands.maxdB = 0.0f;
 
-						for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count; ++j)
+						spectrumBands.minFreq = m_sampleRate / ProcessorSpectrumData::SpectrumBands::count;
+						spectrumBands.maxFreq = m_sampleRate / 2;
+						spectrumBands.freqRes = (spectrumBands.maxFreq - spectrumBands.minFreq) / ProcessorSpectrumData::SpectrumBands::count;
+
+						for (auto j = 0; j < ProcessorSpectrumData::SpectrumBands::count; ++j)
 						{
-							auto skewedProportionX = 1.0f - std::exp(std::log(1.0f - j / (float)ProcessorSpectrumData::SpectrumBands::count) * 0.2f);
-							auto fftDataIndex = jlimit(0, fftSize / 2, (int)(skewedProportionX * fftSize / 2));
-							auto level = jmap(jlimit(spectrumBands.mindB, spectrumBands.maxdB, Decibels::gainToDecibels(m_FFTdata[fftDataIndex])
-								- Decibels::gainToDecibels((float)fftSize)),
+							auto skewedProportionX = 1.0f - std::exp(std::log(1.0f - (j / static_cast<float>(ProcessorSpectrumData::SpectrumBands::count) * 0.2f)));
+							auto fftDataIndex = jlimit(0, fftSize / 2, static_cast<int>(skewedProportionX * fftSize / 2));
+							auto level = jmap(jlimit(spectrumBands.mindB, spectrumBands.maxdB, Decibels::gainToDecibels(m_FFTdata[fftDataIndex])),
 								spectrumBands.mindB, spectrumBands.maxdB, 0.0f, 1.0f);
 
 							spectrumBands.bands[j] = level;
