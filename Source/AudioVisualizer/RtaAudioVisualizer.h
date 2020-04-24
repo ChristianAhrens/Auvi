@@ -37,6 +37,9 @@ public:
 private:
     int                 m_plotChannel;
     std::vector<float>  m_plotPoints;
+    int                 m_minFreq;
+    int                 m_maxFreq;
+    int                 m_freqRes;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (RtaAudioVisualizer)
 };

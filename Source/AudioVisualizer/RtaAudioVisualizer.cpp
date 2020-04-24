@@ -17,6 +17,10 @@ RtaAudioVisualizer::RtaAudioVisualizer()
 {
     showConfigButton(true);
 
+    m_minFreq = 0;
+    m_maxFreq = 0;
+    m_freqRes = 0;
+
     m_plotChannel = 1;
     m_channelMapping = { {"Analyzer channel", m_plotChannel}, };
 }
@@ -38,8 +42,8 @@ void RtaAudioVisualizer::paint (Graphics& g)
     auto outerMargin = 20;
     auto visuAreaWidth = width - 2 * outerMargin;
     auto visuAreaHeight = height - 2 * outerMargin;
-    auto maxFreq = 20000.0f;
-    auto minFreq = 10;
+    auto maxPlotFreq = 20000;
+    auto minPlotFreq = 10;
 
     Rectangle<int> visuArea(outerMargin, outerMargin, visuAreaWidth, visuAreaHeight);
 
@@ -54,16 +58,19 @@ void RtaAudioVisualizer::paint (Graphics& g)
     g.setColour(Colours::forestgreen);
     if (!m_plotPoints.empty())
     {
-        auto plotStepFraction = m_plotPoints.size() > 0 ? 1.0f / float(m_plotPoints.size()) : 1.0f;
-        auto plotStepWidth = float(visuAreaWidth) * plotStepFraction;
+        auto minPlotIdx = jlimit(0, static_cast<int>(m_plotPoints.size() - 1), (minPlotFreq - m_minFreq) / m_freqRes);
+        auto maxPlotIdx = jlimit(0, static_cast<int>(m_plotPoints.size() - 1), (maxPlotFreq - m_minFreq) / m_freqRes);
+        auto plotIdxRange = maxPlotIdx - minPlotIdx;
 
         auto path = Path{};
-        auto newPointX = visuAreaOrigX;
-        auto newPointY = visuAreaOrigY - m_plotPoints.front() * visuAreaHeight;
+        auto skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((minPlotIdx + 1) * m_freqRes) - 1.0f);
+        float newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
+        float newPointY = visuAreaOrigY - m_plotPoints.at(minPlotIdx) * visuAreaHeight;
         path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
-        for (int i = 1; i < m_plotPoints.size(); ++i)
+        for (int i = minPlotIdx + 1; i <= maxPlotIdx; ++i)
         {
-            newPointX = visuAreaOrigX + plotStepWidth * i;
+            skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((i + 1) * m_freqRes) - 1.0f);
+            newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
             newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
 
             path.lineTo(juce::Point<float>(newPointX, newPointY));
@@ -122,20 +129,14 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         if (spectrum.freqRes <= 0)
             break;
 
-        // we want to statically use 10Hz - 20kHz frequency range, therefor we need to prepare the fft spectrum accordingly
-        auto lowestBandInRange = static_cast<int>(10 / spectrum.freqRes);
-        auto highestBandInRange = static_cast<int>(20000 / spectrum.freqRes);
+        if (m_plotPoints.size() != spectrum.count)
+            m_plotPoints.resize(spectrum.count);
 
-        if (lowestBandInRange < 0)
-            lowestBandInRange = 0;
-        if (highestBandInRange >= spectrum.count)
-            highestBandInRange = spectrum.count - 1;
+        memcpy(&m_plotPoints[0], &spectrum.bands[0], spectrum.count * sizeof(float));
 
-        auto spectrumBandsInRange = highestBandInRange - lowestBandInRange;
-
-        if(m_plotPoints.size() != spectrumBandsInRange)
-            m_plotPoints.resize(spectrumBandsInRange);
-        memcpy(&m_plotPoints[0], &spectrum.bands[lowestBandInRange], spectrumBandsInRange * sizeof(float));
+        m_minFreq = spectrum.minFreq;
+        m_maxFreq = spectrum.maxFreq;
+        m_freqRes = spectrum.freqRes;
 
         notifyChanges();
         }
