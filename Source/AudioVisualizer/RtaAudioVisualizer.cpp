@@ -73,22 +73,19 @@ void RtaAudioVisualizer::paint (Graphics& g)
 
     g.setColour(Colours::white);
     // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz
-    auto visuAreaLogscalePart = visuAreaWidth / (3 + log10(2));
-    for(int i=0; i<3; ++i)
+    auto markerLineValues = std::vector<float>{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000};
+    auto markerLegendValues = std::map<int, std::string>{ {10, "10"}, {100, "100"}, {1000, "1k"}, {10000, "10k"}, {20000, "20k"} };
+    auto legendValueWidth = 40.0f;
+    for (auto i = 0; i < markerLineValues.size(); ++i)
     {
-        auto partOrig = visuAreaOrigX + (visuAreaLogscalePart * i);
-        for (int j = 1; j < 11; ++j)
-        {
-            auto partOffset = visuAreaLogscalePart * log10(j);
-            g.drawLine(Line<float>( partOrig + partOffset, visuAreaOrigY,
-                                    partOrig + partOffset, visuAreaOrigY - visuAreaHeight));
-        }
+        auto skewedProportionX = 1.0f / (log10(markerLineValues.back()) - 1.0f) * (log10(markerLineValues.at(i)) - 1.0f);
+        auto posX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
+        g.drawLine(Line<float>( posX, visuAreaOrigY, posX, visuAreaOrigY - visuAreaHeight));
+
+        if(markerLegendValues.count(markerLineValues.at(i)))
+            g.drawText(markerLegendValues.at(markerLineValues.at(i)), Rectangle<float>(posX - 0.5f * legendValueWidth, visuAreaOrigY, legendValueWidth, float(outerMargin)), Justification::centred, true);
     }
-    g.drawText("10", Rectangle<float>(visuAreaOrigX - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("100", Rectangle<float>(visuAreaOrigX - 20.0f + visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("1k", Rectangle<float>(visuAreaOrigX - 20.0f + 2 * visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("10k", Rectangle<float>(visuAreaOrigX - 20.0f + 3 * visuAreaLogscalePart, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
-    g.drawText("20k", Rectangle<float>(visuAreaOrigX - 20.0f + visuAreaWidth, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
+
     // draw an outline around the visu area
     g.drawRect(visuArea, 1);
 }
