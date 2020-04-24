@@ -36,7 +36,8 @@ public:
 
 private:
     int                 m_plotChannel;
-    std::vector<float>  m_plotPoints;
+    std::vector<float>  m_plotPointsPeak;
+    std::vector<float>  m_plotPointsHold;
     int                 m_minFreq;
     int                 m_maxFreq;
     int                 m_freqRes;

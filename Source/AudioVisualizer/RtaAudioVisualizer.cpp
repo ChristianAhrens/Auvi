@@ -55,26 +55,44 @@ void RtaAudioVisualizer::paint (Graphics& g)
     auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
 
     // draw rta curve
-    g.setColour(Colours::forestgreen);
-    if (!m_plotPoints.empty())
+    if (!m_plotPointsPeak.empty() && m_plotPointsHold.size() == m_plotPointsPeak.size())
     {
-        auto minPlotIdx = jlimit(0, static_cast<int>(m_plotPoints.size() - 1), (minPlotFreq - m_minFreq) / m_freqRes);
-        auto maxPlotIdx = jlimit(0, static_cast<int>(m_plotPoints.size() - 1), (maxPlotFreq - m_minFreq) / m_freqRes);
+        auto minPlotIdx = jlimit(0, static_cast<int>(m_plotPointsPeak.size() - 1), (minPlotFreq - m_minFreq) / m_freqRes);
+        auto maxPlotIdx = jlimit(0, static_cast<int>(m_plotPointsPeak.size() - 1), (maxPlotFreq - m_minFreq) / m_freqRes);
         auto plotIdxRange = maxPlotIdx - minPlotIdx;
 
+        // hold curve
         auto path = Path{};
         auto skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((minPlotIdx + 1) * m_freqRes) - 1.0f);
-        float newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
-        float newPointY = visuAreaOrigY - m_plotPoints.at(minPlotIdx) * visuAreaHeight;
+        auto newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
+        auto newPointY = visuAreaOrigY - m_plotPointsHold.at(minPlotIdx) * visuAreaHeight;
         path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
         for (int i = minPlotIdx + 1; i <= maxPlotIdx; ++i)
         {
             skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((i + 1) * m_freqRes) - 1.0f);
             newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
-            newPointY = visuAreaOrigY - m_plotPoints.at(i) * visuAreaHeight;
+            newPointY = visuAreaOrigY - m_plotPointsHold.at(i) * visuAreaHeight;
 
             path.lineTo(juce::Point<float>(newPointX, newPointY));
         }
+        g.setColour(Colours::grey);
+        g.strokePath(path, PathStrokeType(1));
+
+        // peak curve
+        path = Path{};
+        skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((minPlotIdx + 1) * m_freqRes) - 1.0f);
+        newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
+        newPointY = visuAreaOrigY - m_plotPointsPeak.at(minPlotIdx) * visuAreaHeight;
+        path.startNewSubPath(juce::Point<float>(newPointX, newPointY));
+        for (int i = minPlotIdx + 1; i <= maxPlotIdx; ++i)
+        {
+            skewedProportionX = 1.0f / (log10(maxPlotFreq) - 1.0f) * (log10((i + 1) * m_freqRes) - 1.0f);
+            newPointX = visuAreaOrigX + (static_cast<float>(visuAreaWidth) * skewedProportionX);
+            newPointY = visuAreaOrigY - m_plotPointsPeak.at(i) * visuAreaHeight;
+
+            path.lineTo(juce::Point<float>(newPointX, newPointY));
+        }
+        g.setColour(Colours::forestgreen);
         g.strokePath(path, PathStrokeType(3));
     }
 
@@ -129,10 +147,13 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         if (spectrum.freqRes <= 0)
             break;
 
-        if (m_plotPoints.size() != spectrum.count)
-            m_plotPoints.resize(spectrum.count);
+        if (m_plotPointsPeak.size() != spectrum.count)
+            m_plotPointsPeak.resize(spectrum.count);
+        memcpy(&m_plotPointsPeak[0], &spectrum.bandsPeak[0], spectrum.count * sizeof(float));
 
-        memcpy(&m_plotPoints[0], &spectrum.bands[0], spectrum.count * sizeof(float));
+        if (m_plotPointsHold.size() != spectrum.count)
+            m_plotPointsHold.resize(spectrum.count);
+        memcpy(&m_plotPointsHold[0], &spectrum.bandsHold[0], spectrum.count * sizeof(float));
 
         m_minFreq = spectrum.minFreq;
         m_maxFreq = spectrum.maxFreq;
