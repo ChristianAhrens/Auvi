@@ -63,11 +63,18 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
         auto level = m_levelData.GetLevel(i);
         auto peakMeterHeight = meterMaxHeight * level.GetFactorPEAKdB();
         auto rmsMeterHeight = meterMaxHeight * level.GetFactorRMSdB();
+        auto holdMeterHeight = meterMaxHeight * level.GetFactorHOLDdB();
 
+        // peak bar
         g.setColour(Colours::forestgreen.darker());
         g.fillRect(Rectangle<float>(meterLeft, visuAreaOrigY - peakMeterHeight, meterWidth, peakMeterHeight));
+        // rms bar
         g.setColour(Colours::forestgreen);
         g.fillRect(Rectangle<float>(meterLeft, visuAreaOrigY - rmsMeterHeight, meterWidth, rmsMeterHeight));
+        // hold strip
+        g.setColour(Colours::grey);
+        g.drawLine(Line<float>(meterLeft, visuAreaOrigY - holdMeterHeight, meterLeft + meterWidth, visuAreaOrigY - holdMeterHeight));
+        // channel # label
 		g.setColour(Colours::white);
         g.drawText(String(i), Rectangle<float>(meterLeft, visuAreaOrigY, meterWidth, float(outerMargin)), Justification::centred, true);
 
