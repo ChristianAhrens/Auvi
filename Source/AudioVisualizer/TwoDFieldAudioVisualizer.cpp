@@ -81,7 +81,25 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     juce::Point<float> rightMax = levelOrig - juce::Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY - visuAreaHeight);
     juce::Point<float> rightSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX + visuAreaWidth, visuAreaOrigY);
     juce::Point<float> leftSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY);
-    
+
+    // hold values
+    float holdLevelL = m_levelData.GetLevel(m_channelL).GetFactorHOLDdB();
+    float holdLevelC = m_levelData.GetLevel(m_channelC).GetFactorHOLDdB();
+    float holdLevelR = m_levelData.GetLevel(m_channelR).GetFactorHOLDdB();
+    float holdLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorHOLDdB();
+    float holdLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorHOLDdB();
+
+    g.setColour(Colours::grey);
+    Path holdPath;
+    holdPath.startNewSubPath(levelOrig - leftMax * holdLevelL);
+    holdPath.lineTo(levelOrig - centerMax * holdLevelC);
+    holdPath.lineTo(levelOrig - rightMax * holdLevelR);
+    holdPath.lineTo(levelOrig - rightSurroundMax * holdLevelRS);
+    holdPath.lineTo(levelOrig - leftSurroundMax * holdLevelLS);
+    holdPath.lineTo(levelOrig - leftMax * holdLevelL);
+    g.strokePath(holdPath, PathStrokeType(1));
+
+    // peak values
     float peakLevelL = m_levelData.GetLevel(m_channelL).GetFactorPEAKdB();
     float peakLevelC = m_levelData.GetLevel(m_channelC).GetFactorPEAKdB();
     float peakLevelR = m_levelData.GetLevel(m_channelR).GetFactorPEAKdB();
@@ -97,7 +115,8 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     peakPath.lineTo(levelOrig - leftSurroundMax * peakLevelLS);
     peakPath.lineTo(levelOrig - leftMax * peakLevelL);
     g.strokePath(peakPath, PathStrokeType(3));
-    
+
+    // rms values
     float rmsLevelL = m_levelData.GetLevel(m_channelL).GetFactorRMSdB();
     float rmsLevelC = m_levelData.GetLevel(m_channelC).GetFactorRMSdB();
     float rmsLevelR = m_levelData.GetLevel(m_channelR).GetFactorRMSdB();
