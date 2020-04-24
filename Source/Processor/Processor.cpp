@@ -39,6 +39,8 @@ Processor::Processor() :
 	m_FFTdataPos = 0;
 	zeromem(m_FFTdata, sizeof(m_FFTdata));
 	m_pauseProcessing = false;
+	
+	setHoldTime(500);
 }
 
 Processor::~Processor()
@@ -48,6 +50,13 @@ Processor::~Processor()
 void Processor::setPauseProcessing(bool pause)
 {
 	m_pauseProcessing = pause;
+}
+
+void Processor::setHoldTime(int holdTimeMs)
+{
+	m_holdTimeMs = holdTimeMs;
+
+	startTimer(m_holdTimeMs);
 }
 
 void Processor::addListener(Listener *listener)
@@ -119,7 +128,10 @@ void Processor::handleMessage(const Message& message)
 				m_centiSecondBuffer.copyFrom(i, writePos, buffer.getReadPointer(i) + readPos, m_missingSamplesForCentiSecond);
 
 				// generate level data
-				m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond), m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond)));
+				auto peak = m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond);
+				auto rms = m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond);
+				auto hold = std::max(peak, m_level.GetLevel(i + 1).hold);
+				m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(peak, rms, hold));
 
 				// generate spectrum data
 				{
@@ -144,7 +156,7 @@ void Processor::handleMessage(const Message& message)
 					{
 						m_windowF.multiplyWithWindowingTable(m_FFTdata, fftSize);
 						m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
-						ProcessorSpectrumData::SpectrumBands spectrumBands;
+						ProcessorSpectrumData::SpectrumBands spectrumBands = m_spectrum.GetSpectrum(i);
 
 						spectrumBands.mindB = -100.0f;
 						spectrumBands.maxdB = 0.0f;
@@ -166,7 +178,8 @@ void Processor::handleMessage(const Message& message)
 							auto leveldB = jlimit(spectrumBands.mindB, spectrumBands.maxdB, Decibels::gainToDecibels(spectrumVal));
 							auto level = jmap(leveldB, spectrumBands.mindB, spectrumBands.maxdB, 0.0f, 1.0f);
 
-							spectrumBands.bands[j] = level;
+							spectrumBands.bandsPeak[j] = level;
+							spectrumBands.bandsHold[j] = std::max(level, spectrumBands.bandsHold[j]);
 						}
 
 						m_spectrum.SetSpectrum(i, spectrumBands);
@@ -344,7 +357,35 @@ void Processor::audioDeviceStopped()
 
 void Processor::BroadcastData(AbstractProcessorData *data)
 {
-
     for(Listener *l : m_callbackListeners)
         l->processingDataChanged(data);
+}
+
+void Processor::timerCallback()
+{
+	FlushHold();
+}
+
+void Processor::FlushHold()
+{
+	// clear level hold values
+	auto channelCount = m_level.GetChannelCount();
+	for (int i = 0; i < channelCount; ++i)
+	{
+		m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(0.0f, 0.0f, 0.0f));
+	}
+
+	// clear spectrum hold values	auto channelCount = m_level.GetChannelCount();
+	channelCount = m_spectrum.GetChannelCount();
+	for (int i = 0; i < channelCount; ++i)
+	{
+		ProcessorSpectrumData::SpectrumBands spectrumBands = m_spectrum.GetSpectrum(i);
+		for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count; ++j)
+		{
+			spectrumBands.bandsPeak[j] = 0.0f;
+			spectrumBands.bandsHold[j] = 0.0f;
+		}
+
+		m_spectrum.SetSpectrum(i, spectrumBands);
+	}
 }

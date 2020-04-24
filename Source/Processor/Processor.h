@@ -36,7 +36,8 @@ private:
 */
 class Processor :   public AudioProcessor,
 					public AudioIODeviceCallback,
-                    public MessageListener
+                    public MessageListener,
+                    public Timer
 {
 public:
     class Listener
@@ -53,7 +54,8 @@ public:
 
     //==============================================================================
     void setPauseProcessing(bool pause);
-    
+    void setHoldTime(int holdTimeMs);
+
     //==============================================================================
     void addListener(Listener *listener);
     void removeListener(Listener *listener);
@@ -92,8 +94,12 @@ public:
     //==============================================================================
     void handleMessage(const Message& message) override;
 
+    //==============================================================================
+    void timerCallback() override;
+
 private:
     void BroadcastData(AbstractProcessorData *data);
+    void FlushHold();
 
     ProcessorAudioSignalData    m_centiSecondBuffer;
 	ProcessorLevelData          m_level;
@@ -126,6 +132,8 @@ private:
     int                             m_FFTdataPos;
 
     bool                            m_pauseProcessing;
+
+    int                             m_holdTimeMs;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Processor)
 };

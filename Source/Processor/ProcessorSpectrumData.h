@@ -24,7 +24,10 @@ public:
         SpectrumBands()
         {
             for (int i = 0; i < count; ++i)
-                bands[i] = 0.0f;
+            {
+                bandsPeak[i] = 0.0f;
+                bandsHold[i] = 0.0f;
+            }
             mindB = 0.0f;
             maxdB = 0.0f;
             minFreq = 0.0f;
@@ -32,7 +35,8 @@ public:
             freqRes = 0.0f;
         };
         
-        float   bands[count];
+        float   bandsPeak[count];
+        float   bandsHold[count];
         float   mindB;
         float   maxdB;
         float   minFreq;
