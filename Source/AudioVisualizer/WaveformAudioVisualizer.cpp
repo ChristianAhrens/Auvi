@@ -112,21 +112,21 @@ void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     {
     case AbstractProcessorData::AudioSignal:
     {
-        ProcessorAudioSignalData* ld = static_cast<ProcessorAudioSignalData*>(data);
-        if (ld->GetChannelCount() > 0)
+        ProcessorAudioSignalData* sd = static_cast<ProcessorAudioSignalData*>(data);
+        if (sd->GetChannelCount() > 0)
         {
-            m_bufferTime = THUMB_TIME * ld->GetSampleRate();
+            m_bufferTime = THUMB_TIME * sd->GetSampleRate();
 
-            if (m_thumbnail->getNumChannels() != ld->GetChannelCount())
-                m_thumbnail->reset(ld->GetChannelCount(), ld->GetSampleRate());
-            if(m_buffer.getNumChannels() != ld->GetChannelCount())
-                m_buffer.setSize(ld->GetChannelCount(), m_bufferTime, false, true, true);
+            if (m_thumbnail->getNumChannels() != sd->GetChannelCount())
+                m_thumbnail->reset(sd->GetChannelCount(), sd->GetSampleRate());
+            if(m_buffer.getNumChannels() != sd->GetChannelCount())
+                m_buffer.setSize(sd->GetChannelCount(), m_bufferTime, false, true, true);
 
             for (int i = 0; i < m_buffer.getNumChannels(); ++i)
             {
-                m_buffer.copyFrom(i, m_bufferPos,  *ld, i, 0, ld->getNumSamples());
+                m_buffer.copyFrom(i, m_bufferPos,  *sd, i, 0, sd->getNumSamples());
             }
-            m_bufferPos += ld->getNumSamples();
+            m_bufferPos += sd->getNumSamples();
 
             if (m_bufferPos >= m_bufferTime)
                 m_bufferPos = 0;
