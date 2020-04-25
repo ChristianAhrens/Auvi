@@ -17,19 +17,19 @@
 //==============================================================================
 /*
 */
-class ScopeAudioVisualizer    : public AbstractAudioVisualizer
+class ScopeAudioVisualizer : public AbstractAudioVisualizer
 {
 public:
     ScopeAudioVisualizer();
     ~ScopeAudioVisualizer();
-    
+
     //==============================================================================
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
-    
+
     //==============================================================================
-    void processingDataChanged(AbstractProcessorData *data) override;
-    
+    void processingDataChanged(AbstractProcessorData* data) override;
+
     //==============================================================================
     VisuType getType() override;
     void processChangedChannelMapping() override;
@@ -37,13 +37,12 @@ public:
 private:
     unsigned long GetNextScopeTailPos();
     juce::Point<float> MapValToRect(float x, float y, Rectangle<float> rectF);
-    
+
     unsigned long   m_channelX;
     unsigned long   m_channelY;
     unsigned long   m_scopeTailLength;
     unsigned long   m_scopeTailPos;
-    std::vector<std::pair<double, double>>   m_scopeTailX;
-    std::vector<std::pair<double, double>>   m_scopeTailY;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScopeAudioVisualizer)
+    std::vector<std::pair<float, float>>   m_scopeTail;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ScopeAudioVisualizer)
 };
