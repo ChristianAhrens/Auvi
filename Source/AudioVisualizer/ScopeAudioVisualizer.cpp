@@ -89,6 +89,12 @@ void ScopeAudioVisualizer::paint(Graphics& g)
     g.drawText("X", Rectangle<float>((getWidth() - scopeDiameter) * 0.5f - outerMargin, getHeight() * 0.5f, float(outerMargin), float(outerMargin)), Justification::centred, true);
     g.drawText("Y", Rectangle<float>(getWidth() * 0.5f, (getHeight() - scopeDiameter) * 0.5f - outerMargin, float(outerMargin), float(outerMargin)), Justification::centred, true);
 
+    g.drawText("0", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
+    g.drawText("0.5", Rectangle<float>(scopeRect.getX() + 0.25f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
+    g.drawText("1", Rectangle<float>(scopeRect.getX(), scopeRect.getY() + 0.5f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
+    g.drawText("0.5", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY() + 0.25f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
+    g.drawText("1", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY(), float(outerMargin), float(outerMargin)), Justification::centred, true);
+
     // horizontal legend marker lines
     g.drawLine(Line<float>(scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter + 0.5 * legendMarkerSize,
         scopeRect.getX() + 0.125f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize));
@@ -127,7 +133,7 @@ void ScopeAudioVisualizer::paint(Graphics& g)
         path.lineTo(newPoint);
     }
     g.setColour(Colours::forestgreen);
-    g.strokePath(path, PathStrokeType(2));
+    g.strokePath(path, PathStrokeType(1));
 }
 
 void ScopeAudioVisualizer::resized()
