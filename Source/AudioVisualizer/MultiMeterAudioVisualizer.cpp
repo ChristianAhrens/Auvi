@@ -47,10 +47,12 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	auto visuAreaOrigY = float(outerMargin + visuAreaHeight);
 
 	// draw a simple baseline
-	g.setColour(Colours::white);
+    g.setColour(Colours::grey);
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
+    // draw 100 ... 0 dBFS
+    g.drawText("-100 ... 0 dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
 
-	// draw dummy meters
+	// draw meters
     auto meterSpacing = outerMargin * 0.5f;
     auto meterWidth = (visuArea.getWidth() - (m_levelData.GetChannelCount() + 1) * meterSpacing) / m_levelData.GetChannelCount();
     meterWidth = meterWidth > maxMeterWidth ? maxMeterWidth : meterWidth;

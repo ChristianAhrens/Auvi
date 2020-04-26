@@ -74,6 +74,10 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.drawText("LS", Rectangle<float>(visuAreaOrigX - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
     g.drawText("RS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 20.0f, visuAreaOrigY, 40.0f, float(outerMargin)), Justification::centred, true);
 
+    // draw 100 ... 0 dBFS
+    g.setColour(Colours::grey);
+    g.drawText("-100 ... 0 dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 117.0f, visuAreaOrigY - visuAreaHeight - 5.0f, 115.0f, float(outerMargin)), Justification::centred, true);
+
     // draw level indication lines
     juce::Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
     juce::Point<float> leftMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY - visuAreaHeight);

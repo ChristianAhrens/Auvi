@@ -96,6 +96,10 @@ void RtaAudioVisualizer::paint (Graphics& g)
         g.strokePath(path, PathStrokeType(3));
     }
 
+    // draw 100 ... 0 dBFS
+    g.setColour(Colours::grey);
+    g.drawText("-100 ... 0 dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
+
     g.setColour(Colours::white);
     // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz
     auto markerLineValues = std::vector<float>{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000};
