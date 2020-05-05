@@ -78,9 +78,9 @@ const String Processor::getName() const
 void Processor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
 {
 	m_sampleRate = sampleRate;
-	m_samplesPerCentiSecond = sampleRate * 0.01f;
-	m_bufferSize = maximumExpectedSamplesPerBlock;
-	m_missingSamplesForCentiSecond = int(m_samplesPerCentiSecond + 0.5f);
+    m_samplesPerCentiSecond = std::round(sampleRate * 0.01f);
+    m_bufferSize = maximumExpectedSamplesPerBlock;
+    m_missingSamplesForCentiSecond = static_cast<int>(m_samplesPerCentiSecond + 0.5f);
 	m_centiSecondBuffer.setSize(2, m_missingSamplesForCentiSecond, false, true, false);
 }
 
