@@ -101,8 +101,9 @@ void RtaAudioVisualizer::paint (Graphics& g)
     }
 
     // draw dBFS
+    g.setFont(12.0f);
     g.setColour(Colours::grey);
-    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 100.0f, float(outerMargin), 110.0f, float(outerMargin)), Justification::centred, true);
 
     g.setColour(Colours::white);
     // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz

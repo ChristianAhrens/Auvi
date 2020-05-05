@@ -106,6 +106,7 @@ void ScopeAudioVisualizer::paint(Graphics& g)
         scopeRect.getX() + 0.5f * scopeDiameter - 0.5 * legendMarkerSize, scopeRect.getY() + 0.875f * scopeDiameter));
 
     // legend values
+    g.setFont(12.0f);
     g.setColour(Colours::grey);
     g.drawText("0", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
     g.drawText("0.5", Rectangle<float>(scopeRect.getX() + 0.25f * scopeDiameter, scopeRect.getY() + 0.5f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);

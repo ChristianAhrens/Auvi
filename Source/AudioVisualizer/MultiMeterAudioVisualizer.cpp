@@ -54,7 +54,8 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
     g.setColour(Colours::grey);
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
     // draw dBFS
-    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
+    g.setFont(12.0f);
+    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 100.0f, float(outerMargin), 110.0f, float(outerMargin)), Justification::centred, true);
 
 	// draw meters
     auto meterSpacing = outerMargin * 0.5f;
