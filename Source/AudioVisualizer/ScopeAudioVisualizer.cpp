@@ -18,13 +18,8 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
 {
     showConfigButton(true);
 
-    m_channelX = 1;
-    m_channelY = 2;
-
     m_channelMapping = { {"X", m_channelX}, {"Y", m_channelY}, };
 
-    m_scopeTailLength = 50;
-    m_scopeTailPos = 0;
     m_scopeTail.resize(m_scopeTailLength);
 }
 
@@ -117,25 +112,44 @@ void ScopeAudioVisualizer::paint(Graphics& g)
     g.drawText("0.5", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY() + 0.25f * scopeDiameter, float(outerMargin), float(outerMargin)), Justification::centred, true);
     g.drawText("1", Rectangle<float>(scopeRect.getX() + 0.5f * scopeDiameter, scopeRect.getY(), float(outerMargin), float(outerMargin)), Justification::centred, true);
 
-    // scope curve
-    juce::Point<float> newPoint = MapValToRect(m_scopeTail.at(m_scopeTailPos).first, m_scopeTail.at(m_scopeTailPos).second, scopeRect);
-    Path path;
-    path.startNewSubPath(newPoint);
-    unsigned long pos = m_scopeTailPos + 1;
+    //// scope curve
+    //juce::Point<float> newPoint = MapValToRect(m_scopeTail.at(m_scopeTailPos).first, m_scopeTail.at(m_scopeTailPos).second, scopeRect);
+    //Path path;
+    //path.startNewSubPath(newPoint);
+    //unsigned long pos = m_scopeTailPos + 1;
+    //for (unsigned long i = 0; i < m_scopeTailLength; ++i)
+    //{
+    //    if (pos < m_scopeTailLength - 1)
+    //        pos++;
+    //    else if (pos == m_scopeTailLength - 1)
+    //        pos = 0;
+    //    else
+    //        pos = 0;
+    //
+    //    newPoint = MapValToRect(m_scopeTail.at(pos).first, m_scopeTail.at(pos).second, scopeRect);
+    //    path.lineTo(newPoint);
+    //}
+    //g.setColour(Colours::forestgreen);
+    //g.strokePath(path, PathStrokeType(1));
+
+    // scope pointcloud
+    g.setColour(Colours::forestgreen);
+    juce::RectangleList<float> rectangles;
+    unsigned long pos = m_scopeTailPos;
+    juce::Point<float> newPoint;
     for (unsigned long i = 0; i < m_scopeTailLength; ++i)
     {
+        newPoint = MapValToRect(m_scopeTail.at(pos).first, m_scopeTail.at(pos).second, scopeRect);
+        rectangles.add(newPoint.getX(), newPoint.getY(), m_dotDiameter, m_dotDiameter);
+
         if (pos < m_scopeTailLength - 1)
             pos++;
         else if (pos == m_scopeTailLength - 1)
             pos = 0;
         else
             pos = 0;
-
-        newPoint = MapValToRect(m_scopeTail.at(pos).first, m_scopeTail.at(pos).second, scopeRect);
-        path.lineTo(newPoint);
     }
-    g.setColour(Colours::forestgreen);
-    g.strokePath(path, PathStrokeType(1));
+    g.fillRectList(rectangles);
 }
 
 void ScopeAudioVisualizer::resized()
@@ -170,9 +184,13 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
             
             auto minmaxX = block.getSingleChannelBlock(m_channelX-1).findMinAndMax();
             auto maxX = std::fabs(minmaxX.getStart()) > std::fabs(minmaxX.getEnd()) ? minmaxX.getStart() : minmaxX.getEnd();
+            //auto maxXdB = jlimit(m_mindB, m_maxdB, Decibels::gainToDecibels(maxX));
+            //maxXdB = jmap(maxXdB, m_mindB, m_maxdB, m_min, m_max);
 
             auto minmaxY = block.getSingleChannelBlock(m_channelY-1).findMinAndMax();
             auto maxY = std::fabs(minmaxY.getStart()) > std::fabs(minmaxY.getEnd()) ? minmaxY.getStart() : minmaxY.getEnd();
+            //auto maxYdB = jlimit(m_mindB, m_maxdB, Decibels::gainToDecibels(maxY));
+            //maxYdB = jmap(maxYdB, m_mindB, m_maxdB, m_min, m_max);
 
             unsigned long iter = GetNextScopeTailPos();
             m_scopeTail[iter] = std::make_pair(maxX, maxY);
