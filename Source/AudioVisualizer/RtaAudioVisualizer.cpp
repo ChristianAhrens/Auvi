@@ -8,8 +8,12 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "RtaAudioVisualizer.h"
+
+#include "../utils.hpp"
+
+namespace Auvi
+{
 
 //==============================================================================
 RtaAudioVisualizer::RtaAudioVisualizer()
@@ -96,9 +100,9 @@ void RtaAudioVisualizer::paint (Graphics& g)
         g.strokePath(path, PathStrokeType(3));
     }
 
-    // draw 100 ... 0 dBFS
+    // draw dBFS
     g.setColour(Colours::grey);
-    g.drawText("-100 ... 0 dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
+    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
 
     g.setColour(Colours::white);
     // draw marker lines 10Hz, 100Hz, 1000Hz, 10000Hz
@@ -172,4 +176,6 @@ void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     default:
         break;
     }
+}
+
 }

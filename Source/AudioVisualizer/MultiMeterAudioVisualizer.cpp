@@ -8,8 +8,12 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "MultiMeterAudioVisualizer.h"
+
+#include "../utils.hpp"
+
+namespace Auvi
+{
 
 //==============================================================================
 MultiMeterAudioVisualizer::MultiMeterAudioVisualizer()
@@ -49,8 +53,8 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	// draw a simple baseline
     g.setColour(Colours::grey);
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
-    // draw 100 ... 0 dBFS
-    g.drawText("-100 ... 0 dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
+    // draw dBFS
+    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 115.0f, float(outerMargin), 115.0f, float(outerMargin)), Justification::centred, true);
 
 	// draw meters
     auto meterSpacing = outerMargin * 0.5f;
@@ -116,4 +120,6 @@ void MultiMeterAudioVisualizer::processingDataChanged(AbstractProcessorData *dat
         default:
             break;
     }
+}
+
 }

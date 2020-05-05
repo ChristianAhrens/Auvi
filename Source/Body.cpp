@@ -21,6 +21,9 @@
 #include "AudioVisualizer/WaterfallAudioVisualizer.h"
 #include "AudioVisualizer/WaveformAudioVisualizer.h"
 
+namespace Auvi
+{
+
 //==============================================================================
 Body::Body()
 {
@@ -171,4 +174,6 @@ const std::set<AbstractAudioVisualizer::VisuType> Body::getActiveVisuTypes()
 	}
 
 	return activeVisuTypes;
+}
+
 }

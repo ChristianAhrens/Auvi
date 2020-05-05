@@ -12,6 +12,9 @@
 #include "MainComponent.h"
 #include "CustomLookAndFeel.h"
 
+namespace Auvi
+{
+
 //==============================================================================
 class AuviApplication  : public JUCEApplication
 {
@@ -106,6 +109,8 @@ private:
     std::unique_ptr<MainWindow> mainWindow;
 };
 
+}
+
 //==============================================================================
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION (AuviApplication)
+START_JUCE_APPLICATION (Auvi::AuviApplication)

@@ -1,5 +1,8 @@
 #include "CustomLookAndFeel.h"
 
+namespace Auvi
+{
+
 CustomLookAndFeel::CustomLookAndFeel()
 {
 	setColour(ColourScheme::windowBackground, Colours::darkgrey);
@@ -68,4 +71,6 @@ void CustomLookAndFeel::drawButtonBackground(Graphics& g,
 
     g.setColour(baseColour);
 	g.fillRoundedRectangle(bounds, 0);
+}
+
 }

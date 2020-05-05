@@ -8,10 +8,12 @@
 
 #include "MainComponent.h"
 
-#include "utils.hpp"
-#include "Header.h"
-#include "Footer.h"
 #include "Processor/Processor.h"
+
+#include "utils.hpp"
+
+namespace Auvi
+{
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -57,7 +59,7 @@ void MainComponent::resized()
     if(m_body)
         m_body->setPortrait(isPortrait);
     
-    auto safety = getDeviceSafetyMargins();
+    auto safety = Auvi::utils::getDeviceSafetyMargins();
 	
 	FlexBox fb;
 	if(isPortrait)
@@ -174,4 +176,6 @@ VisuSelectComponent* MainComponent::getVisuConfigSelect()
 		return m_visuConfig.get();
 	else
 		return nullptr;
+}
+
 }

@@ -11,6 +11,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+namespace Auvi
+{
+
 //==============================================================================
 Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
@@ -162,4 +165,6 @@ void Header::buttonClicked(Button* button)
             parentListener->onPauseProcessing(m_stopProcessing->getToggleState());
         }
     }
+}
+
 }

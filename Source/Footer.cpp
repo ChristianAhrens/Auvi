@@ -12,6 +12,9 @@
 #include "Footer.h"
 #include "AudioVisualizer/AbstractAudioVisualizer.h"
 
+namespace Auvi
+{
+
 //==============================================================================
 Footer::Footer(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAreaRight)
 {
@@ -114,4 +117,6 @@ void Footer::buttonClicked(Button* button)
 			resized();
 		}
 	}
+}
+
 }

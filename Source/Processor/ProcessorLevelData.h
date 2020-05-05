@@ -12,6 +12,9 @@
 
 #include "AbstractProcessorData.h"
 
+namespace Auvi
+{
+
 class ProcessorLevelData : public AbstractProcessorData
 {
 public:
@@ -73,3 +76,5 @@ public:
 private:
     std::map<unsigned long, LevelVal>    m_levelMap;
 };
+
+}

@@ -12,6 +12,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+namespace Auvi
+{
+
 class AbstractProcessorData
 {
 public:
@@ -34,3 +37,5 @@ public:
 protected:
     Type    m_type;
 };
+
+}

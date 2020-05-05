@@ -12,6 +12,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+namespace Auvi
+{
 
 //==============================================================================
 AudioSelectComponent::AudioSelectComponent(AudioDeviceManager& deviceManager, int minAudioInputChannels, int maxAudioInputChannels, int minAudioOutputChannels, 
@@ -38,4 +40,6 @@ void AudioSelectComponent::paint (Graphics& g)
 void AudioSelectComponent::resized()
 {
 	AudioDeviceSelectorComponent::resized();
+}
+
 }

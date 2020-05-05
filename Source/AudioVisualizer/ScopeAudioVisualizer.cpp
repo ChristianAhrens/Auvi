@@ -8,9 +8,10 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
-
 #include "ScopeAudioVisualizer.h"
+
+namespace Auvi
+{
 
 //==============================================================================
 ScopeAudioVisualizer::ScopeAudioVisualizer()
@@ -205,4 +206,6 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
     default:
         break;
     }
+}
+
 }

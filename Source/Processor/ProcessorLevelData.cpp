@@ -10,6 +10,9 @@
 
 #include "ProcessorLevelData.h"
 
+namespace Auvi
+{
+
 ProcessorLevelData::ProcessorLevelData()
 {
     m_type = Level;
@@ -48,4 +51,6 @@ void ProcessorLevelData::SetChannelCount(unsigned long count)
 unsigned long ProcessorLevelData::GetChannelCount()
 {
     return m_levelMap.size();
+}
+
 }

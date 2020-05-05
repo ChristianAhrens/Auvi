@@ -12,6 +12,9 @@
 
 #include "AbstractProcessorData.h"
 
+namespace Auvi
+{
+
 class ProcessorSpectrumData : public AbstractProcessorData
 {
 public:
@@ -58,3 +61,5 @@ private:
     std::map<unsigned long, SpectrumBands>    m_spectrumsMap;
 
 };
+
+}

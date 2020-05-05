@@ -14,6 +14,9 @@
 
 #include "AbstractProcessorData.h"
 
+namespace Auvi
+{
+
 class ProcessorAudioSignalData :    public AbstractProcessorData,
                                     public AudioBuffer<float>
 {
@@ -31,3 +34,5 @@ private:
     unsigned long m_sampleRate;
     
 };
+
+}

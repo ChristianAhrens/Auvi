@@ -8,8 +8,10 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "WaterfallAudioVisualizer.h"
+
+namespace Auvi
+{
 
 //==============================================================================
 WaterfallAudioVisualizer::WaterfallAudioVisualizer()
@@ -69,4 +71,6 @@ void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data
     default:
         break;
     }
+}
+
 }

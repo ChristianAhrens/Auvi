@@ -8,8 +8,10 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "WaveformAudioVisualizer.h"
+
+namespace Auvi
+{
 
 constexpr int THUMB_RES = 512;
 constexpr int THUMB_TIME = 10;
@@ -144,4 +146,6 @@ void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
     default:
         break;
     }
+}
+
 }

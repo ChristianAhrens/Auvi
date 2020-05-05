@@ -10,6 +10,9 @@
 
 #include "ProcessorAudioSignalData.h"
 
+namespace Auvi
+{
+
 ProcessorAudioSignalData::ProcessorAudioSignalData()
 {
     m_type = AudioSignal;
@@ -40,4 +43,6 @@ void ProcessorAudioSignalData::SetSampleRate(unsigned long rate)
 unsigned long ProcessorAudioSignalData::GetSampleRate()
 {
     return m_sampleRate;
+}
+
 }

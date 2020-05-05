@@ -13,6 +13,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
+namespace Auvi
+{
+
 //==============================================================================
 VisuSelectComponent::VisuSelectComponent()
 	: Component()
@@ -137,4 +140,6 @@ void VisuSelectComponent::buttonClicked(Button* button)
         {
         }
     }
+}
+
 }

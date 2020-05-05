@@ -10,6 +10,9 @@
 
 #include "AbstractProcessorData.h"
 
+namespace Auvi
+{
+
 AbstractProcessorData::AbstractProcessorData()
 {
     m_type = Invalid;
@@ -23,4 +26,6 @@ AbstractProcessorData::~AbstractProcessorData()
 AbstractProcessorData::Type AbstractProcessorData::GetDataType()
 {
     return m_type;
+}
+
 }

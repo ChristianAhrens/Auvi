@@ -2,6 +2,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+namespace Auvi
+{
+
 class CustomLookAndFeel : public LookAndFeel_V4
 {
 
@@ -16,3 +19,5 @@ public:
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };
+
+}

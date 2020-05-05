@@ -14,6 +14,9 @@
 #include "Footer.h"
 #include "Body.h"
 
+namespace Auvi
+{
+
 //==============================================================================
 /* Fwd declarations */
 class Processor;
@@ -61,3 +64,5 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
+
+}

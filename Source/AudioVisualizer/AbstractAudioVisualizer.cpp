@@ -8,8 +8,10 @@
   ==============================================================================
 */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "AbstractAudioVisualizer.h"
+
+namespace Auvi
+{
 
 //==============================================================================
 AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<std::string, int> mapping)
@@ -226,4 +228,6 @@ void AbstractAudioVisualizer::processChanges()
         m_changesPending = false;
         repaint();
     }
+}
+
 }

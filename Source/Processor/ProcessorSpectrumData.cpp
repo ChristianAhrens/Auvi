@@ -10,6 +10,9 @@
 
 #include "ProcessorSpectrumData.h"
 
+namespace Auvi
+{
+
 ProcessorSpectrumData::ProcessorSpectrumData()
 {
     m_type = Spectrum;
@@ -48,4 +51,6 @@ void ProcessorSpectrumData::SetChannelCount(unsigned long count)
 unsigned long ProcessorSpectrumData::GetChannelCount()
 {
     return m_spectrumsMap.size();
+}
+
 }

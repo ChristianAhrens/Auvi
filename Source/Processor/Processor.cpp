@@ -8,11 +8,12 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "Processor.h"
-#include "ProcessorLevelData.h"
-#include "ProcessorSpectrumData.h"
+
+#include "../utils.hpp"
+
+namespace Auvi
+{
 
 //==============================================================================
 AudioBufferMessage::AudioBufferMessage(AudioBuffer<float>& buffer)
@@ -32,14 +33,14 @@ const AudioBuffer<float>& AudioBufferMessage::getAudioBuffer() const
 
 //==============================================================================
 Processor::Processor() :
-    AudioProcessor(), 
-	m_fwdFFT(fftOrder), 
+	AudioProcessor(),
+	m_fwdFFT(fftOrder),
 	m_windowF(fftSize, dsp::WindowingFunction<float>::hann)
 {
 	m_FFTdataPos = 0;
 	zeromem(m_FFTdata, sizeof(m_FFTdata));
 	m_pauseProcessing = false;
-	
+
 	setHoldTime(500);
 }
 
@@ -59,28 +60,28 @@ void Processor::setHoldTime(int holdTimeMs)
 	startTimer(m_holdTimeMs);
 }
 
-void Processor::addListener(Listener *listener)
+void Processor::addListener(Listener* listener)
 {
-    m_callbackListeners.add(listener);
+	m_callbackListeners.add(listener);
 }
 
-void Processor::removeListener(Listener *listener)
+void Processor::removeListener(Listener* listener)
 {
-    m_callbackListeners.remove(m_callbackListeners.indexOf(listener));
+	m_callbackListeners.remove(m_callbackListeners.indexOf(listener));
 }
 
 //==============================================================================
 const String Processor::getName() const
 {
-    return m_Name;
+	return m_Name;
 }
 
-void Processor::prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock)
+void Processor::prepareToPlay(double sampleRate, int maximumExpectedSamplesPerBlock)
 {
 	m_sampleRate = sampleRate;
-    m_samplesPerCentiSecond = std::round(sampleRate * 0.01f);
-    m_bufferSize = maximumExpectedSamplesPerBlock;
-    m_missingSamplesForCentiSecond = static_cast<int>(m_samplesPerCentiSecond + 0.5f);
+	m_samplesPerCentiSecond = std::round(sampleRate * 0.01f);
+	m_bufferSize = maximumExpectedSamplesPerBlock;
+	m_missingSamplesForCentiSecond = static_cast<int>(m_samplesPerCentiSecond + 0.5f);
 	m_centiSecondBuffer.setSize(2, m_missingSamplesForCentiSecond, false, true, false);
 }
 
@@ -131,7 +132,7 @@ void Processor::handleMessage(const Message& message)
 				auto peak = m_centiSecondBuffer.getMagnitude(i, 0, m_samplesPerCentiSecond);
 				auto rms = m_centiSecondBuffer.getRMSLevel(i, 0, m_samplesPerCentiSecond);
 				auto hold = std::max(peak, m_level.GetLevel(i + 1).hold);
-				m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(peak, rms, hold));
+				m_level.SetLevel(i + 1, ProcessorLevelData::LevelVal(peak, rms, hold, Auvi::utils::getGlobalMindB()));
 
 				// generate spectrum data
 				{
@@ -158,8 +159,8 @@ void Processor::handleMessage(const Message& message)
 						m_fwdFFT.performFrequencyOnlyForwardTransform(m_FFTdata);
 						ProcessorSpectrumData::SpectrumBands spectrumBands = m_spectrum.GetSpectrum(i);
 
-						spectrumBands.mindB = -100.0f;
-						spectrumBands.maxdB = 0.0f;
+						spectrumBands.mindB = Auvi::utils::getGlobalMindB();
+						spectrumBands.maxdB = Auvi::utils::getGlobalMaxdB();
 
 						spectrumBands.minFreq = m_sampleRate / ProcessorSpectrumData::SpectrumBands::count;
 						spectrumBands.maxFreq = m_sampleRate / 2;
@@ -170,7 +171,7 @@ void Processor::handleMessage(const Message& message)
 						for (int j = 0; j < ProcessorSpectrumData::SpectrumBands::count && spectrumPos < fftSize; ++j)
 						{
 							float spectrumVal = 0;
-							
+
 							for (int k = 0; k < spectrumStepWidth; ++k, ++spectrumPos)
 								spectrumVal += m_FFTdata[spectrumPos];
 							spectrumVal = spectrumVal / spectrumStepWidth;
@@ -223,68 +224,68 @@ void Processor::handleMessage(const Message& message)
 
 double Processor::getTailLengthSeconds() const
 {
-    /*dbg*/return 0.0;
+	/*dbg*/return 0.0;
 }
 
 bool Processor::acceptsMidi() const
 {
-    return false;
+	return false;
 }
 
 bool Processor::producesMidi() const
 {
-    return false;
+	return false;
 }
 
 AudioProcessorEditor* Processor::createEditor()
 {
-    /*dbg*/return nullptr;
+	/*dbg*/return nullptr;
 }
 
 bool Processor::hasEditor() const
 {
-    /*dbg*/return false;
+	/*dbg*/return false;
 }
 
 int Processor::getNumPrograms()
 {
-    /*dbg*/return 0;
+	/*dbg*/return 0;
 }
 
 int Processor::getCurrentProgram()
 {
-    /*dbg*/return 0;
+	/*dbg*/return 0;
 }
 
-void Processor::setCurrentProgram (int index)
+void Processor::setCurrentProgram(int index)
 {
-    /*dbg*/ignoreUnused(index);
+	/*dbg*/ignoreUnused(index);
 }
 
-const String Processor::getProgramName (int index)
+const String Processor::getProgramName(int index)
 {
-    /*dbg*/ignoreUnused(index);
-    /*dbg*/return String();
+	/*dbg*/ignoreUnused(index);
+	/*dbg*/return String();
 }
 
-void Processor::changeProgramName (int index, const String& newName)
+void Processor::changeProgramName(int index, const String& newName)
 {
-    /*dbg*/ignoreUnused(index);
-    /*dbg*/ignoreUnused(newName);
+	/*dbg*/ignoreUnused(index);
+	/*dbg*/ignoreUnused(newName);
 }
 
-void Processor::getStateInformation (juce::MemoryBlock& destData)
+void Processor::getStateInformation(juce::MemoryBlock& destData)
 {
-    /*dbg*/ignoreUnused(destData);
+	/*dbg*/ignoreUnused(destData);
 }
 
-void Processor::setStateInformation (const void* data, int sizeInBytes)
+void Processor::setStateInformation(const void* data, int sizeInBytes)
 {
-    /*dbg*/ignoreUnused(data);
-    /*dbg*/ignoreUnused(sizeInBytes);
+	/*dbg*/ignoreUnused(data);
+	/*dbg*/ignoreUnused(sizeInBytes);
 }
 
-void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInputChannels, 
+void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInputChannels,
 	float** outputChannelData, int numOutputChannels, int numSamples)
 {
 	ignoreUnused(outputChannelData);
@@ -336,15 +337,15 @@ void Processor::audioDeviceIOCallback(const float** inputChannelData, int numInp
 		}
 	}
 
-    AudioBuffer<float> newAudioBuffer(m_processorChannels, numActiveChans, numSamples);
-    MidiBuffer newMidiBuffer;
-    
+	AudioBuffer<float> newAudioBuffer(m_processorChannels, numActiveChans, numSamples);
+	MidiBuffer newMidiBuffer;
+
 	processBlock(newAudioBuffer, newMidiBuffer);
 }
 
 void Processor::audioDeviceAboutToStart(AudioIODevice* device)
 {
-	if(device)
+	if (device)
 	{
 		prepareToPlay(device->getCurrentSampleRate(), device->getCurrentBufferSizeSamples());
 	}
@@ -355,10 +356,10 @@ void Processor::audioDeviceStopped()
 	releaseResources();
 }
 
-void Processor::BroadcastData(AbstractProcessorData *data)
+void Processor::BroadcastData(AbstractProcessorData* data)
 {
-    for(Listener *l : m_callbackListeners)
-        l->processingDataChanged(data);
+	for (Listener* l : m_callbackListeners)
+		l->processingDataChanged(data);
 }
 
 void Processor::timerCallback()
@@ -389,3 +390,5 @@ void Processor::FlushHold()
 		m_spectrum.SetSpectrum(i, spectrumBands);
 	}
 }
+
+} // namespace Auvi
