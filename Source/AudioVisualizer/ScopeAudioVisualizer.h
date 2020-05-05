@@ -41,7 +41,7 @@ private:
     unsigned long   m_channelX{ 1 };
     unsigned long   m_channelY{ 2 };
     int m_dotDiameter{ 2 };
-    unsigned long   m_scopeTailLength{ 70 };
+    unsigned long   m_scopeTailLength{ 150 };
     unsigned long   m_scopeTailPos{ 0 };
     std::vector<std::pair<float, float>>   m_scopeTail;
 
