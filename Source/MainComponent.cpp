@@ -10,6 +10,7 @@
 
 #include "Processor/Processor.h"
 
+#include "AppConfiguration.h"
 #include "utils.hpp"
 
 namespace Auvi
@@ -26,16 +27,39 @@ MainComponent::MainComponent()
     addAndMakeVisible(m_body.get());
     m_footer            = std::make_unique<Footer>();
 	addAndMakeVisible(m_footer.get());
-    
-    m_deviceManager.initialiseWithDefaultDevices(2, 0);
-#if JUCE_IOS
-    auto currentSetup = m_deviceManager.getAudioDeviceSetup();
-    currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to not sample data being delivered?
-    m_deviceManager.setAudioDeviceSetup(currentSetup, false);
-#endif
-    m_deviceManager.addAudioCallback(&m_processor);
 
-    m_body->setProcessor(&m_processor);
+	m_processor			= std::make_unique<Processor>();
+	m_deviceManager		= std::make_unique<AudioDeviceManager>();
+	m_configuration		= std::make_unique<AppConfiguration>();
+    
+	if(!m_configuration->isValid())
+	{
+		m_deviceManager->initialiseWithDefaultDevices(2, 0);
+#if JUCE_IOS
+		auto currentSetup = m_deviceManager->getAudioDeviceSetup();
+		currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to not sample data being delivered?
+		m_deviceManager->setAudioDeviceSetup(currentSetup, false);
+#endif
+
+		m_configuration->setConfigState(m_deviceManager->createStateXml());
+		m_configuration->setConfigState(createStateXml());
+		m_configuration->flush();
+	}
+	else
+	{
+		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::DEVMGR);
+		auto visuConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::GUI);
+
+		if (devMgrConfigState)
+			m_deviceManager->initialise(2, 0, devMgrConfigState.get(), true);
+
+		if (visuConfigState)
+			setStateXml(visuConfigState.get());
+	}
+
+    m_deviceManager->addAudioCallback(m_processor.get());
+
+    m_body->setProcessor(m_processor.get());
 
 	addMouseListener(this, true);
 
@@ -44,6 +68,20 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+}
+
+std::unique_ptr<XmlElement> MainComponent::createStateXml()
+{
+	XmlElement *guiXmlElement = new XmlElement(AppConfiguration::TagNames::GUI);
+	if (m_body)
+		guiXmlElement->addChildElement(m_body->createVisuStateXml());
+
+	return std::unique_ptr<XmlElement>(guiXmlElement);
+}
+
+bool MainComponent::setStateXml(XmlElement *stateXml)
+{
+	return false;
 }
 
 void MainComponent::paint (Graphics& g)
@@ -103,7 +141,7 @@ void MainComponent::mouseDown(const MouseEvent& event)
 
 void MainComponent::onPauseProcessing(bool pause)
 {
-	m_processor.setPauseProcessing(pause);
+	m_processor->setPauseProcessing(pause);
 }
 
 AudioSelectComponent* MainComponent::onOpenAudioConfigSelect()
@@ -117,9 +155,9 @@ AudioSelectComponent* MainComponent::onOpenAudioConfigSelect()
 		bool  				showMidiInputOptions = false;
 		bool  				showMidiOutputSelector = false;
 		bool  				showChannelsAsStereoPairs = false;
-		bool  				hideAdvancedOptionsWithButton = false;
+		bool  				hideAdvancedOptionsWithButton = true;
 
-		m_audioConfig = std::make_unique<AudioSelectComponent>(m_deviceManager,
+		m_audioConfig = std::make_unique<AudioSelectComponent>(m_deviceManager.get(),
 			minAudioInputChannels,
 			maxAudioInputChannels,
 			minAudioOutputChannels,

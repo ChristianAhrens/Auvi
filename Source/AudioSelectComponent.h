@@ -21,7 +21,7 @@ namespace Auvi
 class AudioSelectComponent    : public AudioDeviceSelectorComponent
 {
 public:
-    AudioSelectComponent(	AudioDeviceManager& deviceManager,
+    AudioSelectComponent(	AudioDeviceManager *deviceManager,
 							int minAudioInputChannels,
 							int maxAudioInputChannels,
 							int minAudioOutputChannels,

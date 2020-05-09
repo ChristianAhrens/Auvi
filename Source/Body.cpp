@@ -14,6 +14,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "AppConfiguration.h"
+
 #include "AudioVisualizer/TwoDFieldAudioVisualizer.h"
 #include "AudioVisualizer/MultiMeterAudioVisualizer.h"
 #include "AudioVisualizer/ScopeAudioVisualizer.h"
@@ -174,6 +176,21 @@ const std::set<AbstractAudioVisualizer::VisuType> Body::getActiveVisuTypes()
 	}
 
 	return activeVisuTypes;
+}
+
+XmlElement* Body::createVisuStateXml()
+{
+    auto activeVisuTypes = getActiveVisuTypes();
+
+    XmlElement* activeVisualizersElement = new XmlElement(AppConfiguration::TagNames::VISU);
+    for (auto i = AbstractAudioVisualizer::InvalidFirst + 1; i < AbstractAudioVisualizer::InvalidLast; ++i)
+    {
+        AbstractAudioVisualizer::VisuType visuType = static_cast<AbstractAudioVisualizer::VisuType>(i);
+        XmlElement* visualizerTypeElement = activeVisualizersElement->createNewChildElement(AbstractAudioVisualizer::VisuTypeToString(visuType));
+        visualizerTypeElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
+    }
+
+    return activeVisualizersElement;
 }
 
 }

@@ -16,9 +16,9 @@ namespace Auvi
 {
 
 //==============================================================================
-AudioSelectComponent::AudioSelectComponent(AudioDeviceManager& deviceManager, int minAudioInputChannels, int maxAudioInputChannels, int minAudioOutputChannels, 
+AudioSelectComponent::AudioSelectComponent(AudioDeviceManager *deviceManager, int minAudioInputChannels, int maxAudioInputChannels, int minAudioOutputChannels, 
 	int maxAudioOutputChannels, bool showMidiInputOptions, bool showMidiOutputSelector, bool showChannelsAsStereoPairs, bool hideAdvancedOptionsWithButton)
-	: AudioDeviceSelectorComponent(deviceManager, minAudioInputChannels, maxAudioInputChannels, minAudioOutputChannels, 
+	: AudioDeviceSelectorComponent(*deviceManager, minAudioInputChannels, maxAudioInputChannels, minAudioOutputChannels, 
 		maxAudioOutputChannels, showMidiInputOptions, showMidiOutputSelector, showChannelsAsStereoPairs, hideAdvancedOptionsWithButton)
 {
 }

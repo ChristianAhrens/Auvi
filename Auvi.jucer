@@ -27,6 +27,10 @@
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
+      <FILE id="RDP10t" name="AppConfiguration.cpp" compile="1" resource="0"
+            file="Source/AppConfiguration.cpp"/>
+      <FILE id="ga6iW7" name="AppConfiguration.h" compile="0" resource="0"
+            file="Source/AppConfiguration.h"/>
       <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
             file="Source/CustomLookAndFeel.cpp"/>
       <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
