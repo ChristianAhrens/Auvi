@@ -215,6 +215,24 @@ std::string AbstractAudioVisualizer::VisuTypeToString(VisuType type)
     }
 }
 
+AbstractAudioVisualizer::VisuType AbstractAudioVisualizer::StringToVisuType(std::string typeName)
+{
+    if (typeName == "MultiMeter")
+        return MultiMeter;
+    else if (typeName == "Scope")
+        return Scope;
+    else if (typeName == "TwoDField")
+        return TwoDField;
+    else if (typeName == "RTA")
+        return Rta;
+    else if (typeName == "Waterfall")
+        return Waterfall;
+    else if (typeName == "Waveform")
+        return Waveform;
+    else
+        return InvalidLast;
+}
+
 void AbstractAudioVisualizer::notifyChanges()
 {
     m_changesPending = true;

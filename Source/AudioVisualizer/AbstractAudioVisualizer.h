@@ -85,6 +85,7 @@ public:
     
     //==============================================================================
     static std::string VisuTypeToString(VisuType type);
+    static VisuType StringToVisuType(std::string typeName);
 
 protected:
     std::map<std::string, int> m_channelMapping;
