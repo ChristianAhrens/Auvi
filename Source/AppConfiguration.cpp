@@ -66,13 +66,13 @@ bool AppConfiguration::isValid()
 	else
 		return false;
 
-	//XmlElement* devMgrSectionElement = m_xml->getChildByName(AppConfiguration::TagNames::DEVMGR);
-	//if (devMgrSectionElement)
-	//{
-	//
-	//}
-	//else
-	//	return false;
+	XmlElement* devMgrSectionElement = m_xml->getChildByName(AppConfiguration::TagNames::DEVCFG);
+	if (devMgrSectionElement)
+	{
+	
+	}
+	else
+		return false;
 
 	return true;
 }
@@ -89,9 +89,9 @@ std::unique_ptr<XmlElement> AppConfiguration::getConfigState(StringRef tagName)
 {
 	if (m_xml)
 	{
-		XmlElement *tagNameElement = m_xml->getNextElementWithTagName(tagName);
+		XmlElement *tagNameElement = m_xml->getChildByName(tagName);
 		if (tagNameElement)
-			return std::unique_ptr<XmlElement>(tagNameElement);
+			return std::make_unique<XmlElement>(*tagNameElement);
 		else
 			return nullptr;
 	}
@@ -103,8 +103,13 @@ bool AppConfiguration::setConfigState(std::unique_ptr<XmlElement> stateXml)
 {
 	if (stateXml && m_xml)
 	{
-		XmlElement* memcpy = new XmlElement(*stateXml);
-		m_xml->addChildElement(memcpy);
+		XmlElement *existingChildElement = m_xml->getChildByName(stateXml->getTagName());
+
+		if(!existingChildElement)
+			m_xml->addChildElement(new XmlElement(*stateXml));
+		else
+			m_xml->replaceChildElement(existingChildElement, new XmlElement(*stateXml));
+
 		return true;
 	}
 		

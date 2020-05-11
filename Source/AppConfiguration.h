@@ -11,7 +11,7 @@ public:
 	struct TagNames {
 		constexpr static const char *GUI = { "GraphicalUserInterface" };
 		constexpr static const char *VISU = { "Visualizers" };
-		constexpr static const char* DEVMGR = { "DeviceManager_tbd" };
+		constexpr static const char* DEVCFG = { "DEVICESETUP" };
 	};
 
 public:

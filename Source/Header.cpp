@@ -150,7 +150,7 @@ void Header::buttonClicked(Button* button)
             auto asc = parentListener->getAudioConfigSelect();
 			if (asc)
                 asc->setVisible(false);
-			asc = parentListener->onOpenAudioConfigSelect();
+			asc = parentListener->onToggleAudioConfigSelect();
 			if (asc)
                 asc->setVisible(true);
 

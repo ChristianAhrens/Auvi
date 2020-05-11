@@ -82,9 +82,6 @@ void Body::resized()
 void Body::setProcessor(Processor *processor)
 {
     m_processor = processor;
-
-	std::set<AbstractAudioVisualizer::VisuType> defaultVisuTypes{ AbstractAudioVisualizer::VisuType::Scope };
-	onUpdateVisuTypes(defaultVisuTypes);
 }
 
 void Body::setPortrait(bool portrait)
@@ -97,14 +94,14 @@ void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTyp
     std::set<AbstractAudioVisualizer::VisuType> visuTypesToAdd, visuTypesToRemove;
     
     // clean up no longer used visualizers
-    for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>> &p : m_AudioVisualizers)
+    for(auto &p : m_AudioVisualizers)
     {
         if(visuTypes.count(p.first)==0)
             visuTypesToRemove.insert(p.first);
     }
     
     // create newly requested visualizers
-    for(AbstractAudioVisualizer::VisuType type : visuTypes)
+    for(auto type : visuTypes)
     {
         if(m_AudioVisualizers.count(type)==0)
             visuTypesToAdd.insert(type);
@@ -151,9 +148,9 @@ void Body::onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTyp
                     m_AudioVisualizers[type] = std::make_unique<WaveformAudioVisualizer>();
                     break;
 				case AbstractAudioVisualizer::VisuType::Scope:
-					// intentionally no break to run into default
-                default:
                     m_AudioVisualizers[type] = std::make_unique<ScopeAudioVisualizer>();
+                    break;
+                default:
                     break;
             }
             addAndMakeVisible(m_AudioVisualizers.at(type).get());
@@ -191,6 +188,25 @@ XmlElement* Body::createVisuStateXml()
     }
 
     return activeVisualizersElement;
+}
+
+bool Body::setVisuStateXml(XmlElement* stateXml)
+{
+    if (!stateXml || stateXml->getTagName() != AppConfiguration::TagNames::VISU)
+        return false;
+
+    std::set<AbstractAudioVisualizer::VisuType> visualizerTypes = {};
+    forEachXmlChildElement(*stateXml, visualizerChildElement)
+    {
+        auto visuType = AbstractAudioVisualizer::StringToVisuType(visualizerChildElement->getTagName().toStdString());
+        auto isActiveAttributeValue = visualizerChildElement->getBoolAttribute("isActive");
+        if (visuType < AbstractAudioVisualizer::InvalidLast && isActiveAttributeValue)
+            visualizerTypes.insert(visuType);
+    }
+
+    onUpdateVisuTypes(visualizerTypes);
+
+    return true;
 }
 
 }

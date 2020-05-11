@@ -40,17 +40,19 @@ public:
     std::unique_ptr<XmlElement> createStateXml();
     bool setStateXml(XmlElement* stateXml);
 
+    void updateConfiguration();
+
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
     void mouseDown(const MouseEvent& event) override;
     
     //==============================================================================
-    VisuSelectComponent * onOpenVisuConfigSelect() override;
+    VisuSelectComponent * onToggleVisuConfigSelect() override;
     VisuSelectComponent* getVisuConfigSelect() override;
 
 	//==============================================================================
-	AudioSelectComponent * onOpenAudioConfigSelect() override;
+	AudioSelectComponent * onToggleAudioConfigSelect() override;
     AudioSelectComponent* getAudioConfigSelect() override;
     void onPauseProcessing(bool pause) override;
 

@@ -36,7 +36,9 @@ public:
     
     void setProcessor(Processor *processor);
     void setPortrait(bool portrait);
+
     XmlElement *createVisuStateXml();
+    bool setVisuStateXml(XmlElement* stateXml);
     
     //==============================================================================
     void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;

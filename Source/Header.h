@@ -27,7 +27,7 @@ public:
     {
     public:
         virtual ~Listener(){};
-        virtual AudioSelectComponent* onOpenAudioConfigSelect() = 0;
+        virtual AudioSelectComponent* onToggleAudioConfigSelect() = 0;
         virtual AudioSelectComponent* getAudioConfigSelect() = 0;
         virtual void onPauseProcessing(bool pause) = 0;
     };

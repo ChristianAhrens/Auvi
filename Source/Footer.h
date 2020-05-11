@@ -29,7 +29,7 @@ public:
     {
     public:
         virtual ~Listener(){};
-        virtual VisuSelectComponent* onOpenVisuConfigSelect() = 0;
+        virtual VisuSelectComponent* onToggleVisuConfigSelect() = 0;
         virtual VisuSelectComponent* getVisuConfigSelect() = 0;
     };
 

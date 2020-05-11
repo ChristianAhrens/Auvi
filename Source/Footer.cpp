@@ -110,7 +110,7 @@ void Footer::buttonClicked(Button* button)
             auto vsc = parentListener->getVisuConfigSelect();
 			if (vsc)
                 vsc->setVisible(false);
-            vsc = parentListener->onOpenVisuConfigSelect();
+            vsc = parentListener->onToggleVisuConfigSelect();
 			if (vsc)
                 vsc->setVisible(true);
 

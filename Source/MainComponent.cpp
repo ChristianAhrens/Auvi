@@ -31,23 +31,24 @@ MainComponent::MainComponent()
 	m_processor			= std::make_unique<Processor>();
 	m_deviceManager		= std::make_unique<AudioDeviceManager>();
 	m_configuration		= std::make_unique<AppConfiguration>();
+
+	m_deviceManager->addAudioCallback(m_processor.get());
+	m_body->setProcessor(m_processor.get());
     
 	if(!m_configuration->isValid())
 	{
 		m_deviceManager->initialiseWithDefaultDevices(2, 0);
 #if JUCE_IOS
 		auto currentSetup = m_deviceManager->getAudioDeviceSetup();
-		currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to not sample data being delivered?
+		currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to no sample data being delivered?
 		m_deviceManager->setAudioDeviceSetup(currentSetup, false);
 #endif
 
-		m_configuration->setConfigState(m_deviceManager->createStateXml());
-		m_configuration->setConfigState(createStateXml());
-		m_configuration->flush();
+		updateConfiguration();
 	}
 	else
 	{
-		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::DEVMGR);
+		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::DEVCFG);
 		auto visuConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::GUI);
 
 		if (devMgrConfigState)
@@ -57,9 +58,6 @@ MainComponent::MainComponent()
 			setStateXml(visuConfigState.get());
 	}
 
-    m_deviceManager->addAudioCallback(m_processor.get());
-
-    m_body->setProcessor(m_processor.get());
 
 	addMouseListener(this, true);
 
@@ -81,7 +79,23 @@ std::unique_ptr<XmlElement> MainComponent::createStateXml()
 
 bool MainComponent::setStateXml(XmlElement *stateXml)
 {
-	return false;
+	if (m_body)
+	{
+		XmlElement* visuXmlElement = stateXml->getChildByName(AppConfiguration::TagNames::VISU);
+		if (visuXmlElement)
+			return m_body->setVisuStateXml(new XmlElement(*visuXmlElement));
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
+void MainComponent::updateConfiguration()
+{
+	m_configuration->setConfigState(m_deviceManager->createStateXml());
+	m_configuration->setConfigState(createStateXml());
+	m_configuration->flush();
 }
 
 void MainComponent::paint (Graphics& g)
@@ -131,10 +145,10 @@ void MainComponent::mouseDown(const MouseEvent& event)
 {
 	// if audio config currently is opened and a click is performed outside of it, close it
 	if (m_audioConfig && (event.eventComponent->getComponentID() != String(Header::AUDIO_CONFIG_OPEN_ID)) && !m_audioConfig->getBounds().contains(event.getEventRelativeTo(this).getMouseDownPosition()))
-		onOpenAudioConfigSelect();
+		onToggleAudioConfigSelect();
 	// if visu config currently is opened and a click is performed outside of it, close it
 	if (m_visuConfig && (event.eventComponent->getComponentID() != String(Footer::VISU_CONFIG_OPEN_ID)) && !m_visuConfig->getBounds().contains(event.getEventRelativeTo(this).getMouseDownPosition()))
-		onOpenVisuConfigSelect();
+		onToggleVisuConfigSelect();
 
 	Component::mouseDown(event);
 }
@@ -144,7 +158,7 @@ void MainComponent::onPauseProcessing(bool pause)
 	m_processor->setPauseProcessing(pause);
 }
 
-AudioSelectComponent* MainComponent::onOpenAudioConfigSelect()
+AudioSelectComponent* MainComponent::onToggleAudioConfigSelect()
 {
 	if (!m_audioConfig)
 	{
@@ -173,6 +187,8 @@ AudioSelectComponent* MainComponent::onOpenAudioConfigSelect()
 	}
     else
     {
+		updateConfiguration();
+
         removeChildComponent(m_audioConfig.get());
         m_audioConfig = nullptr;
 
@@ -188,7 +204,7 @@ AudioSelectComponent* MainComponent::getAudioConfigSelect()
 		return nullptr;
 }
 
-VisuSelectComponent* MainComponent::onOpenVisuConfigSelect()
+VisuSelectComponent* MainComponent::onToggleVisuConfigSelect()
 {
 	if (!m_visuConfig)
 	{
@@ -201,6 +217,8 @@ VisuSelectComponent* MainComponent::onOpenVisuConfigSelect()
 	}
     else
     {
+		updateConfiguration();
+
         removeChildComponent(m_visuConfig.get());
         m_visuConfig = nullptr;
 
