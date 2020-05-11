@@ -69,7 +69,7 @@ bool AppConfiguration::isValid()
 	XmlElement* devMgrSectionElement = m_xml->getChildByName(AppConfiguration::TagNames::DEVCFG);
 	if (devMgrSectionElement)
 	{
-	
+		//todo: further parsing neccessary?
 	}
 	else
 		return false;
@@ -82,7 +82,26 @@ bool AppConfiguration::flush()
 	if (!m_xml)
 		return false;
 
-	return m_xml->writeTo(*m_file.get());
+	//DBG("#####################################");
+	//DBG(m_xml->getTagName());
+	//forEachXmlChildElement(*m_xml, childElement)
+	//{
+	//	DBG("- " + childElement->getTagName());
+	//	forEachXmlChildElement(*childElement, childchildElement)
+	//	{
+	//		DBG("-- " + childchildElement->getTagName());
+	//		forEachXmlChildElement(*childchildElement, childchildchildElement)
+	//		{
+	//			DBG("--- " + childchildchildElement->getTagName());
+	//		}
+	//	}
+	//}
+	//DBG("#####################################");
+
+	if (!m_xml->writeTo(*m_file.get()))
+		jassertfalse;
+
+	return true;
 }
 
 std::unique_ptr<XmlElement> AppConfiguration::getConfigState(StringRef tagName)
