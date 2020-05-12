@@ -8,10 +8,23 @@ namespace Auvi
 class AppConfiguration
 {
 public:
-	struct TagNames {
-		constexpr static const char *GUI = { "GraphicalUserInterface" };
-		constexpr static const char *VISU = { "Visualizers" };
-		constexpr static const char* DEVCFG = { "DEVICESETUP" };
+    enum TagID
+    {
+        GUI,
+        VISU,
+        DEVCFG
+    };
+    static String getTagName(TagID ID)
+    {
+        switch(ID)
+        {
+        case GUI:
+            return "GraphicalUserInterface";
+        case VISU:
+            return "Visualizers";
+        case DEVCFG:
+            return "DEVICESETUP";
+        }
 	};
 
 public:

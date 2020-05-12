@@ -56,17 +56,17 @@ bool AppConfiguration::isValid()
 	if (!m_xml->hasTagName(JUCEApplication::getInstance()->getApplicationName()))
 		return false;
 
-	XmlElement* guiSectionElement = m_xml->getChildByName(AppConfiguration::TagNames::GUI);
+	XmlElement* guiSectionElement = m_xml->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 	if (guiSectionElement)
 	{
-		XmlElement* visuSectionElement = guiSectionElement->getChildByName(AppConfiguration::TagNames::VISU);
+		XmlElement* visuSectionElement = guiSectionElement->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::VISU));
 		if (!visuSectionElement)
 			return false;
 	}
 	else
 		return false;
 
-	XmlElement* devMgrSectionElement = m_xml->getChildByName(AppConfiguration::TagNames::DEVCFG);
+	XmlElement* devMgrSectionElement = m_xml->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
 	if (devMgrSectionElement)
 	{
 		//todo: further parsing neccessary?

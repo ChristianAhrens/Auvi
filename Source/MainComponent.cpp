@@ -46,7 +46,7 @@ MainComponent::MainComponent()
 		// on first start and manual config would be required.
 		m_deviceManager->initialiseWithDefaultDevices(Auvi::utils::max_input_channels, 0);
 		auto audioDeviceSetup = m_deviceManager->getAudioDeviceSetup();
-		m_deviceManager->initialise(Auvi::utils::max_input_channels, 0, &XmlElement(AppConfiguration::TagNames::DEVCFG), false, {}, nullptr);
+        m_deviceManager->initialise(Auvi::utils::max_input_channels, 0, std::make_unique<XmlElement>(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG)).get(), false, {}, nullptr);
 #if JUCE_IOS
 		if(audioDeviceSetup.bufferSize < 512)
 			audioDeviceSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to no sample data being delivered?
@@ -60,8 +60,8 @@ MainComponent::MainComponent()
 	}
 	else
 	{
-		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::DEVCFG);
-		auto visuConfigState = m_configuration->getConfigState(AppConfiguration::TagNames::GUI);
+		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
+		auto visuConfigState = m_configuration->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 
 		if (devMgrConfigState)
 			m_deviceManager->initialise(2, 0, devMgrConfigState.get(), true);
@@ -82,7 +82,7 @@ MainComponent::~MainComponent()
 
 std::unique_ptr<XmlElement> MainComponent::createStateXml()
 {
-	auto guiXmlElement = std::make_unique<XmlElement>(AppConfiguration::TagNames::GUI);
+	auto guiXmlElement = std::make_unique<XmlElement>(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 	if (m_body)
 		guiXmlElement->addChildElement(m_body->createVisuStateXml().release());
 
@@ -93,7 +93,7 @@ bool MainComponent::setStateXml(XmlElement *stateXml)
 {
 	if (m_body)
 	{
-		auto visuXmlElement = stateXml->getChildByName(AppConfiguration::TagNames::VISU);
+		auto visuXmlElement = stateXml->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::VISU));
 		if (visuXmlElement)
 			return m_body->setVisuStateXml(visuXmlElement);
 		else
