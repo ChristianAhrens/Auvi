@@ -63,7 +63,6 @@ void RtaAudioVisualizer::paint (Graphics& g)
     {
         auto minPlotIdx = jlimit(0, static_cast<int>(m_plotPointsPeak.size() - 1), (minPlotFreq - m_minFreq) / m_freqRes);
         auto maxPlotIdx = jlimit(0, static_cast<int>(m_plotPointsPeak.size() - 1), (maxPlotFreq - m_minFreq) / m_freqRes);
-        auto plotIdxRange = maxPlotIdx - minPlotIdx;
 
         // hold curve
         auto path = Path{};
