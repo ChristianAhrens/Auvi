@@ -70,20 +70,20 @@ MainComponent::~MainComponent()
 
 std::unique_ptr<XmlElement> MainComponent::createStateXml()
 {
-	XmlElement *guiXmlElement = new XmlElement(AppConfiguration::TagNames::GUI);
+	auto guiXmlElement = std::make_unique<XmlElement>(AppConfiguration::TagNames::GUI);
 	if (m_body)
-		guiXmlElement->addChildElement(m_body->createVisuStateXml());
+		guiXmlElement->addChildElement(m_body->createVisuStateXml().release());
 
-	return std::unique_ptr<XmlElement>(guiXmlElement);
+	return std::make_unique<XmlElement>(*guiXmlElement);
 }
 
 bool MainComponent::setStateXml(XmlElement *stateXml)
 {
 	if (m_body)
 	{
-		XmlElement* visuXmlElement = stateXml->getChildByName(AppConfiguration::TagNames::VISU);
+		auto visuXmlElement = stateXml->getChildByName(AppConfiguration::TagNames::VISU);
 		if (visuXmlElement)
-			return m_body->setVisuStateXml(new XmlElement(*visuXmlElement));
+			return m_body->setVisuStateXml(visuXmlElement);
 		else
 			return false;
 	}

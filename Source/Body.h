@@ -37,7 +37,7 @@ public:
     void setProcessor(Processor *processor);
     void setPortrait(bool portrait);
 
-    XmlElement *createVisuStateXml();
+    std::unique_ptr<XmlElement> createVisuStateXml();
     bool setVisuStateXml(XmlElement* stateXml);
     
     //==============================================================================

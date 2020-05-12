@@ -175,11 +175,11 @@ const std::set<AbstractAudioVisualizer::VisuType> Body::getActiveVisuTypes()
 	return activeVisuTypes;
 }
 
-XmlElement* Body::createVisuStateXml()
+std::unique_ptr<XmlElement> Body::createVisuStateXml()
 {
     auto activeVisuTypes = getActiveVisuTypes();
 
-    XmlElement* activeVisualizersElement = new XmlElement(AppConfiguration::TagNames::VISU);
+    auto activeVisualizersElement = std::make_unique<XmlElement>(AppConfiguration::TagNames::VISU);
     for (auto i = AbstractAudioVisualizer::InvalidFirst + 1; i < AbstractAudioVisualizer::InvalidLast; ++i)
     {
         AbstractAudioVisualizer::VisuType visuType = static_cast<AbstractAudioVisualizer::VisuType>(i);
@@ -187,7 +187,7 @@ XmlElement* Body::createVisuStateXml()
         visualizerTypeElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
     }
 
-    return activeVisualizersElement;
+    return std::make_unique<XmlElement>(*activeVisualizersElement);
 }
 
 bool Body::setVisuStateXml(XmlElement* stateXml)

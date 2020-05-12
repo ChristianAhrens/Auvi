@@ -34,6 +34,8 @@ public:
 
 
 private:
+	void debugPrintXmlTree();
+
 	std::unique_ptr<File>		m_file;
 	std::unique_ptr<XmlElement>	m_xml{ nullptr };
 
