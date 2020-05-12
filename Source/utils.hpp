@@ -430,6 +430,8 @@ static int getGlobalMaxdB()
 {
     return dBRange::max;
 }
+
+constexpr int const max_input_channels = 512;
      
 }; // namespace utils
 }; // namespace Auvi

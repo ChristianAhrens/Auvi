@@ -37,12 +37,24 @@ MainComponent::MainComponent()
     
 	if(!m_configuration->isValid())
 	{
-		m_deviceManager->initialiseWithDefaultDevices(2, 0);
+		// Hacky bit of device manager initialization:
+		// We first intialize it to be able to get a valid device setup,
+		// then initialize with a dummy xml config to trigger the internal xml structure being reset
+		// and finally apply the original initialized device setup again to have the audio running correctly.
+		// If we did not do so, either the internal xml would not be present as long as the first configuration change was made
+		// and therefor no valid config file could be written by Auvi or the audio would not be running
+		// on first start and manual config would be required.
+		m_deviceManager->initialiseWithDefaultDevices(Auvi::utils::max_input_channels, 0);
+		auto audioDeviceSetup = m_deviceManager->getAudioDeviceSetup();
+		m_deviceManager->initialise(Auvi::utils::max_input_channels, 0, &XmlElement(AppConfiguration::TagNames::DEVCFG), false, {}, nullptr);
 #if JUCE_IOS
-		auto currentSetup = m_deviceManager->getAudioDeviceSetup();
-		currentSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to no sample data being delivered?
-		m_deviceManager->setAudioDeviceSetup(currentSetup, false);
+		if(audioDeviceSetup.bufferSize < 512)
+			audioDeviceSetup.bufferSize = 512; // temp. workaround for iOS where buffersizes <512 lead to no sample data being delivered?
 #endif
+		m_deviceManager->setAudioDeviceSetup(audioDeviceSetup, true);
+
+		// Default visualizer shall be our scope
+		m_body->onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType>{ AbstractAudioVisualizer::VisuType::Scope });
 
 		updateConfiguration();
 	}
@@ -163,7 +175,7 @@ AudioSelectComponent* MainComponent::onToggleAudioConfigSelect()
 	if (!m_audioConfig)
 	{
 		int  				minAudioInputChannels = 1;
-		int  				maxAudioInputChannels = INT_MAX;
+		int  				maxAudioInputChannels = Auvi::utils::max_input_channels;
 		int  				minAudioOutputChannels = 0;
 		int  				maxAudioOutputChannels = 0;
 		bool  				showMidiInputOptions = false;
@@ -217,10 +229,10 @@ VisuSelectComponent* MainComponent::onToggleVisuConfigSelect()
 	}
     else
     {
-		updateConfiguration();
-
         removeChildComponent(m_visuConfig.get());
         m_visuConfig = nullptr;
+
+		updateConfiguration();
 
         return nullptr;
     }
