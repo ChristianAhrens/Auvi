@@ -27,7 +27,7 @@ TwoDFieldAudioVisualizer::TwoDFieldAudioVisualizer()
     m_channelLS = 5;
     m_channelRS = 4;
 
-    m_channelMapping = { {"Left", m_channelL}, {"Center", m_channelC}, {"Right", m_channelR}, {"Left Surround", m_channelLS}, {"Right Surround", m_channelRS}, };
+    m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::L, m_channelL}, {AudioVisualizerConfigBase::MappingKey::C, m_channelC}, {AudioVisualizerConfigBase::MappingKey::R, m_channelR}, {AudioVisualizerConfigBase::MappingKey::LS, m_channelLS}, {AudioVisualizerConfigBase::MappingKey::RS, m_channelRS}, };
 }
 
 TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
@@ -155,11 +155,11 @@ AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()
 
 void TwoDFieldAudioVisualizer::processChangedChannelMapping()
 {
-    m_channelL = m_channelMapping.at("Left");
-    m_channelC = m_channelMapping.at("Center");
-    m_channelR = m_channelMapping.at("Right");
-    m_channelLS = m_channelMapping.at("Left Surround");
-    m_channelRS = m_channelMapping.at("Right Surround");
+    m_channelL = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::L);
+    m_channelC = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::C);
+    m_channelR = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::R);
+    m_channelLS = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::LS);
+    m_channelRS = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::RS);
 }
 
 void TwoDFieldAudioVisualizer::processingDataChanged(AbstractProcessorData *data)

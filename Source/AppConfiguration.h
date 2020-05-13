@@ -12,7 +12,8 @@ public:
     {
         GUI,
         VISU,
-        DEVCFG
+        DEVCFG,
+		VISUMAP,
     };
     static String getTagName(TagID ID)
     {
@@ -24,6 +25,10 @@ public:
             return "Visualizers";
         case DEVCFG:
             return "DEVICESETUP";
+		case VISUMAP:
+			return "VisualizerMapping";
+		default:
+			return "INVALID";
         }
 	};
 

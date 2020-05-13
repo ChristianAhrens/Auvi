@@ -19,7 +19,7 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
 {
     showConfigButton(true);
 
-    m_channelMapping = { {"X", m_channelX}, {"Y", m_channelY}, };
+    m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::X, m_channelX}, {AudioVisualizerConfigBase::MappingKey::Y, m_channelY}, };
 
     m_scopeTail.resize(m_scopeTailLength);
 }
@@ -166,8 +166,8 @@ AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
 
 void ScopeAudioVisualizer::processChangedChannelMapping()
 {
-    m_channelX = m_channelMapping.at("X");
-    m_channelY = m_channelMapping.at("Y");
+    m_channelX = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::X);
+    m_channelY = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::Y);
 }
 
 void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)

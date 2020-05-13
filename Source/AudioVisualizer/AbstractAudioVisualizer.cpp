@@ -10,14 +10,16 @@
 
 #include "AbstractAudioVisualizer.h"
 
+#include "../AppConfiguration.h"
+
 namespace Auvi
 {
 
 //==============================================================================
-AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<std::string, int> mapping)
+AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
 {
-    m_visualizerMappingSelects = std::map<std::string, std::unique_ptr<ComboBox>>{};
-    m_visualizerMappingLabels = std::map<std::string, std::unique_ptr<Label>>{};
+    m_visualizerMappingSelects = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>{};
+    m_visualizerMappingLabels = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>{};
 
     setChannelMapping(mapping);
 }
@@ -65,14 +67,14 @@ void AudioVisualizerConfigBase::resized()
     setSize(getWidth(), r.getY());
 }
 
-void AudioVisualizerConfigBase::setChannelMapping(std::map<std::string, int> mapping)
+void AudioVisualizerConfigBase::setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
 {
     m_visualizerMappingLabels.clear();
     m_visualizerMappingSelects.clear();
     for (auto NameChannelKV : mapping)
     {
         m_visualizerMappingLabels.insert(std::make_pair(NameChannelKV.first, std::make_unique<Label>()));
-        m_visualizerMappingLabels.at(NameChannelKV.first)->setText(NameChannelKV.first, dontSendNotification);
+        m_visualizerMappingLabels.at(NameChannelKV.first)->setText(this->getMappingString(NameChannelKV.first), dontSendNotification);
         addAndMakeVisible(m_visualizerMappingLabels.at(NameChannelKV.first).get());
         m_visualizerMappingSelects.insert(std::make_pair(NameChannelKV.first, std::make_unique<ComboBox>()));
         addAndMakeVisible(m_visualizerMappingSelects.at(NameChannelKV.first).get());
@@ -81,9 +83,9 @@ void AudioVisualizerConfigBase::setChannelMapping(std::map<std::string, int> map
     }
 }
 
-std::map<std::string, int> const AudioVisualizerConfigBase::getChannelMapping()
+std::map<AudioVisualizerConfigBase::MappingKey, int> const AudioVisualizerConfigBase::getChannelMapping()
 {
-    std::map<std::string, int> visualizerChannelMapping;
+    std::map<AudioVisualizerConfigBase::MappingKey, int> visualizerChannelMapping;
     for (auto iter = m_visualizerMappingSelects.cbegin(); iter != m_visualizerMappingSelects.cend(); iter++)
     {
         visualizerChannelMapping.insert(std::make_pair(iter->first, iter->second->getSelectedId()));
@@ -97,7 +99,7 @@ AbstractAudioVisualizer::AbstractAudioVisualizer()
 {
     m_changesPending = false;
 
-    m_channelMapping = std::map<std::string, int>{};
+    m_channelMapping = std::map<AudioVisualizerConfigBase::MappingKey, int>{};
 
     m_openConfig = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
     m_openConfig->setComponentID(VISUALIZER_CONFIG_OPEN_ID);
@@ -190,6 +192,38 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
         processChangedChannelMapping();
         m_visualizerConfig.reset();
     }
+}
+
+std::unique_ptr<XmlElement> AbstractAudioVisualizer::createStateXml()
+{
+    XmlElement mappingStateXml(AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP));
+    for (auto mapping : m_channelMapping)
+    {
+        XmlElement* mappingElement = mappingStateXml.createNewChildElement("M" + String(static_cast<int>(mapping.first)));
+        if (mappingElement)
+        {
+            mappingElement->setAttribute("name", AudioVisualizerConfigBase::getMappingString(mapping.first));
+            mappingElement->addTextElement(String(mapping.second));
+        }
+    }
+    return std::make_unique<XmlElement>(mappingStateXml);
+}
+
+bool AbstractAudioVisualizer::setStateXml(XmlElement* stateXml)
+{
+    if (!stateXml)
+        return false;
+
+    if (stateXml->getTagName() != AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))
+        return false;
+
+    forEachXmlChildElement(*stateXml, mappingElement)
+    {
+        if (m_channelMapping.count(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) > 0)
+            m_channelMapping.at(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) = mappingElement->getAllSubText().getIntValue();
+    }
+
+    return true;
 }
 
 std::string AbstractAudioVisualizer::VisuTypeToString(VisuType type)

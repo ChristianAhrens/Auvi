@@ -23,7 +23,48 @@ namespace Auvi
 class AudioVisualizerConfigBase : public Component
 {
 public:
-    AudioVisualizerConfigBase(std::map<std::string, int> mapping = std::map<std::string, int>{});
+    enum MappingKey
+    {
+        invalid,
+        L,
+        R,
+        C,
+        LS,
+        RS,
+        LFE,
+        X,
+        Y,
+        RTA
+    };
+    static std::string getMappingString(MappingKey key)
+    {
+        switch (key)
+        {
+            case L:
+                return "Left";
+            case R:
+                return "Right";
+            case C:
+                return "Center";
+            case LS:
+                return "Left Surround";
+            case RS:
+                return "Right Surround";
+            case LFE:
+                return "LFE";
+            case X:
+                return "X";
+            case Y:
+                return "Y";
+            case RTA:
+                return "Analyzer channel";
+            default:
+                return std::string{};
+        }
+    }
+
+public:
+    AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping = std::map<AudioVisualizerConfigBase::MappingKey, int>{});
     ~AudioVisualizerConfigBase();
 
     //==============================================================================
@@ -31,12 +72,12 @@ public:
     void resized() override;
 
     //==============================================================================
-    void setChannelMapping(std::map<std::string, int> mapping);
-    std::map<std::string, int> const getChannelMapping();
+    void setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping);
+    std::map<AudioVisualizerConfigBase::MappingKey, int> const getChannelMapping();
 
 private:
-    std::map<std::string, std::unique_ptr<Label>>       m_visualizerMappingLabels;
-    std::map<std::string, std::unique_ptr<ComboBox>>    m_visualizerMappingSelects;
+    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>       m_visualizerMappingLabels;
+    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>    m_visualizerMappingSelects;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };
@@ -68,6 +109,9 @@ public:
     void showConfigButton(bool enable);
     void notifyChanges();
     void processChanges();
+
+    virtual std::unique_ptr<XmlElement> createStateXml();
+    virtual bool setStateXml(XmlElement* stateXml);
     
     //==============================================================================
     void paint (Graphics&) override;
@@ -88,7 +132,7 @@ public:
     static VisuType StringToVisuType(std::string typeName);
 
 protected:
-    std::map<std::string, int> m_channelMapping;
+    std::map<AudioVisualizerConfigBase::MappingKey, int> m_channelMapping;
 
 private:
     void onOpenConfigClicked();

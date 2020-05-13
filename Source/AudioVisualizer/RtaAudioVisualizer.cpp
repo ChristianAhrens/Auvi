@@ -26,7 +26,7 @@ RtaAudioVisualizer::RtaAudioVisualizer()
     m_freqRes = 0;
 
     m_plotChannel = 1;
-    m_channelMapping = { {"Analyzer channel", m_plotChannel}, };
+    m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::RTA, m_plotChannel}, };
 }
 
 RtaAudioVisualizer::~RtaAudioVisualizer()
@@ -135,7 +135,7 @@ AbstractAudioVisualizer::VisuType RtaAudioVisualizer::getType()
 
 void RtaAudioVisualizer::processChangedChannelMapping()
 {
-    m_plotChannel = m_channelMapping.at("Analyzer channel");
+    m_plotChannel = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::RTA);
 }
 
 void RtaAudioVisualizer::processingDataChanged(AbstractProcessorData *data)

@@ -184,7 +184,16 @@ std::unique_ptr<XmlElement> Body::createVisuStateXml()
     {
         AbstractAudioVisualizer::VisuType visuType = static_cast<AbstractAudioVisualizer::VisuType>(i);
         XmlElement* visualizerTypeElement = activeVisualizersElement->createNewChildElement(AbstractAudioVisualizer::VisuTypeToString(visuType));
-        visualizerTypeElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
+        if(visualizerTypeElement)
+        {
+            visualizerTypeElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
+
+            if (m_AudioVisualizers.count(visuType) > 0)
+            {
+                auto mappingStateXml = m_AudioVisualizers.at(visuType)->createStateXml();
+                visualizerTypeElement->addChildElement(mappingStateXml.release());
+            }
+        }
     }
 
     return std::make_unique<XmlElement>(*activeVisualizersElement);
@@ -196,15 +205,25 @@ bool Body::setVisuStateXml(XmlElement* stateXml)
         return false;
 
     std::set<AbstractAudioVisualizer::VisuType> visualizerTypes = {};
+    std::map< AbstractAudioVisualizer::VisuType, XmlElement*> visualizerXmlElements;
     forEachXmlChildElement(*stateXml, visualizerChildElement)
     {
         auto visuType = AbstractAudioVisualizer::StringToVisuType(visualizerChildElement->getTagName().toStdString());
         auto isActiveAttributeValue = visualizerChildElement->getBoolAttribute("isActive");
         if (visuType < AbstractAudioVisualizer::InvalidLast && isActiveAttributeValue)
+        {
             visualizerTypes.insert(visuType);
+            visualizerXmlElements.insert(std::make_pair(visuType, visualizerChildElement->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))));
+        }
     }
 
     onUpdateVisuTypes(visualizerTypes);
+
+    for (auto mappingStateXml : visualizerXmlElements)
+    {
+        if (m_AudioVisualizers.count(mappingStateXml.first) > 0)
+            m_AudioVisualizers.at(mappingStateXml.first)->setStateXml(mappingStateXml.second);
+    }
 
     return true;
 }
