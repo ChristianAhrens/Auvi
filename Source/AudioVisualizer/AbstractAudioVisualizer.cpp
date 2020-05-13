@@ -223,6 +223,8 @@ bool AbstractAudioVisualizer::setStateXml(XmlElement* stateXml)
             m_channelMapping.at(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) = mappingElement->getAllSubText().getIntValue();
     }
 
+    processChangedChannelMapping();
+
     return true;
 }
 
