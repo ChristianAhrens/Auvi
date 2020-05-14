@@ -27,7 +27,7 @@ ProcessorAudioSignalData::~ProcessorAudioSignalData()
 
 void ProcessorAudioSignalData::SetChannelCount(unsigned long count)
 {
-    setSize(count, getNumSamples(), true, false, true);
+    setSize(static_cast<int>(count), getNumSamples(), true, false, true);
 }
 
 unsigned long ProcessorAudioSignalData::GetChannelCount()

@@ -117,12 +117,12 @@ void WaveformAudioVisualizer::processingDataChanged(AbstractProcessorData *data)
         ProcessorAudioSignalData* sd = static_cast<ProcessorAudioSignalData*>(data);
         if (sd->GetChannelCount() > 0)
         {
-            m_bufferTime = THUMB_TIME * sd->GetSampleRate();
+            m_bufferTime = static_cast<int>(THUMB_TIME * sd->GetSampleRate());
 
             if (m_thumbnail->getNumChannels() != sd->GetChannelCount())
-                m_thumbnail->reset(sd->GetChannelCount(), sd->GetSampleRate());
+                m_thumbnail->reset(static_cast<int>(sd->GetChannelCount()), sd->GetSampleRate());
             if(m_buffer.getNumChannels() != sd->GetChannelCount())
-                m_buffer.setSize(sd->GetChannelCount(), m_bufferTime, false, true, true);
+                m_buffer.setSize(static_cast<int>(sd->GetChannelCount()), m_bufferTime, false, true, true);
 
             for (int i = 0; i < m_buffer.getNumChannels(); ++i)
             {
