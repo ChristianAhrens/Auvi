@@ -25,7 +25,9 @@ class Processor;
 //==============================================================================
 /*
 */
-class Body : public Component, public VisuSelectComponent::Listener
+class Body :    public Component, 
+                public VisuSelectComponent::Listener, 
+                public AppConfiguration::XmlConfigurableElement
 {
 public:
     Body();
@@ -37,8 +39,8 @@ public:
     void setProcessor(Processor *processor);
     void setPortrait(bool portrait);
 
-    std::unique_ptr<XmlElement> createVisuStateXml();
-    bool setVisuStateXml(XmlElement* stateXml);
+    std::unique_ptr<XmlElement> createStateXml() override;
+    bool setStateXml(XmlElement* stateXml) override;
     
     //==============================================================================
     void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) override;

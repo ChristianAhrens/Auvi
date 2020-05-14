@@ -13,6 +13,7 @@
 #include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "../Processor/Processor.h"
+#include "../AppConfiguration.h"
 
 namespace Auvi
 {
@@ -85,7 +86,10 @@ private:
 //==============================================================================
 /*
 */
-class AbstractAudioVisualizer : public Component, public Processor::Listener, public DrawableButton::Listener
+class AbstractAudioVisualizer : public Component, 
+                                public Processor::Listener, 
+                                public DrawableButton::Listener, 
+                                public AppConfiguration::XmlConfigurableElement
 {
 public:
     enum VisuType
@@ -110,8 +114,8 @@ public:
     void notifyChanges();
     void processChanges();
 
-    virtual std::unique_ptr<XmlElement> createStateXml();
-    virtual bool setStateXml(XmlElement* stateXml);
+    std::unique_ptr<XmlElement> createStateXml() override;
+    bool setStateXml(XmlElement* stateXml) override;
     
     //==============================================================================
     void paint (Graphics&) override;

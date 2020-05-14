@@ -16,6 +16,15 @@ AppConfiguration::~AppConfiguration()
 {
 }
 
+AppConfiguration& AppConfiguration::getInstance() noexcept
+{
+	static AppConfiguration s_config{	File::getSpecialLocation(File::SpecialLocationType::userApplicationDataDirectory).getFullPathName() + "/"
+										+ JUCEApplication::getInstance()->getApplicationName() + "/"
+										+ JUCEApplication::getInstance()->getApplicationName() + ".config" };
+
+	return s_config;
+}
+
 bool AppConfiguration::exists()
 {
 	return m_file->exists();
@@ -92,6 +101,19 @@ bool AppConfiguration::flush()
 		jassertfalse;
 
 	return true;
+}
+
+void AppConfiguration::addListener(AppConfiguration::Listener* l)
+{
+	m_listeners.push_back(l);
+}
+
+void AppConfiguration::triggerListenersUpdate()
+{
+	for (auto l : m_listeners)
+		l->performConfigurationDump();
+
+	flush();
 }
 
 std::unique_ptr<XmlElement> AppConfiguration::getConfigState(StringRef tagName)

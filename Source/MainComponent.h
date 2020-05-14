@@ -20,7 +20,7 @@ namespace Auvi
 //==============================================================================
 /* Fwd declarations */
 class Processor;
-class AppConfiguration;
+//class AppConfiguration;
 
 
 //==============================================================================
@@ -30,17 +30,21 @@ class AppConfiguration;
 */
 class MainComponent   : public Component,
                         public Header::Listener,
-                        public Footer::Listener
+                        public Footer::Listener,
+                        public AppConfiguration::XmlConfigurableElement,
+                        public AppConfiguration::Listener
 {
 public:
     //==============================================================================
     MainComponent();
     ~MainComponent();
 
-    std::unique_ptr<XmlElement> createStateXml();
-    bool setStateXml(XmlElement* stateXml);
+    //==============================================================================
+    std::unique_ptr<XmlElement> createStateXml() override;
+    bool setStateXml(XmlElement* stateXml) override;
 
-    void updateConfiguration();
+    //==============================================================================
+    void performConfigurationDump() override;
 
     //==============================================================================
     void paint (Graphics&) override;
@@ -67,7 +71,7 @@ private:
 
     std::unique_ptr<Processor>					m_processor;
 	std::unique_ptr<AudioDeviceManager>			m_deviceManager;
-    std::unique_ptr<AppConfiguration>           m_configuration;
+    //std::unique_ptr<AppConfiguration>           m_configuration;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

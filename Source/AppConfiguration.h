@@ -8,6 +8,25 @@ namespace Auvi
 class AppConfiguration
 {
 public:
+	class XmlConfigurableElement
+	{
+	public:
+		virtual std::unique_ptr<XmlElement> createStateXml() = 0;
+		virtual bool setStateXml(XmlElement* stateXml) = 0;
+
+		void triggerConfigurationUpdate()
+		{
+			AppConfiguration::getInstance().triggerListenersUpdate();
+		};
+	};
+
+	class Listener
+	{
+	public:
+		virtual void performConfigurationDump() = 0;
+	};
+
+public:
     enum TagID
     {
         GUI,
@@ -33,29 +52,30 @@ public:
 	};
 
 public:
-	AppConfiguration(const File &file 
-		= File::getSpecialLocation(File::SpecialLocationType::userApplicationDataDirectory).getFullPathName() + "/" 
-		+ JUCEApplication::getInstance()->getApplicationName() + "/" 
-		+ JUCEApplication::getInstance()->getApplicationName() + ".config");
+	AppConfiguration(const File &file);
 	~AppConfiguration();
 
-	bool exists();
-	bool create();
-	bool initializeFromDisk();
+	static AppConfiguration& getInstance() noexcept;
+
 	bool isValid();
-	bool flush();
+
+	void addListener(AppConfiguration::Listener* l);
+	void triggerListenersUpdate();
 
 	std::unique_ptr<XmlElement> getConfigState(StringRef tagName);
 	bool setConfigState(std::unique_ptr<XmlElement> stateXml);
 
-	//==============================================================================
-
-
 private:
+	bool initializeFromDisk();
+	bool exists();
+	bool create();
+	bool flush();
 	void debugPrintXmlTree();
 
 	std::unique_ptr<File>		m_file;
 	std::unique_ptr<XmlElement>	m_xml{ nullptr };
+
+	std::vector<Listener*>		m_listeners;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AppConfiguration)
 };

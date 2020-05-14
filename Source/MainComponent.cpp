@@ -30,12 +30,13 @@ MainComponent::MainComponent()
 
 	m_processor			= std::make_unique<Processor>();
 	m_deviceManager		= std::make_unique<AudioDeviceManager>();
-	m_configuration		= std::make_unique<AppConfiguration>();
 
 	m_deviceManager->addAudioCallback(m_processor.get());
 	m_body->setProcessor(m_processor.get());
-    
-	if(!m_configuration->isValid())
+
+	auto& configuration = AppConfiguration::getInstance();
+	configuration.addListener(this);
+	if(!configuration.isValid())
 	{
 		// Hacky bit of device manager initialization:
 		// We first intialize it to be able to get a valid device setup,
@@ -56,12 +57,12 @@ MainComponent::MainComponent()
 		// Default visualizer shall be our scope
 		m_body->onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType>{ AbstractAudioVisualizer::VisuType::Scope });
 
-		updateConfiguration();
+		triggerConfigurationUpdate();
 	}
 	else
 	{
-		auto devMgrConfigState = m_configuration->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
-		auto visuConfigState = m_configuration->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
+		auto devMgrConfigState = configuration.getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
+		auto visuConfigState = configuration.getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 
 		if (devMgrConfigState)
 			m_deviceManager->initialise(2, 0, devMgrConfigState.get(), true);
@@ -84,7 +85,7 @@ std::unique_ptr<XmlElement> MainComponent::createStateXml()
 {
 	auto guiXmlElement = std::make_unique<XmlElement>(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 	if (m_body)
-		guiXmlElement->addChildElement(m_body->createVisuStateXml().release());
+		guiXmlElement->addChildElement(m_body->createStateXml().release());
 
 	return std::make_unique<XmlElement>(*guiXmlElement);
 }
@@ -95,7 +96,7 @@ bool MainComponent::setStateXml(XmlElement *stateXml)
 	{
 		auto visuXmlElement = stateXml->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::VISU));
 		if (visuXmlElement)
-			return m_body->setVisuStateXml(visuXmlElement);
+			return m_body->setStateXml(visuXmlElement);
 		else
 			return false;
 	}
@@ -103,11 +104,11 @@ bool MainComponent::setStateXml(XmlElement *stateXml)
 		return false;
 }
 
-void MainComponent::updateConfiguration()
+void MainComponent::performConfigurationDump()
 {
-	m_configuration->setConfigState(m_deviceManager->createStateXml());
-	m_configuration->setConfigState(createStateXml());
-	m_configuration->flush();
+	auto& configuration = AppConfiguration::getInstance();
+	configuration.setConfigState(m_deviceManager->createStateXml());
+	configuration.setConfigState(createStateXml());
 }
 
 void MainComponent::paint (Graphics& g)
@@ -199,7 +200,7 @@ AudioSelectComponent* MainComponent::onToggleAudioConfigSelect()
 	}
     else
     {
-		updateConfiguration();
+		triggerConfigurationUpdate();
 
         removeChildComponent(m_audioConfig.get());
         m_audioConfig = nullptr;
@@ -232,7 +233,7 @@ VisuSelectComponent* MainComponent::onToggleVisuConfigSelect()
         removeChildComponent(m_visuConfig.get());
         m_visuConfig = nullptr;
 
-		updateConfiguration();
+		triggerConfigurationUpdate();
 
         return nullptr;
     }

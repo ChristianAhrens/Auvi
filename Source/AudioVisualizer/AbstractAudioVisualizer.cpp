@@ -10,8 +10,6 @@
 
 #include "AbstractAudioVisualizer.h"
 
-#include "../AppConfiguration.h"
-
 namespace Auvi
 {
 
@@ -124,7 +122,6 @@ AbstractAudioVisualizer::~AbstractAudioVisualizer()
 {
 }
 
-
 void AbstractAudioVisualizer::showConfigButton(bool enable)
 {
     if(enable)
@@ -191,6 +188,8 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
         m_channelMapping = m_visualizerConfig->getChannelMapping();
         processChangedChannelMapping();
         m_visualizerConfig.reset();
+
+        triggerConfigurationUpdate();
     }
 }
 
