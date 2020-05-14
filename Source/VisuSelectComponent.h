@@ -30,6 +30,7 @@ public:
     {
     public:
         virtual ~Listener(){};
+        
         virtual void onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes) = 0;
 		virtual const std::set<AbstractAudioVisualizer::VisuType> getActiveVisuTypes() = 0;
     };

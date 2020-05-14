@@ -108,7 +108,7 @@ public:
 
 public:
     AbstractAudioVisualizer();
-    ~AbstractAudioVisualizer();
+    virtual ~AbstractAudioVisualizer();
 
     void showConfigButton(bool enable);
     void notifyChanges();

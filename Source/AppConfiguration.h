@@ -11,6 +11,8 @@ public:
 	class XmlConfigurableElement
 	{
 	public:
+        virtual ~XmlConfigurableElement(){};
+        
 		virtual std::unique_ptr<XmlElement> createStateXml() = 0;
 		virtual bool setStateXml(XmlElement* stateXml) = 0;
 
@@ -23,6 +25,8 @@ public:
 	class Listener
 	{
 	public:
+        virtual ~Listener(){};
+        
 		virtual void performConfigurationDump() = 0;
 	};
 
