@@ -92,8 +92,6 @@ bool AppConfiguration::flush()
 		return false;
 
 #ifdef DEBUG
-	DBG("#####################################");
-	DBG("###### saving xml tree to file ######");
 	debugPrintXmlTree();
 #endif
 
@@ -150,6 +148,8 @@ bool AppConfiguration::setConfigState(std::unique_ptr<XmlElement> stateXml)
 void AppConfiguration::debugPrintXmlTree()
 {
 	DBG("#####################################");
+	DBG("###### saving xml tree to file ######");
+	DBG("#####################################");
 	DBG(m_xml->getTagName());
 	forEachXmlChildElement(*m_xml, childElement)
 	{
@@ -171,10 +171,26 @@ void AppConfiguration::debugPrintXmlTree()
 				for (int i = 0; i < childchildchildElement->getNumAttributes(); ++i)
 					childchildchildDbgString += " " + childchildchildElement->getAttributeName(i) + "=" + childchildchildElement->getAttributeValue(i);
 				DBG(childchildchildDbgString);
+
+				forEachXmlChildElement(*childchildchildElement, childchildchildchildElement)
+				{
+					auto childchildchildchildDbgString = String("---- " + childchildchildchildElement->getTagName());
+					for (int i = 0; i < childchildchildchildElement->getNumAttributes(); ++i)
+						childchildchildchildDbgString += " " + childchildchildchildElement->getAttributeName(i) + "=" + childchildchildchildElement->getAttributeValue(i);
+					DBG(childchildchildchildDbgString);
+
+					forEachXmlChildElement(*childchildchildchildElement, childchildchildchildchildElement)
+					{
+						auto childchildchildchildchildDbgString = String("----- " + childchildchildchildchildElement->getTagName());
+						for (int i = 0; i < childchildchildchildchildElement->getNumAttributes(); ++i)
+							childchildchildchildchildDbgString += " " + childchildchildchildchildElement->getAttributeName(i) + "=" + childchildchildchildchildElement->getAttributeValue(i) + " value=" + childchildchildchildchildElement->getAllSubText();
+						DBG(childchildchildchildchildDbgString);
+					}
+				}
 			}
 		}
 	}
-	DBG("#####################################");
+	DBG("#####################################\n");
 }
 
 }
