@@ -27,7 +27,15 @@ TwoDFieldAudioVisualizer::TwoDFieldAudioVisualizer()
     m_channelLS = 5;
     m_channelRS = 4;
 
-    m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::L, m_channelL}, {AudioVisualizerConfigBase::MappingKey::C, m_channelC}, {AudioVisualizerConfigBase::MappingKey::R, m_channelR}, {AudioVisualizerConfigBase::MappingKey::LS, m_channelLS}, {AudioVisualizerConfigBase::MappingKey::RS, m_channelRS}, };
+    m_channelMapping = {
+        {AudioVisualizerConfigBase::MappingKey::L, m_channelL},
+        {AudioVisualizerConfigBase::MappingKey::C, m_channelC},
+        {AudioVisualizerConfigBase::MappingKey::R, m_channelR},
+        {AudioVisualizerConfigBase::MappingKey::LS, m_channelLS},
+        {AudioVisualizerConfigBase::MappingKey::RS, m_channelRS},
+    };
+
+    m_usesValuesInDB = true;
 }
 
 TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
@@ -81,7 +89,12 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     // draw dBFS
     g.setFont(12.0f);
     g.setColour(Colours::grey);
-    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 110.0f, visuAreaOrigY - visuAreaHeight - 5.0f, 110.0f, float(outerMargin)), Justification::centred, true);
+    String rangeText;
+    if (m_usesValuesInDB)
+        rangeText = String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS";
+    else
+        rangeText = "0 ... 1";
+    g.drawText(rangeText, Rectangle<float>(visuAreaOrigX + visuAreaWidth - 110.0f, visuAreaOrigY - visuAreaHeight - 5.0f, 110.0f, float(outerMargin)), Justification::centred, true);
 
     // draw level indication lines
     juce::Point<float> levelOrig(visuAreaOrigX + 0.5f*visuAreaWidth, visuAreaOrigY - 0.5f*visuAreaHeight);
@@ -92,11 +105,27 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     juce::Point<float> leftSurroundMax = levelOrig - juce::Point<float>(visuAreaOrigX, visuAreaOrigY);
 
     // hold values
-    float holdLevelL = m_levelData.GetLevel(m_channelL).GetFactorHOLDdB();
-    float holdLevelC = m_levelData.GetLevel(m_channelC).GetFactorHOLDdB();
-    float holdLevelR = m_levelData.GetLevel(m_channelR).GetFactorHOLDdB();
-    float holdLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorHOLDdB();
-    float holdLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorHOLDdB();
+    float holdLevelL  {0};
+    float holdLevelC  {0};
+    float holdLevelR  {0};
+    float holdLevelLS {0};
+    float holdLevelRS {0};
+    if (m_usesValuesInDB)
+    {
+        holdLevelL = m_levelData.GetLevel(m_channelL).GetFactorHOLDdB();
+        holdLevelC = m_levelData.GetLevel(m_channelC).GetFactorHOLDdB();
+        holdLevelR = m_levelData.GetLevel(m_channelR).GetFactorHOLDdB();
+        holdLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorHOLDdB();
+        holdLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorHOLDdB();
+    }
+    else
+    {
+        holdLevelL = m_levelData.GetLevel(m_channelL).hold;
+        holdLevelC = m_levelData.GetLevel(m_channelC).hold;
+        holdLevelR = m_levelData.GetLevel(m_channelR).hold;
+        holdLevelLS = m_levelData.GetLevel(m_channelLS).hold;
+        holdLevelRS = m_levelData.GetLevel(m_channelRS).hold;
+    }
 
     g.setColour(Colours::grey);
     Path holdPath;
@@ -109,11 +138,27 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.strokePath(holdPath, PathStrokeType(1));
 
     // peak values
-    float peakLevelL = m_levelData.GetLevel(m_channelL).GetFactorPEAKdB();
-    float peakLevelC = m_levelData.GetLevel(m_channelC).GetFactorPEAKdB();
-    float peakLevelR = m_levelData.GetLevel(m_channelR).GetFactorPEAKdB();
-    float peakLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorPEAKdB();
-    float peakLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorPEAKdB();
+    float peakLevelL  {0};
+    float peakLevelC  {0};
+    float peakLevelR  {0};
+    float peakLevelLS {0};
+    float peakLevelRS {0};
+    if (m_usesValuesInDB)
+    {
+        peakLevelL = m_levelData.GetLevel(m_channelL).GetFactorPEAKdB();
+        peakLevelC = m_levelData.GetLevel(m_channelC).GetFactorPEAKdB();
+        peakLevelR = m_levelData.GetLevel(m_channelR).GetFactorPEAKdB();
+        peakLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorPEAKdB();
+        peakLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorPEAKdB();
+    }
+    else
+    {
+        peakLevelL = m_levelData.GetLevel(m_channelL).peak;
+        peakLevelC = m_levelData.GetLevel(m_channelC).peak;
+        peakLevelR = m_levelData.GetLevel(m_channelR).peak;
+        peakLevelLS = m_levelData.GetLevel(m_channelLS).peak;
+        peakLevelRS = m_levelData.GetLevel(m_channelRS).peak;
+    }
 
     g.setColour(Colours::forestgreen.darker());
     Path peakPath;
@@ -126,11 +171,27 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.strokePath(peakPath, PathStrokeType(3));
 
     // rms values
-    float rmsLevelL = m_levelData.GetLevel(m_channelL).GetFactorRMSdB();
-    float rmsLevelC = m_levelData.GetLevel(m_channelC).GetFactorRMSdB();
-    float rmsLevelR = m_levelData.GetLevel(m_channelR).GetFactorRMSdB();
-    float rmsLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorRMSdB();
-    float rmsLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorRMSdB();
+    float rmsLevelL  {0};
+    float rmsLevelC  {0};
+    float rmsLevelR  {0};
+    float rmsLevelLS {0};
+    float rmsLevelRS {0};
+    if (m_usesValuesInDB)
+    {
+        rmsLevelL = m_levelData.GetLevel(m_channelL).GetFactorRMSdB();
+        rmsLevelC = m_levelData.GetLevel(m_channelC).GetFactorRMSdB();
+        rmsLevelR = m_levelData.GetLevel(m_channelR).GetFactorRMSdB();
+        rmsLevelLS = m_levelData.GetLevel(m_channelLS).GetFactorRMSdB();
+        rmsLevelRS = m_levelData.GetLevel(m_channelRS).GetFactorRMSdB();
+    }
+    else
+    {
+        rmsLevelL = m_levelData.GetLevel(m_channelL).rms;
+        rmsLevelC = m_levelData.GetLevel(m_channelC).rms;
+        rmsLevelR = m_levelData.GetLevel(m_channelR).rms;
+        rmsLevelLS = m_levelData.GetLevel(m_channelLS).rms;
+        rmsLevelRS = m_levelData.GetLevel(m_channelRS).rms;
+    }
 
     g.setColour(Colours::forestgreen);
     Path rmsPath;

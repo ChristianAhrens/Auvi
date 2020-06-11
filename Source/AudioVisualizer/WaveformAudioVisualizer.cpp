@@ -29,6 +29,8 @@ WaveformAudioVisualizer::WaveformAudioVisualizer()
     m_buffer.clear();
     m_bufferPos = 0;
     m_bufferTime = 0;
+
+    m_usesValuesInDB = false;
 }
 
 WaveformAudioVisualizer::~WaveformAudioVisualizer()

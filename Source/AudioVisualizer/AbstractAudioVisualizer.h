@@ -65,7 +65,7 @@ public:
     }
 
 public:
-    AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping = std::map<AudioVisualizerConfigBase::MappingKey, int>{});
+    AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping = std::map<AudioVisualizerConfigBase::MappingKey, int>{}, bool usesValuesInDB = false);
     ~AudioVisualizerConfigBase();
 
     //==============================================================================
@@ -76,9 +76,16 @@ public:
     void setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping);
     std::map<AudioVisualizerConfigBase::MappingKey, int> const getChannelMapping();
 
+    //==============================================================================
+    void setUsesValuesInDB(bool useValuesInDB);
+    bool getUsesValuesInDB();
+
 private:
-    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>       m_visualizerMappingLabels;
-    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>    m_visualizerMappingSelects;
+    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>     m_visualizerMappingLabels;
+    std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>  m_visualizerMappingSelects;
+
+    std::unique_ptr<Label>      m_usesValuesInDBLabel;
+    std::unique_ptr<Slider>     m_usesValuesInDBSlider;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };
@@ -137,6 +144,7 @@ public:
 
 protected:
     std::map<AudioVisualizerConfigBase::MappingKey, int> m_channelMapping;
+    bool m_usesValuesInDB{ 0 };
 
 private:
     void onOpenConfigClicked();

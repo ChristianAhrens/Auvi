@@ -27,6 +27,7 @@ RtaAudioVisualizer::RtaAudioVisualizer()
 
     m_plotChannel = 1;
     m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::RTA, m_plotChannel}, };
+    m_usesValuesInDB = true;
 }
 
 RtaAudioVisualizer::~RtaAudioVisualizer()

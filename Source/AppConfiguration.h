@@ -37,6 +37,7 @@ public:
         VISU,
         DEVCFG,
 		VISUMAP,
+		VISUUSEDB,
     };
     static String getTagName(TagID ID)
     {
@@ -50,6 +51,8 @@ public:
             return "DEVICESETUP";
 		case VISUMAP:
 			return "VisualizerMapping";
+		case VISUUSEDB:
+			return "UseValuesInDB";
 		default:
 			return "INVALID";
         }

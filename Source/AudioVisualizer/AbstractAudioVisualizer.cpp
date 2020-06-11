@@ -14,12 +14,22 @@ namespace Auvi
 {
 
 //==============================================================================
-AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
+AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping, bool usesValuesInDB)
 {
     m_visualizerMappingSelects = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>{};
     m_visualizerMappingLabels = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>{};
 
     setChannelMapping(mapping);
+
+    m_usesValuesInDBLabel = std::make_unique<Label>();
+    addAndMakeVisible(m_usesValuesInDBLabel.get());
+    m_usesValuesInDBLabel->setText("Use values in db", dontSendNotification);
+
+    m_usesValuesInDBSlider = std::make_unique<Slider>();
+    addAndMakeVisible(m_usesValuesInDBSlider.get());
+    m_usesValuesInDBSlider->setRange(0, 1, 1);
+
+    setUsesValuesInDB(usesValuesInDB);
 }
 
 AudioVisualizerConfigBase::~AudioVisualizerConfigBase()
@@ -32,18 +42,6 @@ void AudioVisualizerConfigBase::paint(Graphics& g)
 
     g.setColour(Colours::grey);
     g.drawRect(getLocalBounds(), 1);   // draw an outline around the component
-
-    if(m_visualizerMappingSelects.empty())
-    {
-        g.setColour(Colours::white);
-        g.setFont(14.0f);
-        g.drawText("No configuration implemtented for this AudioVisualizer", getLocalBounds(),
-            Justification::centred, true);   // draw some placeholder text
-    }
-    else
-    {
-
-    }
 }
 
 void AudioVisualizerConfigBase::resized()
@@ -61,6 +59,11 @@ void AudioVisualizerConfigBase::resized()
             m_visualizerMappingSelects.at(iter->first)->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
         r.removeFromTop(space);
     }
+
+    auto rect = r.removeFromTop(itemHeight);
+    m_usesValuesInDBLabel->setBounds(rect.withX(0).withWidth(proportionOfWidth(0.6f)));
+    m_usesValuesInDBSlider->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
+    r.removeFromTop(space);
 
     setSize(getWidth(), r.getY());
 }
@@ -90,6 +93,19 @@ std::map<AudioVisualizerConfigBase::MappingKey, int> const AudioVisualizerConfig
     }
 
     return visualizerChannelMapping;
+}
+
+void AudioVisualizerConfigBase::setUsesValuesInDB(bool usesValuesInDB)
+{
+    m_usesValuesInDBSlider->setValue(usesValuesInDB ? 1.0 : 0.0);
+}
+
+bool AudioVisualizerConfigBase::getUsesValuesInDB()
+{
+    if (m_usesValuesInDBSlider->getValue() == 1.0)
+        return true;
+    else
+        return false;
 }
 
 //==============================================================================
@@ -178,7 +194,7 @@ void AbstractAudioVisualizer::onOpenConfigClicked()
 
 std::unique_ptr<AudioVisualizerConfigBase> AbstractAudioVisualizer::openAudioVisualizerConfig()
 {
-    return std::make_unique<AudioVisualizerConfigBase>(m_channelMapping);
+    return std::make_unique<AudioVisualizerConfigBase>(m_channelMapping, m_usesValuesInDB);
 }
 
 void AbstractAudioVisualizer::closeAudioVisualizerConfig()
@@ -187,6 +203,7 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
     {
         m_channelMapping = m_visualizerConfig->getChannelMapping();
         processChangedChannelMapping();
+        m_usesValuesInDB = m_visualizerConfig->getUsesValuesInDB();
         m_visualizerConfig.reset();
 
         triggerConfigurationUpdate();
@@ -195,17 +212,26 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
 
 std::unique_ptr<XmlElement> AbstractAudioVisualizer::createStateXml()
 {
-    XmlElement mappingStateXml(AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP));
+    XmlElement visualizerElement(String(AbstractAudioVisualizer::VisuTypeToString(getType())));
+
+    auto mappingStateXml = std::make_unique<XmlElement>(AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP));
     for (auto mapping : m_channelMapping)
     {
-        XmlElement* mappingElement = mappingStateXml.createNewChildElement("M" + String(static_cast<int>(mapping.first)));
+        XmlElement* mappingElement = mappingStateXml->createNewChildElement("M" + String(static_cast<int>(mapping.first)));
         if (mappingElement)
         {
             mappingElement->setAttribute("name", AudioVisualizerConfigBase::getMappingString(mapping.first));
             mappingElement->addTextElement(String(mapping.second));
         }
     }
-    return std::make_unique<XmlElement>(mappingStateXml);
+
+    auto usesValuesInDBStateXml = std::make_unique<XmlElement>(AppConfiguration::getTagName(AppConfiguration::TagID::VISUUSEDB));
+    usesValuesInDBStateXml->addTextElement(m_usesValuesInDB ? "true" : "false");
+
+    visualizerElement.addChildElement(usesValuesInDBStateXml.release());
+    visualizerElement.addChildElement(mappingStateXml.release());
+
+    return std::make_unique<XmlElement>(visualizerElement);
 }
 
 bool AbstractAudioVisualizer::setStateXml(XmlElement* stateXml)
@@ -213,13 +239,24 @@ bool AbstractAudioVisualizer::setStateXml(XmlElement* stateXml)
     if (!stateXml)
         return false;
 
-    if (stateXml->getTagName() != AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))
+    if (stateXml->getTagName() != String(AbstractAudioVisualizer::VisuTypeToString(getType())))
         return false;
 
-    forEachXmlChildElement(*stateXml, mappingElement)
+    forEachXmlChildElement(*stateXml, stateXmlElement)
     {
-        if (m_channelMapping.count(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) > 0)
-            m_channelMapping.at(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) = mappingElement->getAllSubText().getIntValue();
+        if (stateXmlElement->getTagName() == AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))
+        {
+            forEachXmlChildElement(*stateXmlElement, mappingElement)
+            {
+                if (m_channelMapping.count(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) > 0)
+                    m_channelMapping.at(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) = mappingElement->getAllSubText().getIntValue();
+            }
+        }
+        else if (stateXmlElement->getTagName() == AppConfiguration::getTagName(AppConfiguration::TagID::VISUUSEDB))
+        {
+            auto valueString = stateXmlElement->getAllSubText();
+            m_usesValuesInDB = (stateXmlElement->getAllSubText() == "true") ? true : false;
+        }
     }
 
     processChangedChannelMapping();

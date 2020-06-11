@@ -10,6 +10,8 @@
 
 #include "ScopeAudioVisualizer.h"
 
+#include "../utils.hpp"
+
 namespace Auvi
 {
 
@@ -19,7 +21,11 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
 {
     showConfigButton(true);
 
-    m_channelMapping = { {AudioVisualizerConfigBase::MappingKey::X, m_channelX}, {AudioVisualizerConfigBase::MappingKey::Y, m_channelY}, };
+    m_channelMapping = {
+        {AudioVisualizerConfigBase::MappingKey::X, m_channelX},
+        {AudioVisualizerConfigBase::MappingKey::Y, m_channelY},
+    };
+    m_usesValuesInDB = false;
 
     m_scopeTail.resize(m_scopeTailLength);
 }
@@ -183,19 +189,26 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
         if (sd->GetChannelCount() >= m_channelX && sd->GetChannelCount() >= m_channelY)
         {
             auto block = juce::dsp::AudioBlock<float>(*static_cast<AudioBuffer<float>*>(sd));
-            
+
+            auto tailPos = GetNextScopeTailPos();
+
             auto minmaxX = block.getSingleChannelBlock(m_channelX-1).findMinAndMax();
             auto maxX = std::fabs(minmaxX.getStart()) > std::fabs(minmaxX.getEnd()) ? minmaxX.getStart() : minmaxX.getEnd();
-            //auto maxXdB = jlimit(m_mindB, m_maxdB, Decibels::gainToDecibels(maxX));
-            //maxXdB = jmap(maxXdB, m_mindB, m_maxdB, m_min, m_max);
-
             auto minmaxY = block.getSingleChannelBlock(m_channelY-1).findMinAndMax();
             auto maxY = std::fabs(minmaxY.getStart()) > std::fabs(minmaxY.getEnd()) ? minmaxY.getStart() : minmaxY.getEnd();
-            //auto maxYdB = jlimit(m_mindB, m_maxdB, Decibels::gainToDecibels(maxY));
-            //maxYdB = jmap(maxYdB, m_mindB, m_maxdB, m_min, m_max);
 
-            unsigned long iter = GetNextScopeTailPos();
-            m_scopeTail[iter] = std::make_pair(maxX, maxY);
+            if (m_usesValuesInDB)
+            {
+                auto mindB = static_cast<float>(Auvi::utils::getGlobalMindB());
+                auto maxdB = static_cast<float>(Auvi::utils::getGlobalMaxdB());
+                auto maxXdB = jlimit(mindB, maxdB, Decibels::gainToDecibels(maxX));
+                maxXdB = jmap(maxXdB, mindB, maxdB, m_min, m_max);
+                auto maxYdB = jlimit(mindB, maxdB, Decibels::gainToDecibels(maxY));
+                maxYdB = jmap(maxYdB, mindB, maxdB, m_min, m_max);
+                m_scopeTail[tailPos] = std::make_pair(maxXdB, maxYdB);
+            }
+            else
+                m_scopeTail[tailPos] = std::make_pair(maxX, maxY);
 
             notifyChanges();
         }

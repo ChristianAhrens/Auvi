@@ -50,8 +50,6 @@ private:
 
     float m_min{ 0.0f };
     float m_max{ 1.0f };
-    //int m_mindB{ Auvi::utils::getGlobalMindB() };
-    //int m_maxdB{ Auvi::utils::getGlobalMaxdB() };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ScopeAudioVisualizer)
 };

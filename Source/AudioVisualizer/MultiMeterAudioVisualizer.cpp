@@ -19,7 +19,9 @@ namespace Auvi
 MultiMeterAudioVisualizer::MultiMeterAudioVisualizer()
     : AbstractAudioVisualizer()
 {
+    showConfigButton(true);
 
+    m_usesValuesInDB = true;
 }
 
 MultiMeterAudioVisualizer::~MultiMeterAudioVisualizer()
@@ -55,7 +57,13 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
 	g.drawLine(Line<float>(visuAreaOrigX, visuAreaOrigY, visuAreaOrigX + visuAreaWidth, visuAreaOrigY));
     // draw dBFS
     g.setFont(12.0f);
-    g.drawText(String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS", Rectangle<float>(visuAreaOrigX + visuAreaWidth - 100.0f, float(outerMargin), 110.0f, float(outerMargin)), Justification::centred, true);
+    g.setColour(Colours::grey);
+    String rangeText;
+    if (m_usesValuesInDB)
+        rangeText = String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS";
+    else
+        rangeText = "0 ... 1";
+    g.drawText(rangeText, Rectangle<float>(visuAreaOrigX + visuAreaWidth - 100.0f, float(outerMargin), 110.0f, float(outerMargin)), Justification::centred, true);
 
 	// draw meters
     auto meterSpacing = outerMargin * 0.5f;
@@ -68,9 +76,21 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
     for(unsigned long i=1; i<=m_levelData.GetChannelCount(); ++i)
     {
         auto level = m_levelData.GetLevel(i);
-        auto peakMeterHeight = meterMaxHeight * level.GetFactorPEAKdB();
-        auto rmsMeterHeight = meterMaxHeight * level.GetFactorRMSdB();
-        auto holdMeterHeight = meterMaxHeight * level.GetFactorHOLDdB();
+        float peakMeterHeight {0};
+        float rmsMeterHeight  {0};
+        float holdMeterHeight {0};
+        if (m_usesValuesInDB)
+        {
+            peakMeterHeight = meterMaxHeight * level.GetFactorPEAKdB();
+            rmsMeterHeight = meterMaxHeight * level.GetFactorRMSdB();
+            holdMeterHeight = meterMaxHeight * level.GetFactorHOLDdB();
+        }
+        else
+        {
+            peakMeterHeight = meterMaxHeight * level.peak;
+            rmsMeterHeight = meterMaxHeight * level.rms;
+            holdMeterHeight = meterMaxHeight * level.hold;
+        }
 
         // peak bar
         g.setColour(Colours::forestgreen.darker());

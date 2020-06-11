@@ -183,16 +183,21 @@ std::unique_ptr<XmlElement> Body::createStateXml()
     for (auto i = AbstractAudioVisualizer::InvalidFirst + 1; i < AbstractAudioVisualizer::InvalidLast; ++i)
     {
         AbstractAudioVisualizer::VisuType visuType = static_cast<AbstractAudioVisualizer::VisuType>(i);
-        XmlElement* visualizerTypeElement = activeVisualizersElement->createNewChildElement(AbstractAudioVisualizer::VisuTypeToString(visuType));
-        if(visualizerTypeElement)
-        {
-            visualizerTypeElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
+        auto visualizerElement = static_cast<XmlElement*>(0);
 
-            if (m_AudioVisualizers.count(visuType) > 0)
-            {
-                auto mappingStateXml = m_AudioVisualizers.at(visuType)->createStateXml();
-                visualizerTypeElement->addChildElement(mappingStateXml.release());
-            }
+        if (m_AudioVisualizers.count(visuType) == 0)
+        {
+            visualizerElement = activeVisualizersElement->createNewChildElement(AbstractAudioVisualizer::VisuTypeToString(visuType));
+        }
+        else
+        {
+            visualizerElement = m_AudioVisualizers.at(visuType)->createStateXml().release();
+            activeVisualizersElement->addChildElement(visualizerElement);
+        }
+
+        if(visualizerElement)
+        {
+            visualizerElement->setAttribute("isActive", (activeVisuTypes.count(visuType) > 0) ? 1 : 0);
         }
     }
 
@@ -213,7 +218,7 @@ bool Body::setStateXml(XmlElement* stateXml)
         if (visuType < AbstractAudioVisualizer::InvalidLast && isActiveAttributeValue)
         {
             visualizerTypes.insert(visuType);
-            visualizerXmlElements.insert(std::make_pair(visuType, visualizerChildElement->getChildByName(AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))));
+            visualizerXmlElements.insert(std::make_pair(visuType, visualizerChildElement));
         }
     }
 
