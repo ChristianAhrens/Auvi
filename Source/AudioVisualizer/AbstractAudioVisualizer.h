@@ -14,6 +14,7 @@
 
 #include "../Processor/Processor.h"
 #include "../AppConfiguration.h"
+#include "../SplitButtonComponent.h"
 
 namespace Auvi
 {
@@ -21,7 +22,7 @@ namespace Auvi
 //==============================================================================
 /*
 */
-class AudioVisualizerConfigBase : public Component
+class AudioVisualizerConfigBase : public Component, public SplitButtonComponent::Listener
 {
 public:
     enum MappingKey
@@ -73,6 +74,9 @@ public:
     void resized() override;
 
     //==============================================================================
+    void buttonClicked(uint64 buttonId) override;
+
+    //==============================================================================
     void setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping);
     std::map<AudioVisualizerConfigBase::MappingKey, int> const getChannelMapping();
 
@@ -84,8 +88,8 @@ private:
     std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>     m_visualizerMappingLabels;
     std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>  m_visualizerMappingSelects;
 
-    std::unique_ptr<Label>      m_usesValuesInDBLabel;
-    std::unique_ptr<Slider>     m_usesValuesInDBSlider;
+    std::unique_ptr<SplitButtonComponent>     m_usesValuesInDBSplitButton;
+    bool m_usesValuesInDB{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };

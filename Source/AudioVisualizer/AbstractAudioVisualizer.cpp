@@ -21,13 +21,11 @@ AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<AudioVisualizerCon
 
     setChannelMapping(mapping);
 
-    m_usesValuesInDBLabel = std::make_unique<Label>();
-    addAndMakeVisible(m_usesValuesInDBLabel.get());
-    m_usesValuesInDBLabel->setText("Use values in db", dontSendNotification);
-
-    m_usesValuesInDBSlider = std::make_unique<Slider>();
-    addAndMakeVisible(m_usesValuesInDBSlider.get());
-    m_usesValuesInDBSlider->setRange(0, 1, 1);
+    m_usesValuesInDBSplitButton = std::make_unique<SplitButtonComponent>();
+    addAndMakeVisible(m_usesValuesInDBSplitButton.get());
+    m_usesValuesInDBSplitButton->addButton("dB");
+    m_usesValuesInDBSplitButton->addButton("lin");
+    m_usesValuesInDBSplitButton->addListener(this);
 
     setUsesValuesInDB(usesValuesInDB);
 }
@@ -46,7 +44,6 @@ void AudioVisualizerConfigBase::paint(Graphics& g)
 
 void AudioVisualizerConfigBase::resized()
 {
-
     auto itemHeight = 19;
     auto space = itemHeight / 4;
     Rectangle<int> r(proportionOfWidth(0.35f), space, proportionOfWidth(0.6f), getHeight());
@@ -61,11 +58,15 @@ void AudioVisualizerConfigBase::resized()
     }
 
     auto rect = r.removeFromTop(itemHeight);
-    m_usesValuesInDBLabel->setBounds(rect.withX(0).withWidth(proportionOfWidth(0.6f)));
-    m_usesValuesInDBSlider->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
+    m_usesValuesInDBSplitButton->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
     r.removeFromTop(space);
 
     setSize(getWidth(), r.getY());
+}
+
+void AudioVisualizerConfigBase::buttonClicked(uint64 buttonId)
+{
+    setUsesValuesInDB(m_usesValuesInDBSplitButton->getButtonDownText() == "dB");
 }
 
 void AudioVisualizerConfigBase::setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
@@ -97,15 +98,13 @@ std::map<AudioVisualizerConfigBase::MappingKey, int> const AudioVisualizerConfig
 
 void AudioVisualizerConfigBase::setUsesValuesInDB(bool usesValuesInDB)
 {
-    m_usesValuesInDBSlider->setValue(usesValuesInDB ? 1.0 : 0.0);
+    m_usesValuesInDB = usesValuesInDB;
+    m_usesValuesInDBSplitButton->setButtonDown(usesValuesInDB ? "dB" : "lin");
 }
 
 bool AudioVisualizerConfigBase::getUsesValuesInDB()
 {
-    if (m_usesValuesInDBSlider->getValue() == 1.0)
-        return true;
-    else
-        return false;
+    return m_usesValuesInDB;
 }
 
 //==============================================================================

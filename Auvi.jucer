@@ -104,6 +104,10 @@
             file="Source/AudioSelectComponent.cpp"/>
       <FILE id="ykU4ro" name="AudioSelectComponent.h" compile="0" resource="0"
             file="Source/AudioSelectComponent.h"/>
+      <FILE id="CvTFDy" name="SplitButtonComponent.cpp" compile="1" resource="0"
+            file="Source/SplitButtonComponent.cpp"/>
+      <FILE id="xLmsEO" name="SplitButtonComponent.h" compile="0" resource="0"
+            file="Source/SplitButtonComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
