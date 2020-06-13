@@ -30,7 +30,7 @@ WaveformAudioVisualizer::WaveformAudioVisualizer()
     m_bufferPos = 0;
     m_bufferTime = 0;
 
-    m_usesValuesInDB = false;
+    setUsesValuesInDB(false);
 }
 
 WaveformAudioVisualizer::~WaveformAudioVisualizer()

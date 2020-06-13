@@ -20,22 +20,15 @@ TwoDFieldAudioVisualizer::TwoDFieldAudioVisualizer()
     : AbstractAudioVisualizer()
 {
     showConfigButton(true);
-
-    m_channelL = 1;
-    m_channelC = 2;
-    m_channelR = 3;
-    m_channelLS = 5;
-    m_channelRS = 4;
-
-    m_channelMapping = {
+    setConfigFeatures(AudioVisualizerConfigBase::ConfigFeatures::ChannelMapping | AudioVisualizerConfigBase::ConfigFeatures::UseValuesInDBToogle);
+    setChannelMapping({
         {AudioVisualizerConfigBase::MappingKey::L, m_channelL},
         {AudioVisualizerConfigBase::MappingKey::C, m_channelC},
         {AudioVisualizerConfigBase::MappingKey::R, m_channelR},
         {AudioVisualizerConfigBase::MappingKey::LS, m_channelLS},
         {AudioVisualizerConfigBase::MappingKey::RS, m_channelRS},
-    };
-
-    m_usesValuesInDB = true;
+        });
+    setUsesValuesInDB(true);
 }
 
 TwoDFieldAudioVisualizer::~TwoDFieldAudioVisualizer()
@@ -90,7 +83,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     g.setFont(12.0f);
     g.setColour(Colours::grey);
     String rangeText;
-    if (m_usesValuesInDB)
+    if (getUsesValuesInDB())
         rangeText = String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS";
     else
         rangeText = "0 ... 1";
@@ -110,7 +103,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     float holdLevelR  {0};
     float holdLevelLS {0};
     float holdLevelRS {0};
-    if (m_usesValuesInDB)
+    if (getUsesValuesInDB())
     {
         holdLevelL = m_levelData.GetLevel(m_channelL).GetFactorHOLDdB();
         holdLevelC = m_levelData.GetLevel(m_channelC).GetFactorHOLDdB();
@@ -143,7 +136,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     float peakLevelR  {0};
     float peakLevelLS {0};
     float peakLevelRS {0};
-    if (m_usesValuesInDB)
+    if (getUsesValuesInDB())
     {
         peakLevelL = m_levelData.GetLevel(m_channelL).GetFactorPEAKdB();
         peakLevelC = m_levelData.GetLevel(m_channelC).GetFactorPEAKdB();
@@ -176,7 +169,7 @@ void TwoDFieldAudioVisualizer::paint (Graphics& g)
     float rmsLevelR  {0};
     float rmsLevelLS {0};
     float rmsLevelRS {0};
-    if (m_usesValuesInDB)
+    if (getUsesValuesInDB())
     {
         rmsLevelL = m_levelData.GetLevel(m_channelL).GetFactorRMSdB();
         rmsLevelC = m_levelData.GetLevel(m_channelC).GetFactorRMSdB();
@@ -216,11 +209,16 @@ AbstractAudioVisualizer::VisuType TwoDFieldAudioVisualizer::getType()
 
 void TwoDFieldAudioVisualizer::processChangedChannelMapping()
 {
-    m_channelL = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::L);
-    m_channelC = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::C);
-    m_channelR = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::R);
-    m_channelLS = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::LS);
-    m_channelRS = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::RS);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::L))
+        m_channelL = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::L);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::C))
+        m_channelC = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::C);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::R))
+        m_channelR = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::R);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::LS))
+        m_channelLS = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::LS);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::RS))
+        m_channelRS = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::RS);
 }
 
 void TwoDFieldAudioVisualizer::processingDataChanged(AbstractProcessorData *data)

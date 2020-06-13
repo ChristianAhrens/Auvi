@@ -20,12 +20,12 @@ ScopeAudioVisualizer::ScopeAudioVisualizer()
     : AbstractAudioVisualizer()
 {
     showConfigButton(true);
-
-    m_channelMapping = {
+    setConfigFeatures(AudioVisualizerConfigBase::ConfigFeatures::ChannelMapping | AudioVisualizerConfigBase::ConfigFeatures::UseValuesInDBToogle);
+    setChannelMapping({
         {AudioVisualizerConfigBase::MappingKey::X, m_channelX},
         {AudioVisualizerConfigBase::MappingKey::Y, m_channelY},
-    };
-    m_usesValuesInDB = false;
+        });
+    setUsesValuesInDB(false);
 
     m_scopeTail.resize(m_scopeTailLength);
 }
@@ -172,8 +172,10 @@ AbstractAudioVisualizer::VisuType ScopeAudioVisualizer::getType()
 
 void ScopeAudioVisualizer::processChangedChannelMapping()
 {
-    m_channelX = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::X);
-    m_channelY = m_channelMapping.at(AudioVisualizerConfigBase::MappingKey::Y);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::X))
+        m_channelX = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::X);
+    if(getChannelMapping().count(AudioVisualizerConfigBase::MappingKey::Y))
+        m_channelY = getChannelMapping().at(AudioVisualizerConfigBase::MappingKey::Y);
 }
 
 void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
@@ -197,7 +199,7 @@ void ScopeAudioVisualizer::processingDataChanged(AbstractProcessorData* data)
             auto minmaxY = block.getSingleChannelBlock(m_channelY-1).findMinAndMax();
             auto maxY = std::fabs(minmaxY.getStart()) > std::fabs(minmaxY.getEnd()) ? minmaxY.getStart() : minmaxY.getEnd();
 
-            if (m_usesValuesInDB)
+            if (getUsesValuesInDB())
             {
                 auto mindB = static_cast<float>(Auvi::utils::getGlobalMindB());
                 auto maxdB = static_cast<float>(Auvi::utils::getGlobalMaxdB());

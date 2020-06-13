@@ -20,8 +20,8 @@ MultiMeterAudioVisualizer::MultiMeterAudioVisualizer()
     : AbstractAudioVisualizer()
 {
     showConfigButton(true);
-
-    m_usesValuesInDB = true;
+    setConfigFeatures(AudioVisualizerConfigBase::ConfigFeatures::UseValuesInDBToogle);
+    setUsesValuesInDB(true);
 }
 
 MultiMeterAudioVisualizer::~MultiMeterAudioVisualizer()
@@ -59,7 +59,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
     g.setFont(12.0f);
     g.setColour(Colours::grey);
     String rangeText;
-    if (m_usesValuesInDB)
+    if (getUsesValuesInDB())
         rangeText = String(Auvi::utils::getGlobalMindB()) + " ... " + String(Auvi::utils::getGlobalMaxdB()) + " dBFS";
     else
         rangeText = "0 ... 1";
@@ -79,7 +79,7 @@ void MultiMeterAudioVisualizer::paint(Graphics& g)
         float peakMeterHeight {0};
         float rmsMeterHeight  {0};
         float holdMeterHeight {0};
-        if (m_usesValuesInDB)
+        if (getUsesValuesInDB())
         {
             peakMeterHeight = meterMaxHeight * level.GetFactorPEAKdB();
             rmsMeterHeight = meterMaxHeight * level.GetFactorRMSdB();

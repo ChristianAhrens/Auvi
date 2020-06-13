@@ -22,9 +22,15 @@ namespace Auvi
 //==============================================================================
 /*
 */
-class AudioVisualizerConfigBase : public Component, public SplitButtonComponent::Listener
+class AudioVisualizerConfigBase : public Component, public ComboBox::Listener, public SplitButtonComponent::Listener
 {
 public:
+    enum ConfigFeatures
+    {
+        ChannelMapping      = 0x01,
+        UseValuesInDBToogle = 0x02,
+    };
+
     enum MappingKey
     {
         invalid,
@@ -66,7 +72,7 @@ public:
     }
 
 public:
-    AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping = std::map<AudioVisualizerConfigBase::MappingKey, int>{}, bool usesValuesInDB = false);
+    AudioVisualizerConfigBase();
     ~AudioVisualizerConfigBase();
 
     //==============================================================================
@@ -74,11 +80,17 @@ public:
     void resized() override;
 
     //==============================================================================
+    void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
+
+    //==============================================================================
     void buttonClicked(uint64 buttonId) override;
 
     //==============================================================================
+    void setConfigFeatures(int features);
+
+    //==============================================================================
     void setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping);
-    std::map<AudioVisualizerConfigBase::MappingKey, int> const getChannelMapping();
+    std::map<AudioVisualizerConfigBase::MappingKey, int> const& getChannelMapping();
 
     //==============================================================================
     void setUsesValuesInDB(bool useValuesInDB);
@@ -87,9 +99,12 @@ public:
 private:
     std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>     m_visualizerMappingLabels;
     std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>  m_visualizerMappingSelects;
+    std::map<AudioVisualizerConfigBase::MappingKey, int>                        m_visualizerChannelMapping;
 
-    std::unique_ptr<SplitButtonComponent>     m_usesValuesInDBSplitButton;
-    bool m_usesValuesInDB{ 0 };
+    std::unique_ptr<SplitButtonComponent>   m_usesValuesInDBSplitButton;
+    bool                                    m_usesValuesInDB{ false };
+
+    int m_configFeatures{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioVisualizerConfigBase)
 };
@@ -147,15 +162,30 @@ public:
     static VisuType StringToVisuType(std::string typeName);
 
 protected:
-    std::map<AudioVisualizerConfigBase::MappingKey, int> m_channelMapping;
-    bool m_usesValuesInDB{ 0 };
+    //==============================================================================
+    void setConfigFeatures(int features);
+    int getConfigFeatures();
+
+    //==============================================================================
+    void setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping);
+    std::map<AudioVisualizerConfigBase::MappingKey, int> const& getChannelMapping();
+
+    //==============================================================================
+    void setUsesValuesInDB(bool useValuesInDB);
+    bool getUsesValuesInDB();
+
 
 private:
     void onOpenConfigClicked();
 
-    std::unique_ptr<DrawableButton>	m_openConfig;
-    std::unique_ptr<AudioVisualizerConfigBase> m_visualizerConfig;
+    std::unique_ptr<DrawableButton>	            m_openConfig;
+    std::unique_ptr<AudioVisualizerConfigBase>  m_visualizerConfig;
+
     bool m_changesPending;
+
+    std::map<AudioVisualizerConfigBase::MappingKey, int>    m_channelMapping;
+    bool                                                    m_usesValuesInDB{ 0 };
+    int                                                     m_configFeatures{ 0 };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AbstractAudioVisualizer)
 };

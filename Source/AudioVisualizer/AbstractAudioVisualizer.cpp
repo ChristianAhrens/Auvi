@@ -14,20 +14,16 @@ namespace Auvi
 {
 
 //==============================================================================
-AudioVisualizerConfigBase::AudioVisualizerConfigBase(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping, bool usesValuesInDB)
+AudioVisualizerConfigBase::AudioVisualizerConfigBase()
 {
     m_visualizerMappingSelects = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>{};
     m_visualizerMappingLabels = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>{};
-
-    setChannelMapping(mapping);
 
     m_usesValuesInDBSplitButton = std::make_unique<SplitButtonComponent>();
     addAndMakeVisible(m_usesValuesInDBSplitButton.get());
     m_usesValuesInDBSplitButton->addButton("dB");
     m_usesValuesInDBSplitButton->addButton("lin");
     m_usesValuesInDBSplitButton->addListener(this);
-
-    setUsesValuesInDB(usesValuesInDB);
 }
 
 AudioVisualizerConfigBase::~AudioVisualizerConfigBase()
@@ -47,21 +43,36 @@ void AudioVisualizerConfigBase::resized()
     auto itemHeight = 19;
     auto space = itemHeight / 4;
     Rectangle<int> r(proportionOfWidth(0.35f), space, proportionOfWidth(0.6f), getHeight());
-    for(auto iter = m_visualizerMappingSelects.cbegin(); iter != m_visualizerMappingSelects.cend(); iter++)
+
+    if (m_configFeatures & ConfigFeatures::ChannelMapping)
+    {
+        for (auto iter = m_visualizerMappingSelects.cbegin(); iter != m_visualizerMappingSelects.cend(); iter++)
+        {
+            auto rect = r.removeFromTop(itemHeight);
+            if (m_visualizerMappingLabels.count(iter->first) != 0)
+                m_visualizerMappingLabels.at(iter->first)->setBounds(rect.withX(0).withWidth(proportionOfWidth(0.6f)));
+            if (m_visualizerMappingSelects.count(iter->first) != 0)
+                m_visualizerMappingSelects.at(iter->first)->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
+            r.removeFromTop(space);
+        }
+    }
+
+    if (m_configFeatures & ConfigFeatures::UseValuesInDBToogle)
     {
         auto rect = r.removeFromTop(itemHeight);
-        if(m_visualizerMappingLabels.count(iter->first)!=0)
-            m_visualizerMappingLabels.at(iter->first)->setBounds(rect.withX(0).withWidth(proportionOfWidth(0.6f)));
-        if (m_visualizerMappingSelects.count(iter->first) != 0)
-            m_visualizerMappingSelects.at(iter->first)->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
+        m_usesValuesInDBSplitButton->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
         r.removeFromTop(space);
     }
 
-    auto rect = r.removeFromTop(itemHeight);
-    m_usesValuesInDBSplitButton->setBounds(rect.withX(proportionOfWidth(0.6f)).withWidth(proportionOfWidth(0.4f) - space));
-    r.removeFromTop(space);
-
     setSize(getWidth(), r.getY());
+}
+
+void AudioVisualizerConfigBase::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
+{
+    for (auto iter = m_visualizerMappingSelects.cbegin(); iter != m_visualizerMappingSelects.cend(); iter++)
+    {
+        m_visualizerChannelMapping.at(iter->first) = iter->second->getSelectedId();
+    }
 }
 
 void AudioVisualizerConfigBase::buttonClicked(uint64 buttonId)
@@ -69,8 +80,15 @@ void AudioVisualizerConfigBase::buttonClicked(uint64 buttonId)
     setUsesValuesInDB(m_usesValuesInDBSplitButton->getButtonDownText() == "dB");
 }
 
+void AudioVisualizerConfigBase::setConfigFeatures(int features)
+{
+    m_configFeatures = features;
+}
+
 void AudioVisualizerConfigBase::setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
 {
+    m_visualizerChannelMapping = mapping;
+
     m_visualizerMappingLabels.clear();
     m_visualizerMappingSelects.clear();
     for (auto NameChannelKV : mapping)
@@ -82,18 +100,13 @@ void AudioVisualizerConfigBase::setChannelMapping(std::map<AudioVisualizerConfig
         addAndMakeVisible(m_visualizerMappingSelects.at(NameChannelKV.first).get());
         m_visualizerMappingSelects.at(NameChannelKV.first)->addItemList({ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16" }, 1);
         m_visualizerMappingSelects.at(NameChannelKV.first)->setSelectedId(NameChannelKV.second, dontSendNotification);
+        m_visualizerMappingSelects.at(NameChannelKV.first)->addListener(this);
     }
 }
 
-std::map<AudioVisualizerConfigBase::MappingKey, int> const AudioVisualizerConfigBase::getChannelMapping()
+std::map<AudioVisualizerConfigBase::MappingKey, int> const& AudioVisualizerConfigBase::getChannelMapping()
 {
-    std::map<AudioVisualizerConfigBase::MappingKey, int> visualizerChannelMapping;
-    for (auto iter = m_visualizerMappingSelects.cbegin(); iter != m_visualizerMappingSelects.cend(); iter++)
-    {
-        visualizerChannelMapping.insert(std::make_pair(iter->first, iter->second->getSelectedId()));
-    }
-
-    return visualizerChannelMapping;
+    return m_visualizerChannelMapping;
 }
 
 void AudioVisualizerConfigBase::setUsesValuesInDB(bool usesValuesInDB)
@@ -186,6 +199,9 @@ void AbstractAudioVisualizer::onOpenConfigClicked()
     else
     {
         m_visualizerConfig = openAudioVisualizerConfig();
+        m_visualizerConfig->setChannelMapping(m_channelMapping);
+        m_visualizerConfig->setUsesValuesInDB(m_usesValuesInDB);
+        m_visualizerConfig->setConfigFeatures(static_cast<AudioVisualizerConfigBase::ConfigFeatures>(m_configFeatures));
         addAndMakeVisible(m_visualizerConfig.get());
         resized();
     }
@@ -193,7 +209,7 @@ void AbstractAudioVisualizer::onOpenConfigClicked()
 
 std::unique_ptr<AudioVisualizerConfigBase> AbstractAudioVisualizer::openAudioVisualizerConfig()
 {
-    return std::make_unique<AudioVisualizerConfigBase>(m_channelMapping, m_usesValuesInDB);
+    return std::make_unique<AudioVisualizerConfigBase>();
 }
 
 void AbstractAudioVisualizer::closeAudioVisualizerConfig()
@@ -207,6 +223,37 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
 
         triggerConfigurationUpdate();
     }
+}
+
+
+void AbstractAudioVisualizer::setConfigFeatures(int features)
+{
+    m_configFeatures = features;
+}
+
+int AbstractAudioVisualizer::getConfigFeatures()
+{
+    return m_configFeatures;
+}
+
+void AbstractAudioVisualizer::setChannelMapping(std::map<AudioVisualizerConfigBase::MappingKey, int> mapping)
+{
+    m_channelMapping = mapping;
+}
+
+std::map<AudioVisualizerConfigBase::MappingKey, int> const& AbstractAudioVisualizer::getChannelMapping()
+{
+    return m_channelMapping;
+}
+
+void AbstractAudioVisualizer::setUsesValuesInDB(bool useValuesInDB)
+{
+    m_usesValuesInDB = useValuesInDB;
+}
+
+bool AbstractAudioVisualizer::getUsesValuesInDB()
+{
+    return m_usesValuesInDB;
 }
 
 std::unique_ptr<XmlElement> AbstractAudioVisualizer::createStateXml()
