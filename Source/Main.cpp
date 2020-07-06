@@ -8,9 +8,11 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
+
 #include "MainComponent.h"
-#include "CustomLookAndFeel.h"
+
+#include "../submodules/JUCE-AppBasics/Source/CustomLookAndFeel.h"
 
 namespace Auvi
 {
@@ -68,7 +70,7 @@ public:
                                                                           .findColour (ResizableWindow::backgroundColourId),
                                                     DocumentWindow::allButtons)
         {
-            m_customLookAndFeel = std::unique_ptr<LookAndFeel>(new CustomLookAndFeel);
+            m_customLookAndFeel = std::unique_ptr<LookAndFeel>(new JUCEAppBasics::CustomLookAndFeel);
             Desktop::getInstance().setDefaultLookAndFeel(m_customLookAndFeel.get());
 
             setUsingNativeTitleBar (true);

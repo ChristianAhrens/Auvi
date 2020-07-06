@@ -9,8 +9,6 @@
 */
 #include "Header.h"
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 namespace Auvi
 {
 

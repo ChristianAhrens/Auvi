@@ -19,7 +19,7 @@ AudioVisualizerConfigBase::AudioVisualizerConfigBase()
     m_visualizerMappingSelects = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>{};
     m_visualizerMappingLabels = std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<Label>>{};
 
-    m_usesValuesInDBSplitButton = std::make_unique<SplitButtonComponent>();
+    m_usesValuesInDBSplitButton = std::make_unique<JUCEAppBasics::SplitButtonComponent>();
     addAndMakeVisible(m_usesValuesInDBSplitButton.get());
     m_usesValuesInDBSplitButton->addButton("dB");
     m_usesValuesInDBSplitButton->addButton("lin");

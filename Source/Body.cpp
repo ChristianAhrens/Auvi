@@ -12,7 +12,7 @@
 
 #include <set>
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 
 #include "AppConfiguration.h"
 

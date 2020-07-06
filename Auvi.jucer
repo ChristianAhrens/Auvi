@@ -4,26 +4,51 @@
               version="0.1.8" companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
               companyCopyright="2020">
   <MAINGROUP id="wsXNhp" name="Auvi">
+    <GROUP id="{BAE28760-B384-4AEF-64FE-7DD11A569849}" name="submodules">
+      <GROUP id="{544F3BC2-3FCF-5A18-0ED0-B0479BC0D639}" name="JUCE-AppBasics">
+        <GROUP id="{502F11C7-E551-CAD6-F6A8-C30A481D1012}" name="Resources">
+          <FILE id="w8fzJO" name="close_fullscreen-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/close_fullscreen-24px.svg"/>
+          <FILE id="YCKzbO" name="equalizer-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/equalizer-24px.svg"/>
+          <FILE id="wq9FfA" name="graphic_eq-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/graphic_eq-24px.svg"/>
+          <FILE id="rLSM6i" name="grid_on-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/grid_on-24px.svg"/>
+          <FILE id="YyBrSm" name="mediation-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/mediation-24px.svg"/>
+          <FILE id="cZZnsY" name="pause-24px.svg" compile="0" resource="1" file="submodules/JUCE-AppBasics/Resources/Images/pause-24px.svg"/>
+          <FILE id="Y52x5J" name="radio_button_checked-24px.svg" compile="0"
+                resource="1" file="submodules/JUCE-AppBasics/Resources/Images/radio_button_checked-24px.svg"/>
+          <FILE id="alz5EJ" name="radio_button_unchecked-24px.svg" compile="0"
+                resource="1" file="submodules/JUCE-AppBasics/Resources/Images/radio_button_unchecked-24px.svg"/>
+          <FILE id="DEwN2K" name="settings-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/settings-24px.svg"/>
+          <FILE id="aqV4EO" name="show_chart-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/show_chart-24px.svg"/>
+          <FILE id="d5ls7d" name="track_changes-24px.svg" compile="0" resource="1"
+                file="submodules/JUCE-AppBasics/Resources/Images/track_changes-24px.svg"/>
+          <FILE id="VAz1lw" name="waves-24px.svg" compile="0" resource="1" file="submodules/JUCE-AppBasics/Resources/Images/waves-24px.svg"/>
+        </GROUP>
+        <GROUP id="{09924093-FB8E-32A1-A873-00D6B2FF66F0}" name="Source">
+          <FILE id="yWOazM" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+                file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.cpp"/>
+          <FILE id="Mo2bNM" name="CustomLookAndFeel.h" compile="0" resource="0"
+                file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.h"/>
+          <FILE id="B4UVYB" name="iOS_utils.hpp" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/iOS_utils.hpp"/>
+          <FILE id="pCPy7z" name="SplitButtonComponent.cpp" compile="1" resource="0"
+                file="submodules/JUCE-AppBasics/Source/SplitButtonComponent.cpp"/>
+          <FILE id="GnVV4X" name="SplitButtonComponent.h" compile="0" resource="0"
+                file="submodules/JUCE-AppBasics/Source/SplitButtonComponent.h"/>
+        </GROUP>
+      </GROUP>
+    </GROUP>
     <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="Documentation"/>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
         <FILE id="y9CNR0" name="Auvi.png" compile="0" resource="1" file="Resources/Images/Auvi.png"/>
         <FILE id="sgyBt4" name="Auvi.xcf" compile="0" resource="1" file="Resources/Images/Auvi.xcf"/>
         <FILE id="LCX3QV" name="Auvi_radar.png" compile="0" resource="1" file="Resources/Images/Auvi_radar.png"/>
-        <FILE id="xXKbTx" name="equalizer-24px.svg" compile="0" resource="1"
-              file="Resources/Images/equalizer-24px.svg"/>
-        <FILE id="MnDll2" name="graphic_eq-24px.svg" compile="0" resource="1"
-              file="Resources/Images/graphic_eq-24px.svg"/>
-        <FILE id="ZqfE8t" name="grid_on-24px.svg" compile="0" resource="1"
-              file="Resources/Images/grid_on-24px.svg"/>
-        <FILE id="CO96rM" name="pause-24px.svg" compile="0" resource="1" file="Resources/Images/pause-24px.svg"/>
-        <FILE id="qZEIhV" name="settings-24px.svg" compile="0" resource="1"
-              file="Resources/Images/settings-24px.svg"/>
-        <FILE id="q5jvrF" name="show_chart-24px.svg" compile="0" resource="1"
-              file="Resources/Images/show_chart-24px.svg"/>
-        <FILE id="UjwnVc" name="track_changes-24px.svg" compile="0" resource="1"
-              file="Resources/Images/track_changes-24px.svg"/>
-        <FILE id="SyQmGq" name="waves-24px.svg" compile="0" resource="1" file="Resources/Images/waves-24px.svg"/>
       </GROUP>
     </GROUP>
     <GROUP id="{45B42ABC-4AC3-D8D9-5073-D1AEE8199147}" name="Sources">
@@ -31,10 +56,6 @@
             file="Source/AppConfiguration.cpp"/>
       <FILE id="ga6iW7" name="AppConfiguration.h" compile="0" resource="0"
             file="Source/AppConfiguration.h"/>
-      <FILE id="bJSgjR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
-            file="Source/CustomLookAndFeel.cpp"/>
-      <FILE id="sJfTMU" name="CustomLookAndFeel.h" compile="0" resource="0"
-            file="Source/CustomLookAndFeel.h"/>
       <FILE id="b4qqBj" name="utils.hpp" compile="1" resource="0" file="Source/utils.hpp"/>
       <FILE id="zswaEW" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <GROUP id="{A4FA5224-B995-2116-2C5E-65302BD4192F}" name="Processor">
@@ -104,10 +125,6 @@
             file="Source/AudioSelectComponent.cpp"/>
       <FILE id="ykU4ro" name="AudioSelectComponent.h" compile="0" resource="0"
             file="Source/AudioSelectComponent.h"/>
-      <FILE id="CvTFDy" name="SplitButtonComponent.cpp" compile="1" resource="0"
-            file="Source/SplitButtonComponent.cpp"/>
-      <FILE id="xLmsEO" name="SplitButtonComponent.h" compile="0" resource="0"
-            file="Source/SplitButtonComponent.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

@@ -10,11 +10,11 @@
 
 #pragma once
 
-#include "../../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 
 #include "../Processor/Processor.h"
 #include "../AppConfiguration.h"
-#include "../SplitButtonComponent.h"
+#include "../submodules/JUCE-AppBasics/Source/SplitButtonComponent.h"
 
 namespace Auvi
 {
@@ -22,7 +22,7 @@ namespace Auvi
 //==============================================================================
 /*
 */
-class AudioVisualizerConfigBase : public Component, public ComboBox::Listener, public SplitButtonComponent::Listener
+class AudioVisualizerConfigBase : public Component, public ComboBox::Listener, public JUCEAppBasics::SplitButtonComponent::Listener
 {
 public:
     enum ConfigFeatures
@@ -101,8 +101,8 @@ private:
     std::map<AudioVisualizerConfigBase::MappingKey, std::unique_ptr<ComboBox>>  m_visualizerMappingSelects;
     std::map<AudioVisualizerConfigBase::MappingKey, int>                        m_visualizerChannelMapping;
 
-    std::unique_ptr<SplitButtonComponent>   m_usesValuesInDBSplitButton;
-    bool                                    m_usesValuesInDB{ false };
+    std::unique_ptr<JUCEAppBasics::SplitButtonComponent>    m_usesValuesInDBSplitButton;
+    bool                                                    m_usesValuesInDB{ false };
 
     int m_configFeatures{ 0 };
 

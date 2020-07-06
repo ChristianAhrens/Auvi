@@ -10,6 +10,8 @@
 
 #include "Processor/Processor.h"
 
+#include "../submodules/JUCE-AppBasics/Source/iOS_utils.hpp"
+
 #include "AppConfiguration.h"
 #include "utils.hpp"
 
@@ -125,7 +127,7 @@ void MainComponent::resized()
     if(m_body)
         m_body->setPortrait(isPortrait);
     
-    auto safety = Auvi::utils::getDeviceSafetyMargins();
+    auto safety = JUCEAppBasics::iOS_utils::getDeviceSafetyMargins();
 	
 	FlexBox fb;
 	if(isPortrait)

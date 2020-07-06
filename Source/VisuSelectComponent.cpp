@@ -10,8 +10,6 @@
 
 #include "VisuSelectComponent.h"
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 
 namespace Auvi
 {

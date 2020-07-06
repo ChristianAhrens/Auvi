@@ -8,9 +8,7 @@
   ==============================================================================
 */
 
-#include "../JuceLibraryCode/JuceHeader.h"
 #include "Footer.h"
-#include "AudioVisualizer/AbstractAudioVisualizer.h"
 
 namespace Auvi
 {
