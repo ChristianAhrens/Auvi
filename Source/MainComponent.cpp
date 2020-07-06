@@ -79,6 +79,7 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
+	m_deviceManager->removeAudioCallback(m_processor.get());
 }
 
 std::unique_ptr<XmlElement> MainComponent::createStateXml()
