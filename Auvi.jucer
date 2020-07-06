@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" jucerVersion="5.4.7"
-              version="0.1.8" companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
+              version="0.1.9" companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
               companyCopyright="2020">
   <MAINGROUP id="wsXNhp" name="Auvi">
     <GROUP id="{BAE28760-B384-4AEF-64FE-7DD11A569849}" name="submodules">
