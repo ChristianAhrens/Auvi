@@ -108,7 +108,7 @@ public:
         m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
         m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
         
-#ifdef JUCE_OPENGL3
+#if JUCE_OPENGL3
         m_openGLContext.extensions.glGenVertexArrays(1, &m_VAO);
         m_openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
@@ -120,7 +120,11 @@ public:
         m_openGLContext.extensions.glEnableVertexAttribArray (0);
         m_openGLContext.extensions.glEnableVertexAttribArray (1);
         
-        glPointSize (6.0f);
+#if JUCE_OPENGL_ES
+        glEnable(GL_POINT_SPRITE);
+#else
+        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
         
         // Setup Shaders
         createShaders();
@@ -342,6 +346,7 @@ private:
         "void main()\n"
         "{\n"
         "    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
+        "    gl_PointSize = 5.0f;\n"
         "}\n";
    
         juce::Colour color = Colours::forestgreen.darker();
