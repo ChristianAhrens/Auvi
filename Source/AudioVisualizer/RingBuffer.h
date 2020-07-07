@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
 
 /** A circular, lock-free buffer for multiple channels of audio.
  

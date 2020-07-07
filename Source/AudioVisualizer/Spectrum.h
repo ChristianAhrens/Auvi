@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include <JuceHeader.h>
+
 #include "RingBuffer.h"
 
 #define RING_BUFFER_READ_SIZE 256
@@ -119,11 +120,13 @@ public:
         
         m_openGLContext.extensions.glEnableVertexAttribArray (0);
         m_openGLContext.extensions.glEnableVertexAttribArray (1);
-        
-#if JUCE_OPENGL_ES
-        glEnable(GL_POINT_SPRITE);
-#else
-        glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+
+#if JUCE_OPENGL3
+    #if JUCE_OPENGL_ES
+            glEnable(GL_POINT_SPRITE);
+    #else
+            glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    #endif
 #endif
         
         // Setup Shaders
@@ -330,42 +333,50 @@ private:
         
         return rotationMatrix * viewMatrix;
     }
+
+    const char* createVertexShader()
+    {
+        return 
+        "#version 330 core\n"
+        "layout (location = 0) in vec2 xzPos;\n"
+        "layout (location = 1) in float yPos;\n"
+            // Uniforms
+            "uniform mat4 projectionMatrix;\n"
+            "uniform mat4 viewMatrix;\n"
+            "\n"
+            "void main()\n"
+            "{\n"
+            "    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
+            "    gl_PointSize = 5.0f;\n"
+            "}\n";
+    }
+
+    const char* createFragmentShader()
+    {
+        juce::Colour color = Colours::forestgreen.darker();
+        // Base Shader
+        auto fragmentShaderString = String(
+            "#version 330 core\n"
+            "out vec4 color;\n"
+            "void main()\n"
+            "{\n"
+            "    color = vec4 ("
+            + String(color.getFloatRed()) + ", "
+            + String(color.getFloatGreen()) + ", "
+            + String(color.getFloatBlue()) + ", "
+            + String(color.getFloatAlpha()) + ");\n"
+            "}\n");
+
+        return fragmentShaderString.toUTF8();
+    }
     
     /** Loads the OpenGL Shaders and sets up the whole ShaderProgram
      */
     void createShaders()
     {
-        m_vertexShader =
-        "#version 330 core\n"
-        "layout (location = 0) in vec2 xzPos;\n"
-        "layout (location = 1) in float yPos;\n"
-        // Uniforms
-        "uniform mat4 projectionMatrix;\n"
-        "uniform mat4 viewMatrix;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
-        "    gl_PointSize = 5.0f;\n"
-        "}\n";
-   
-        juce::Colour color = Colours::forestgreen.darker();
+        m_vertexShader = createVertexShader();
+        m_fragmentShader = createFragmentShader();
         
-        // Base Shader
-        auto fragmentShaderString = String(
-        "#version 330 core\n"
-        "out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "    color = vec4 ("
-                        + String(color.getFloatRed()) + ", "
-                        + String(color.getFloatGreen()) + ", "
-                        + String(color.getFloatBlue()) + ", "
-                        + String(color.getFloatAlpha()) + ");\n"
-        "}\n");
-        m_fragmentShader = fragmentShaderString.toUTF8();
-        
-
         ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (m_openGLContext));
         String statusText;
         
@@ -380,14 +391,16 @@ private:
             
             m_uniforms   = new Uniforms (m_openGLContext, *m_shader);
             
+#ifdef DEBUG
             statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);
+#endif
         }
         else
         {
             statusText = newShader->getLastError();
         }
         
-        //m_statusLabel.setText (statusText, dontSendNotification);
+        m_statusLabel.setText (statusText, dontSendNotification);
     }
     
     //==============================================================================
