@@ -154,7 +154,7 @@ public:
         glViewport (0, 0, roundToInt (renderingScale * getWidth()), roundToInt (renderingScale * getHeight()));
         
         // Set background Color
-        OpenGLHelpers::clear (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+        OpenGLHelpers::clear (getLookAndFeel().findColour (ResizableWindow::backgroundColourId).darker());
         
         // Enable Alpha Blending
         glEnable (GL_BLEND);
@@ -344,15 +344,21 @@ private:
         "    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
         "}\n";
    
+        juce::Colour color = Colours::forestgreen.darker();
         
         // Base Shader
-        m_fragmentShader =
+        auto fragmentShaderString = String(
         "#version 330 core\n"
         "out vec4 color;\n"
         "void main()\n"
         "{\n"
-        "    color = vec4 (1.0f, 0.0f, 2.0f, 1.0f);\n"
-        "}\n";
+        "    color = vec4 ("
+                        + String(color.getFloatRed()) + ", "
+                        + String(color.getFloatGreen()) + ", "
+                        + String(color.getFloatBlue()) + ", "
+                        + String(color.getFloatAlpha()) + ");\n"
+        "}\n");
+        m_fragmentShader = fragmentShaderString.toUTF8();
         
 
         ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (m_openGLContext));

@@ -20,10 +20,13 @@ WaterfallAudioVisualizer::WaterfallAudioVisualizer()
     m_buffer = std::make_unique<RingBuffer<GLfloat>>(2,441);
     m_3Dspectrum = std::make_unique<Spectrum>(m_buffer.get());
     addAndMakeVisible(m_3Dspectrum.get());
+    
+    m_3Dspectrum->start();
 }
 
 WaterfallAudioVisualizer::~WaterfallAudioVisualizer()
 {
+    m_3Dspectrum->stop();
 }
 
 void WaterfallAudioVisualizer::paint (Graphics& g)
@@ -71,6 +74,7 @@ void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data
         {
             juce::AudioSampleBuffer* b = static_cast<juce::AudioSampleBuffer*>(ld);
             m_buffer->writeSamples(*b, 0, b->getNumSamples());
+            notifyChanges();
         }
         break;
     }
