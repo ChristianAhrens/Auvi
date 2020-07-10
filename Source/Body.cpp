@@ -20,7 +20,7 @@
 #include "AudioVisualizer/MultiMeterAudioVisualizer.h"
 #include "AudioVisualizer/ScopeAudioVisualizer.h"
 #include "AudioVisualizer/RtaAudioVisualizer.h"
-#include "AudioVisualizer/WaterfallAudioVisualizer.h"
+#include "AudioVisualizer/WaterfallAudioVisualizer/WaterfallAudioVisualizer.h"
 #include "AudioVisualizer/WaveformAudioVisualizer.h"
 
 namespace Auvi

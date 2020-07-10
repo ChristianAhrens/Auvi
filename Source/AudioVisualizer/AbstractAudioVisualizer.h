@@ -42,7 +42,8 @@ public:
         LFE,
         X,
         Y,
-        RTA
+        RTA,
+        WFRTA
     };
     static std::string getMappingString(MappingKey key)
     {
@@ -66,6 +67,8 @@ public:
                 return "Y";
             case RTA:
                 return "Analyzer channel";
+            case WFRTA:
+                return "Waterfall analyser channel";
             default:
                 return std::string{};
         }
@@ -138,8 +141,9 @@ public:
 
     void showConfigButton(bool enable);
     void notifyChanges();
-    void processChanges();
-
+    virtual void processChanges();
+    
+    //==============================================================================
     std::unique_ptr<XmlElement> createStateXml() override;
     bool setStateXml(XmlElement* stateXml) override;
     
@@ -174,14 +178,13 @@ protected:
     void setUsesValuesInDB(bool useValuesInDB);
     bool getUsesValuesInDB();
 
-
 private:
     void onOpenConfigClicked();
 
     std::unique_ptr<DrawableButton>	            m_openConfig;
     std::unique_ptr<AudioVisualizerConfigBase>  m_visualizerConfig;
 
-    bool m_changesPending;
+    bool m_changesPending{ false };
 
     std::map<AudioVisualizerConfigBase::MappingKey, int>    m_channelMapping;
     bool                                                    m_usesValuesInDB{ 0 };
