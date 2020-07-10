@@ -309,9 +309,9 @@ Matrix3D<float> Spectrum::getViewMatrix() const
 	return rotationMatrix * viewMatrix;
 }
 
-const char* Spectrum::createVertexShader()
+void Spectrum::createVertexShader()
 {
-	return 
+	m_vertexShader = String(
 	"#version 330 core\n"
 	"layout (location = 0) in vec2 xzPos;\n"
 	"layout (location = 1) in float yPos;\n"
@@ -323,14 +323,14 @@ const char* Spectrum::createVertexShader()
 		"{\n"
 		"    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
 		"    gl_PointSize = 5.0f;\n"
-		"}\n";
+		"}\n");
 }
 
-const char* Spectrum::createFragmentShader()
+void Spectrum::createFragmentShader()
 {
 	juce::Colour color = Colours::forestgreen.darker();
 	// Base Shader
-	auto fragmentShaderString = String(
+	m_fragmentShader = String(
 		"#version 330 core\n"
 		"out vec4 color;\n"
 		"void main()\n"
@@ -341,8 +341,6 @@ const char* Spectrum::createFragmentShader()
 		+ String(color.getFloatBlue()) + ", "
 		+ String(color.getFloatAlpha()) + ");\n"
 		"}\n");
-
-	return fragmentShaderString.toUTF8();
 }
 
 /** Loads the OpenGL Shaders and sets up the whole ShaderProgram
@@ -351,14 +349,14 @@ void Spectrum::createShaders()
 {
 	DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()));
 
-	m_vertexShader = createVertexShader();
-	m_fragmentShader = createFragmentShader();
+	createVertexShader();
+	createFragmentShader();
 	
 	ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (m_openGLContext));
 	String statusText;
 	
-	if (newShader->addVertexShader ((m_vertexShader))
-		&& newShader->addFragmentShader ((m_fragmentShader))
+    if (newShader->addVertexShader (m_vertexShader)
+        && newShader->addFragmentShader (m_fragmentShader)
 		&& newShader->link())
 	{
 		m_uniforms = nullptr;
@@ -377,5 +375,5 @@ void Spectrum::createShaders()
 		statusText = newShader->getLastError();
 	}
 	
-	m_statusLabel.setText (statusText, dontSendNotification);
+	//m_statusLabel.setText (statusText, dontSendNotification);
 }

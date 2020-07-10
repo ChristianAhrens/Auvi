@@ -63,8 +63,8 @@ private:
     /** Loads the OpenGL Shaders and sets up the whole ShaderProgram
      */
     void createShaders();
-    const char* createVertexShader();
-    const char* createFragmentShader();
+    void createVertexShader();
+    void createFragmentShader();
     
     //==============================================================================
     // This class manages the uniform values that the shaders use.
@@ -114,8 +114,8 @@ private:
     ScopedPointer<OpenGLShaderProgram> m_shader;
     ScopedPointer<Uniforms> m_uniforms;
     
-    const char* m_vertexShader;
-    const char* m_fragmentShader;
+    String m_vertexShader;
+    String m_fragmentShader;
     
     
     // GUI Interaction
