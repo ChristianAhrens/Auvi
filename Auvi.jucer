@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" jucerVersion="5.4.7"
-              version="0.1.9" companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
-              companyCopyright="2020">
+<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" version="0.1.9"
+              companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
+              companyCopyright="2020" jucerFormatVersion="1">
   <MAINGROUP id="wsXNhp" name="Auvi">
     <GROUP id="{BAE28760-B384-4AEF-64FE-7DD11A569849}" name="submodules">
       <GROUP id="{544F3BC2-3FCF-5A18-0ED0-B0479BC0D639}" name="JUCE-AppBasics">
@@ -79,6 +79,15 @@
               file="Source/Processor/ProcessorSpectrumData.h"/>
       </GROUP>
       <GROUP id="{15561174-C97B-3E3D-395E-723D2371D9A8}" name="AudioVisualizer">
+        <GROUP id="{F134A0F6-4E8C-3021-2EC2-FDB110DB5BD6}" name="WaterfallAudioVisualizer">
+          <FILE id="YzAzvM" name="RingBuffer.h" compile="0" resource="0" file="Source/AudioVisualizer/WaterfallAudioVisualizer/RingBuffer.h"/>
+          <FILE id="xC27wC" name="Spectrum.cpp" compile="1" resource="0" file="Source/AudioVisualizer/WaterfallAudioVisualizer/Spectrum.cpp"/>
+          <FILE id="ZbDYh0" name="Spectrum.h" compile="0" resource="0" file="Source/AudioVisualizer/WaterfallAudioVisualizer/Spectrum.h"/>
+          <FILE id="DuFOcb" name="WaterfallAudioVisualizer.cpp" compile="1" resource="0"
+                file="Source/AudioVisualizer/WaterfallAudioVisualizer/WaterfallAudioVisualizer.cpp"/>
+          <FILE id="bd3rv3" name="WaterfallAudioVisualizer.h" compile="0" resource="0"
+                file="Source/AudioVisualizer/WaterfallAudioVisualizer/WaterfallAudioVisualizer.h"/>
+        </GROUP>
         <FILE id="ZUrWEL" name="AbstractAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/AbstractAudioVisualizer.cpp"/>
         <FILE id="Mjt7js" name="AbstractAudioVisualizer.h" compile="0" resource="0"
@@ -87,7 +96,6 @@
               resource="0" file="Source/AudioVisualizer/MultiMeterAudioVisualizer.cpp"/>
         <FILE id="T0yWsQ" name="MultiMeterAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/MultiMeterAudioVisualizer.h"/>
-        <FILE id="Zh3Qqk" name="RingBuffer.h" compile="0" resource="0" file="Source/AudioVisualizer/RingBuffer.h"/>
         <FILE id="ViI2uj" name="RtaAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/RtaAudioVisualizer.cpp"/>
         <FILE id="tApziv" name="RtaAudioVisualizer.h" compile="0" resource="0"
@@ -96,15 +104,10 @@
               file="Source/AudioVisualizer/ScopeAudioVisualizer.cpp"/>
         <FILE id="RRJxwc" name="ScopeAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/ScopeAudioVisualizer.h"/>
-        <FILE id="ApDzwL" name="Spectrum.h" compile="0" resource="0" file="Source/AudioVisualizer/Spectrum.h"/>
         <FILE id="mnwzGj" name="TwoDFieldAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/TwoDFieldAudioVisualizer.cpp"/>
         <FILE id="GmYCJH" name="TwoDFieldAudioVisualizer.h" compile="0" resource="0"
               file="Source/AudioVisualizer/TwoDFieldAudioVisualizer.h"/>
-        <FILE id="v53Bu5" name="WaterfallAudioVisualizer.cpp" compile="1" resource="0"
-              file="Source/AudioVisualizer/WaterfallAudioVisualizer.cpp"/>
-        <FILE id="t6UiPX" name="WaterfallAudioVisualizer.h" compile="0" resource="0"
-              file="Source/AudioVisualizer/WaterfallAudioVisualizer.h"/>
         <FILE id="TL4Jaf" name="WaveformAudioVisualizer.cpp" compile="1" resource="0"
               file="Source/AudioVisualizer/WaveformAudioVisualizer.cpp"/>
         <FILE id="rLHOfi" name="WaveformAudioVisualizer.h" compile="0" resource="0"

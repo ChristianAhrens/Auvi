@@ -42,7 +42,8 @@ public:
         LFE,
         X,
         Y,
-        RTA
+        RTA,
+        WFRTA
     };
     static std::string getMappingString(MappingKey key)
     {
@@ -66,6 +67,8 @@ public:
                 return "Y";
             case RTA:
                 return "Analyzer channel";
+            case WFRTA:
+                return "Waterfall analyser channel";
             default:
                 return std::string{};
         }
