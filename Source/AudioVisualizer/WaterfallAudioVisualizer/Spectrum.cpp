@@ -2,6 +2,7 @@
 
 #define RING_BUFFER_READ_SIZE 256
 #define MIN_SUPPORTED_GLSL_VERSION 3.3f
+#define MIN_SUPPORTED_GLESSL_VERSION 1.2f
 
 
 Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
@@ -72,13 +73,22 @@ void Spectrum::setChannel(int channel)
  */
 void Spectrum::newOpenGLContextCreated()
 {
+#if JUCE_OPENGL_ES
+    if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLESSL_VERSION)
+    {
+        DBG("Detected Open GL ES Shader Language Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+        jassertfalse;
+        return;
+    }
+#else
 	if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLSL_VERSION)
 	{
-		DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+		DBG("Detected Open GL Shader Language Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
 		jassertfalse;
 		return;
 	}
-
+#endif
+    
 	// Setup Sizing Variables
 	m_xFreqWidth = 3.0f;
 	m_yAmpHeight = 1.0f;
@@ -133,12 +143,21 @@ void Spectrum::newOpenGLContextCreated()
  */
 void Spectrum::openGLContextClosing()
 {
-	if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLSL_VERSION)
-	{
-		DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
-		jassertfalse;
-		return;
-	}
+    #if JUCE_OPENGL_ES
+        if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLESSL_VERSION)
+        {
+            DBG("Detected Open GL ES Shader Language Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+            jassertfalse;
+            return;
+        }
+    #else
+        if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLSL_VERSION)
+        {
+            DBG("Detected Open GL Shader Language Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+            jassertfalse;
+            return;
+        }
+    #endif
 
 	if(m_shader)
 		m_shader->release();
@@ -330,6 +349,22 @@ void Spectrum::createVertexShader()
     auto oglViewSize = getLocalBounds().toFloat().getWidth();
     auto pointSize = std::max(3.0f, ((oglViewSize/bufSize) * 3.0f));
     
+#if JUCE_OPENGL_ES
+    m_vertexShader = String(
+    "#version 300 es\n"
+    "layout (location = 0) in vec2 xzPos;\n"
+    "layout (location = 1) in float yPos;\n"
+        // Uniforms
+        "uniform mat4 projectionMatrix;\n"
+        "uniform mat4 viewMatrix;\n"
+        "\n"
+        "void main()\n"
+        "{\n"
+        "    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
+        "    gl_PointSize = "
+        + String(pointSize) +";\n"
+        "}\n");
+#else
 	m_vertexShader = String(
 	"#version 330 core\n"
 	"layout (location = 0) in vec2 xzPos;\n"
@@ -344,11 +379,27 @@ void Spectrum::createVertexShader()
 		"    gl_PointSize = "
         + String(pointSize) +";\n"
 		"}\n");
+#endif
 }
 
 void Spectrum::createFragmentShader()
 {
 	juce::Colour color = Colours::forestgreen.darker();
+#if JUCE_OPENGL_ES
+    // Base Shader
+    m_fragmentShader = String(
+        "#version 300 es\n"
+        "precision mediump float;\n"
+        "out vec4 color;\n"
+        "void main()\n"
+        "{\n"
+        "    color = vec4 ("
+        + String(color.getFloatRed()) + ", "
+        + String(color.getFloatGreen()) + ", "
+        + String(color.getFloatBlue()) + ", "
+        + String(color.getFloatAlpha()) + ");\n"
+        "}\n");
+#else
 	// Base Shader
 	m_fragmentShader = String(
 		"#version 330 core\n"
@@ -361,6 +412,7 @@ void Spectrum::createFragmentShader()
 		+ String(color.getFloatBlue()) + ", "
 		+ String(color.getFloatAlpha()) + ");\n"
 		"}\n");
+#endif
 }
 
 /** Loads the OpenGL Shaders and sets up the whole ShaderProgram
@@ -391,6 +443,7 @@ void Spectrum::createShaders()
 	else
 	{
 		statusText = newShader->getLastError();
+        DBG(statusText);
 	}
 	
 	//m_statusLabel.setText (statusText, dontSendNotification);
