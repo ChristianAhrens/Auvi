@@ -1,6 +1,7 @@
 #include "Spectrum.h"
 
 #define RING_BUFFER_READ_SIZE 256
+#define MIN_SUPPORTED_GLSL_VERSION 3.3f
 
 
 Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
@@ -71,6 +72,13 @@ void Spectrum::setChannel(int channel)
  */
 void Spectrum::newOpenGLContextCreated()
 {
+	if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLSL_VERSION)
+	{
+		DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+		jassertfalse;
+		return;
+	}
+
 	// Setup Sizing Variables
 	m_xFreqWidth = 3.0f;
 	m_yAmpHeight = 1.0f;
@@ -125,6 +133,13 @@ void Spectrum::newOpenGLContextCreated()
  */
 void Spectrum::openGLContextClosing()
 {
+	if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLSL_VERSION)
+	{
+		DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()) + " is not supported!");
+		jassertfalse;
+		return;
+	}
+
 	if(m_shader)
 		m_shader->release();
 	m_shader = nullptr;
@@ -352,8 +367,6 @@ void Spectrum::createFragmentShader()
  */
 void Spectrum::createShaders()
 {
-	DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()));
-
 	createVertexShader();
 	createFragmentShader();
 	
