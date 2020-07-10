@@ -311,6 +311,10 @@ Matrix3D<float> Spectrum::getViewMatrix() const
 
 void Spectrum::createVertexShader()
 {
+    auto bufSize = float(RING_BUFFER_READ_SIZE);
+    auto oglViewSize = getLocalBounds().toFloat().getWidth();
+    auto pointSize = std::max(3.0f, ((oglViewSize/bufSize) * 3.0f));
+    
 	m_vertexShader = String(
 	"#version 330 core\n"
 	"layout (location = 0) in vec2 xzPos;\n"
@@ -322,7 +326,8 @@ void Spectrum::createVertexShader()
 		"void main()\n"
 		"{\n"
 		"    gl_Position = projectionMatrix * viewMatrix * vec4(xzPos[0], yPos, xzPos[1], 1.0f);\n"
-		"    gl_PointSize = 5.0f;\n"
+		"    gl_PointSize = "
+        + String(pointSize) +";\n"
 		"}\n");
 }
 
