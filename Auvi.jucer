@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" version="0.1.9"
+<JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" version="0.1.10"
               companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
               companyCopyright="2020" jucerFormatVersion="1">
   <MAINGROUP id="wsXNhp" name="Auvi">
