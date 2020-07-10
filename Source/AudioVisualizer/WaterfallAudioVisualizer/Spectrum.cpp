@@ -311,8 +311,6 @@ Matrix3D<float> Spectrum::getViewMatrix() const
 
 const char* Spectrum::createVertexShader()
 {
-	auto GLVersion = OpenGLShaderProgram::getLanguageVersion();
-
 	return 
 	"#version 330 core\n"
 	"layout (location = 0) in vec2 xzPos;\n"
@@ -330,8 +328,6 @@ const char* Spectrum::createVertexShader()
 
 const char* Spectrum::createFragmentShader()
 {
-	auto GLVersion = OpenGLShaderProgram::getLanguageVersion();
-
 	juce::Colour color = Colours::forestgreen.darker();
 	// Base Shader
 	auto fragmentShaderString = String(
@@ -353,6 +349,8 @@ const char* Spectrum::createFragmentShader()
  */
 void Spectrum::createShaders()
 {
+	DBG("Detected OGLSL Version " + String(OpenGLShaderProgram::getLanguageVersion()));
+
 	m_vertexShader = createVertexShader();
 	m_fragmentShader = createFragmentShader();
 	
