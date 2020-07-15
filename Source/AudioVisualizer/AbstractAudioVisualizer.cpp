@@ -10,6 +10,8 @@
 
 #include "AbstractAudioVisualizer.h"
 
+#include "../submodules/JUCE-AppBasics/Source/Image_utils.hpp"
+
 namespace Auvi
 {
 
@@ -130,16 +132,9 @@ AbstractAudioVisualizer::AbstractAudioVisualizer()
     m_openConfig = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
     m_openConfig->setComponentID(VISUALIZER_CONFIG_OPEN_ID);
     m_openConfig->setClickingTogglesState(true);
-    std::unique_ptr<XmlElement> Settings_svg_xml = XmlDocument::parse(BinaryData::settings24px_svg);
-
-    std::unique_ptr<juce::Drawable> drawableSettingsNormalImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
-    drawableSettingsNormalImage->replaceColour(Colours::black, Colours::white);
-    std::unique_ptr<juce::Drawable> drawableSettingsOverImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
-    drawableSettingsOverImage->replaceColour(Colours::black, Colours::lightgrey);
-    std::unique_ptr<juce::Drawable> drawableSettingsDownImage = Drawable::createFromSVG(*(Settings_svg_xml.get()));
-    drawableSettingsDownImage->replaceColour(Colours::black, Colours::grey);
-
-    m_openConfig->setImages(drawableSettingsNormalImage.get(), drawableSettingsOverImage.get(), drawableSettingsDownImage.get(), nullptr, nullptr, nullptr, nullptr, nullptr);
+    std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+    JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::settings24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
+    m_openConfig->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
     addAndMakeVisible(m_openConfig.get());
     m_openConfig->addListener(this);
 

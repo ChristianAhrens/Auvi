@@ -9,6 +9,8 @@
 */
 #include "Header.h"
 
+#include "../submodules/JUCE-AppBasics/Source/Image_utils.hpp"
+
 namespace Auvi
 {
 
@@ -28,23 +30,13 @@ Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
     m_stopProcessing = std::make_unique<DrawableButton>(String(), DrawableButton::ButtonStyle::ImageStretched);
     m_stopProcessing->setComponentID(STOP_PROCESSING_ID);
     m_stopProcessing->setClickingTogglesState(true);
-    std::unique_ptr<XmlElement> Pause_svg_xml = XmlDocument::parse(BinaryData::pause24px_svg);
-    // create svg images from resources for regular state
-    std::unique_ptr<juce::Drawable> drawablePauseNormalImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseNormalImage->replaceColour(Colours::black, Colours::white);
-    std::unique_ptr<juce::Drawable> drawablePauseOverImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseOverImage->replaceColour(Colours::black, Colours::lightgrey);
-    std::unique_ptr<juce::Drawable> drawablePauseDownImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseDownImage->replaceColour(Colours::black, Colours::grey);
-    // create svg images from resources for ON state
-    std::unique_ptr<juce::Drawable> drawablePauseNormalOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseNormalOnImage->replaceColour(Colours::black, Colours::red);
-    std::unique_ptr<juce::Drawable> drawablePauseOverOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseOverOnImage->replaceColour(Colours::black, Colours::indianred);
-    std::unique_ptr<juce::Drawable> drawablePauseDownOnImage = Drawable::createFromSVG(*(Pause_svg_xml.get()));
-    drawablePauseDownOnImage->replaceColour(Colours::black, Colours::darkred);
     // set the images to button
-    m_stopProcessing->setImages(drawablePauseNormalImage.get(), drawablePauseOverImage.get(), drawablePauseDownImage.get(), nullptr, drawablePauseNormalOnImage.get(), drawablePauseOverOnImage.get(), drawablePauseDownOnImage.get(), nullptr);
+    std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+    JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::pause24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
+    NormalOnImage->replaceColour(Colours::black, Colours::red);
+    OverOnImage->replaceColour(Colours::black, Colours::indianred);
+    DownOnImage->replaceColour(Colours::black, Colours::darkred);
+    m_stopProcessing->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
     m_stopProcessing->setColour(DrawableButton::ColourIds::backgroundColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
     m_stopProcessing->setColour(DrawableButton::ColourIds::backgroundOnColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
     addAndMakeVisible(m_stopProcessing.get());
