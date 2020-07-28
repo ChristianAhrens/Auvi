@@ -36,9 +36,9 @@ MainComponent::MainComponent()
 	m_deviceManager->addAudioCallback(m_processor.get());
 	m_body->setProcessor(m_processor.get());
 
-	auto& configuration = AppConfiguration::getInstance();
-	configuration.addListener(this);
-	if(!configuration.isValid())
+	m_config			= std::make_unique<AppConfiguration>(JUCEAppBasics::AppConfigurationBase::getDefaultConfigFilePath());
+	m_config->addListener(this);
+	if(!m_config->isValid())
 	{
 		// Hacky bit of device manager initialization:
 		// We first intialize it to be able to get a valid device setup,
@@ -63,8 +63,8 @@ MainComponent::MainComponent()
 	}
 	else
 	{
-		auto devMgrConfigState = configuration.getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
-		auto visuConfigState = configuration.getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
+		auto devMgrConfigState = m_config->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::DEVCFG));
+		auto visuConfigState = m_config->getConfigState(AppConfiguration::getTagName(AppConfiguration::TagID::GUI));
 
 		if (devMgrConfigState)
 			m_deviceManager->initialise(2, 0, devMgrConfigState.get(), true);
@@ -109,9 +109,12 @@ bool MainComponent::setStateXml(XmlElement *stateXml)
 
 void MainComponent::performConfigurationDump()
 {
-	auto& configuration = AppConfiguration::getInstance();
-	configuration.setConfigState(m_deviceManager->createStateXml());
-	configuration.setConfigState(createStateXml());
+	auto configuration = AppConfiguration::getInstance();
+	if (configuration != nullptr)
+	{
+		configuration->setConfigState(m_deviceManager->createStateXml());
+		configuration->setConfigState(createStateXml());
+	}
 }
 
 void MainComponent::paint (Graphics& g)

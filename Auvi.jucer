@@ -31,6 +31,10 @@
           <FILE id="VAz1lw" name="waves-24px.svg" compile="0" resource="1" file="submodules/JUCE-AppBasics/Resources/Images/waves-24px.svg"/>
         </GROUP>
         <GROUP id="{09924093-FB8E-32A1-A873-00D6B2FF66F0}" name="Source">
+          <FILE id="yxmW33" name="AppConfigurationBase.cpp" compile="1" resource="0"
+                file="submodules/JUCE-AppBasics/Source/AppConfigurationBase.cpp"/>
+          <FILE id="Hhwa00" name="AppConfigurationBase.h" compile="0" resource="0"
+                file="submodules/JUCE-AppBasics/Source/AppConfigurationBase.h"/>
           <FILE id="yWOazM" name="CustomLookAndFeel.cpp" compile="1" resource="0"
                 file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.cpp"/>
           <FILE id="Mo2bNM" name="CustomLookAndFeel.h" compile="0" resource="0"

@@ -71,6 +71,8 @@ private:
     std::unique_ptr<Processor>					m_processor;
 	std::unique_ptr<AudioDeviceManager>			m_deviceManager;
 
+    std::unique_ptr<AppConfiguration>           m_config;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
 
