@@ -140,8 +140,13 @@ public:
     virtual ~AbstractAudioVisualizer();
 
     void showConfigButton(bool enable);
+    
+    //==============================================================================
     void notifyChanges();
     virtual void processChanges();
+    
+    //==============================================================================
+    virtual void setPauseProcessing(bool pause);
     
     //==============================================================================
     std::unique_ptr<XmlElement> createStateXml() override;

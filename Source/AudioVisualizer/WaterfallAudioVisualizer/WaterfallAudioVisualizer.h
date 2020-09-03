@@ -37,6 +37,9 @@ public:
     void processingDataChanged(AbstractProcessorData *data) override;
     
     //==============================================================================
+    void setPauseProcessing(bool pause) override;
+    
+    //==============================================================================
     VisuType getType() override;
     void processChangedChannelMapping() override;
 

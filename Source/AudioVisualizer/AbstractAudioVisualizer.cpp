@@ -361,4 +361,9 @@ void AbstractAudioVisualizer::processChanges()
     }
 }
 
+void AbstractAudioVisualizer::setPauseProcessing(bool pause)
+{
+    ignoreUnused(pause);
+}
+
 }

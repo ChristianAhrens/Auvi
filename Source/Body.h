@@ -32,6 +32,8 @@ class Body :    public Component,
 public:
     Body();
     ~Body();
+    
+    void setPause(bool pause);
 
     void paint (Graphics&) override;
     void resized() override;

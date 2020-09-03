@@ -174,7 +174,7 @@ void MainComponent::mouseDown(const MouseEvent& event)
 
 void MainComponent::onPauseProcessing(bool pause)
 {
-	m_processor->setPauseProcessing(pause);
+	m_body->setPause(pause);
 }
 
 AudioSelectComponent* MainComponent::onToggleAudioConfigSelect()

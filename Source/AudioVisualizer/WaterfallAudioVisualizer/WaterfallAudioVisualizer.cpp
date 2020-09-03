@@ -97,4 +97,15 @@ void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data
     }
 }
 
+void WaterfallAudioVisualizer::setPauseProcessing(bool pause)
+{
+    if (m_3Dspectrum)
+    {
+        if (pause)
+            m_3Dspectrum->stop();
+        else
+            m_3Dspectrum->start();
+    }
+}
+
 }

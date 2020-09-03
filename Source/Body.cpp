@@ -37,6 +37,15 @@ Body::~Body()
 {
 }
 
+void Body::setPause(bool pause)
+{
+    if(m_processor)
+        m_processor->setPauseProcessing(pause);
+    
+    for(const auto &p : m_AudioVisualizers)
+        p.second->setPauseProcessing(pause);
+}
+
 void Body::paint (Graphics& g)
 {
 	g.fillAll(getLookAndFeel().findColour(ResizableWindow::backgroundColourId));
@@ -70,7 +79,7 @@ void Body::resized()
     while(colCount--)
         grid.templateColumns.add(Track (1_fr));
     
-    for(const std::pair<const AbstractAudioVisualizer::VisuType, std::unique_ptr<AbstractAudioVisualizer>> &p : m_AudioVisualizers)
+    for(const auto &p : m_AudioVisualizers)
     {
         if(p.second)
             grid.items.add(*p.second);
