@@ -31,7 +31,7 @@ class MainComponent   : public Component,
                         public Header::Listener,
                         public Footer::Listener,
                         public AppConfiguration::XmlConfigurableElement,
-                        public AppConfiguration::Listener
+                        public AppConfiguration::Dumper
 {
 public:
     //==============================================================================

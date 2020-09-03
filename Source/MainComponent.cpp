@@ -37,7 +37,7 @@ MainComponent::MainComponent()
 	m_body->setProcessor(m_processor.get());
 
 	m_config			= std::make_unique<AppConfiguration>(JUCEAppBasics::AppConfigurationBase::getDefaultConfigFilePath());
-	m_config->addListener(this);
+	m_config->addDumper(this);
 	if(!m_config->isValid())
 	{
 		// Hacky bit of device manager initialization:
