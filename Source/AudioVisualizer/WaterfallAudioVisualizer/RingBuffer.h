@@ -28,7 +28,7 @@ public:
         m_bufferSize = bufferSize;
         m_numChannels = numChannels;
 
-        m_audioBuffer = new AudioBuffer<Type>(numChannels, bufferSize);
+        m_audioBuffer = std::make_unique<AudioBuffer<Type>>(numChannels, bufferSize);
         m_writePosition = 0;
     }
 
@@ -155,7 +155,7 @@ public:
 private:
     int m_bufferSize;
     int m_numChannels;
-    ScopedPointer<AudioBuffer<Type>> m_audioBuffer;
+    std::unique_ptr<AudioBuffer<Type>> m_audioBuffer;
     Atomic<int> m_writePosition; // This must be atomic so the conumer does
                                // not read it in a torn state as it is being
                                // changed.

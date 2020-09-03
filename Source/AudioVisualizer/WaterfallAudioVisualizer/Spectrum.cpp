@@ -417,7 +417,7 @@ void Spectrum::createShaders()
 	createVertexShader();
 	createFragmentShader();
 	
-	ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (openGLContext));
+	std::unique_ptr<OpenGLShaderProgram> newShader = std::make_unique<OpenGLShaderProgram>(openGLContext);
 	String statusText;
 	
     if (newShader->addVertexShader (m_vertexShader)
@@ -426,10 +426,10 @@ void Spectrum::createShaders()
 	{
 		m_uniforms = nullptr;
 		
-		m_shader = newShader;
+		m_shader = std::move(newShader);
 		m_shader->use();
 		
-		m_uniforms   = new Uniforms (openGLContext, *m_shader);
+        m_uniforms = std::make_unique<Uniforms>(openGLContext, *m_shader);
 		
 #ifdef DEBUG
 		statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);

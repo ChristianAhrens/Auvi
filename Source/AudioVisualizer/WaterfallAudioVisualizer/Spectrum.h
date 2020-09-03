@@ -74,18 +74,18 @@ private:
             viewMatrix       = createUniform (openGLContext, shaderProgram, "viewMatrix");
         }
         
-        ScopedPointer<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
-        //ScopedPointer<OpenGLShaderProgram::Uniform> lightPosition;
+        std::unique_ptr<OpenGLShaderProgram::Uniform> projectionMatrix, viewMatrix;
+        //std::unique_ptr<OpenGLShaderProgram::Uniform> lightPosition;
         
     private:
-        static OpenGLShaderProgram::Uniform* createUniform (OpenGLContext& openGLContext,
+        static std::unique_ptr<OpenGLShaderProgram::Uniform> createUniform (OpenGLContext& openGLContext,
                                                             OpenGLShaderProgram& shaderProgram,
                                                             const char* uniformName)
         {
             if (openGLContext.extensions.glGetUniformLocation (shaderProgram.getProgramID(), uniformName) < 0)
                 return nullptr;
             
-            return new OpenGLShaderProgram::Uniform (shaderProgram, uniformName);
+            return std::make_unique<OpenGLShaderProgram::Uniform>(shaderProgram, uniformName);
         }
     };
 
@@ -108,8 +108,8 @@ private:
     GLuint m_yVBO;
     GLuint m_VAO;/*, EBO;*/
     
-    ScopedPointer<OpenGLShaderProgram> m_shader;
-    ScopedPointer<Uniforms> m_uniforms;
+    std::unique_ptr<OpenGLShaderProgram> m_shader;
+    std::unique_ptr<Uniforms> m_uniforms;
     
     String m_vertexShader;
     String m_fragmentShader;
