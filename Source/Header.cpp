@@ -33,9 +33,10 @@ Header::Header(int noGoAreaTop, int noGoAreaBottom, int noGoAreaLeft, int noGoAr
     // set the images to button
     std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
     JUCEAppBasics::Image_utils::getDrawableButtonImages(BinaryData::pause24px_svg, NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
-    NormalOnImage->replaceColour(Colours::black, Colours::red);
-    OverOnImage->replaceColour(Colours::black, Colours::indianred);
-    DownOnImage->replaceColour(Colours::black, Colours::darkred);
+    NormalOnImage->replaceColour(Colours::white, Colours::red);
+    OverOnImage->replaceColour(Colours::white, Colours::indianred);
+    DownOnImage->replaceColour(Colours::white, Colours::darkred);
+    DisabledOnImage->replaceColour(Colours::white, Colours::red.withSaturation(0.4f));
     m_stopProcessing->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
     m_stopProcessing->setColour(DrawableButton::ColourIds::backgroundColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
     m_stopProcessing->setColour(DrawableButton::ColourIds::backgroundOnColourId, getLookAndFeel().findColour(ResizableWindow::backgroundColourId).darker());
