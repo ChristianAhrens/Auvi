@@ -6,11 +6,12 @@
 
 
 Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
-:   m_readBuffer (2, RING_BUFFER_READ_SIZE),
+:   OpenGLAppComponent(),
+    m_readBuffer (2, RING_BUFFER_READ_SIZE),
 	m_forwardFFT(fftOrder)
 {
 	// Sets the version to 3.2
-	m_openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
+	openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
  
 	m_ringBuffer = ringBuffer;
 	
@@ -20,10 +21,6 @@ Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
 	// Allocate FFT data
 	m_fftData = new GLfloat [2 * fftSize];
 	
-	// Attach the OpenGL context but do not start [ see start() ]
-	m_openGLContext.setRenderer(this);
-	m_openGLContext.attachTo(*this);
-	
 	// Setup GUI Overlay Label: Status of Shaders, compiler errors, etc.
 	addAndMakeVisible (m_statusLabel);
 	m_statusLabel.setJustificationType (Justification::topLeft);
@@ -32,9 +29,7 @@ Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
 
 Spectrum::~Spectrum()
 {
-	// Turn off OpenGL
-	m_openGLContext.setContinuousRepainting (false);
-	m_openGLContext.detach();
+    shutdownOpenGL();
 	
 	delete [] m_fftData;
 	
@@ -47,12 +42,12 @@ Spectrum::~Spectrum()
 
 void Spectrum::start()
 {
-	m_openGLContext.setContinuousRepainting (true);
+	openGLContext.setContinuousRepainting (true);
 }
 
 void Spectrum::stop()
 {
-	m_openGLContext.setContinuousRepainting (false);
+	openGLContext.setContinuousRepainting (false);
 }
 
 void Spectrum::setChannel(int channel)
@@ -65,13 +60,13 @@ void Spectrum::setChannel(int channel)
 
 
 //==========================================================================
-// OpenGL Callbacks
+// OpenGLAppComponent OpenGL wrapper methods
 
 /** Called before rendering OpenGL, after an OpenGLContext has been associated
 	with this OpenGLRenderer (this component is a OpenGLRenderer).
 	Sets up GL objects that are needed for rendering.
  */
-void Spectrum::newOpenGLContextCreated()
+void Spectrum::initialise()
 {
 #if JUCE_OPENGL_ES
     if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLESSL_VERSION)
@@ -105,26 +100,26 @@ void Spectrum::newOpenGLContextCreated()
 	initializeYVertices();
 	
 	// Setup Buffer Objects
-	m_openGLContext.extensions.glGenBuffers (1, &m_xzVBO); // Vertex Buffer Object
-	m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
-	m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 2, m_xzVertices, GL_STATIC_DRAW);
+	openGLContext.extensions.glGenBuffers (1, &m_xzVBO); // Vertex Buffer Object
+	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
+	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 2, m_xzVertices, GL_STATIC_DRAW);
 	
 	
-	m_openGLContext.extensions.glGenBuffers (1, &m_yVBO);
-	m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
+	openGLContext.extensions.glGenBuffers (1, &m_yVBO);
+	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
 	
 #if JUCE_OPENGL3
-	m_openGLContext.extensions.glGenVertexArrays(1, &m_VAO);
-	m_openGLContext.extensions.glBindVertexArray(m_VAO);
+	openGLContext.extensions.glGenVertexArrays(1, &m_VAO);
+	openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
-	m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
-	m_openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-	m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	m_openGLContext.extensions.glVertexAttribPointer (1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), NULL);
+	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
+	openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
+	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glVertexAttribPointer (1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), NULL);
 	
-	m_openGLContext.extensions.glEnableVertexAttribArray (0);
-	m_openGLContext.extensions.glEnableVertexAttribArray (1);
+	openGLContext.extensions.glEnableVertexAttribArray (0);
+	openGLContext.extensions.glEnableVertexAttribArray (1);
 
 #if JUCE_OPENGL3
 #if JUCE_OPENGL_ES
@@ -141,7 +136,7 @@ void Spectrum::newOpenGLContextCreated()
 /** Called when done rendering OpenGL, as an OpenGLContext object is closing.
 	Frees any GL objects created during rendering.
  */
-void Spectrum::openGLContextClosing()
+void Spectrum::shutdown()
 {
     #if JUCE_OPENGL_ES
         if (OpenGLShaderProgram::getLanguageVersion() < MIN_SUPPORTED_GLESSL_VERSION)
@@ -171,14 +166,14 @@ void Spectrum::openGLContextClosing()
 
 /** The OpenGL rendering callback.
  */
-void Spectrum::renderOpenGL()
+void Spectrum::render()
 {
 	jassert (OpenGLHelpers::isContextActive());
 	if (!m_shader)
 		return;
 	
 	// Setup Viewport
-	const float renderingScale = (float)m_openGLContext.getRenderingScale();
+	const float renderingScale = (float)openGLContext.getRenderingScale();
 	glViewport (0, 0, roundToInt (renderingScale * getWidth()), roundToInt (renderingScale * getHeight()));
 	
 	// Set background Color
@@ -237,8 +232,8 @@ void Spectrum::renderOpenGL()
 		}
 	}
 	
-	m_openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	m_openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
+	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
 	
 	
 	// Setup the Uniforms for use in the Shader
@@ -258,7 +253,7 @@ void Spectrum::renderOpenGL()
 
 	// Draw the points
 #ifdef JUCE_OPENGL3
-	m_openGLContext.extensions.glBindVertexArray(m_VAO);
+	openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
 	glDrawArrays (GL_POINTS, 0, m_numVertices);
 	
@@ -422,7 +417,7 @@ void Spectrum::createShaders()
 	createVertexShader();
 	createFragmentShader();
 	
-	ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (m_openGLContext));
+	ScopedPointer<OpenGLShaderProgram> newShader (new OpenGLShaderProgram (openGLContext));
 	String statusText;
 	
     if (newShader->addVertexShader (m_vertexShader)
@@ -434,7 +429,7 @@ void Spectrum::createShaders()
 		m_shader = newShader;
 		m_shader->use();
 		
-		m_uniforms   = new Uniforms (m_openGLContext, *m_shader);
+		m_uniforms   = new Uniforms (openGLContext, *m_shader);
 		
 #ifdef DEBUG
 		statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);

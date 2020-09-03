@@ -9,8 +9,7 @@
     GPU.
  */
 
-class Spectrum :    public Component,
-                    public OpenGLRenderer
+class Spectrum :    public OpenGLAppComponent
 {
     
 public:
@@ -25,11 +24,10 @@ public:
     void setChannel(int channel);
     
     //==========================================================================
-    // OpenGL Callbacks
-    void newOpenGLContextCreated() override;
-    void openGLContextClosing() override;
-    void renderOpenGL() override;
-    
+    // OpenGLAppComponent OpenGL wrapper methods
+    void initialise() override; // called from call to private OpenGLAppComponent::newOpenGLContextCreated
+    void shutdown() override; // called from call to private OpenGLAppComponent::openGLContextClosing
+    void render() override; // called from call to private OpenGLAppComponent::renderOpenGL
     
     //==========================================================================
     // JUCE Callbacks
@@ -106,7 +104,6 @@ private:
     
     
     // OpenGL Variables
-    OpenGLContext m_openGLContext;
     GLuint m_xzVBO;
     GLuint m_yVBO;
     GLuint m_VAO;/*, EBO;*/
