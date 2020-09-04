@@ -29,6 +29,8 @@ VisuSelectComponent::VisuSelectComponent()
         JUCEAppBasics::Image_utils::getDrawableButtonImages(getVisuTypeFileName((AbstractAudioVisualizer::VisuType)i), NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
 
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setColour(TextButton::ColourIds::buttonColourId, Colours::darkgrey);
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setColour(TextButton::ColourIds::buttonOnColourId, Colours::grey);
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setClickingTogglesState(true);
         addAndMakeVisible(m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->addListener(this);
