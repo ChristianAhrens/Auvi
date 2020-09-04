@@ -50,7 +50,7 @@ public:
     void buttonClicked(Button* button) override;
 
 private:
-    std::unique_ptr<Drawable> getVisuTypeDrawable(AbstractAudioVisualizer::VisuType type);
+    String getVisuTypeFileName(AbstractAudioVisualizer::VisuType type);
     
     std::map<AbstractAudioVisualizer::VisuType, std::unique_ptr<DrawableButton>> m_visuSelectButtons;
     Listener *m_listener;

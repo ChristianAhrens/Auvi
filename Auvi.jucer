@@ -39,6 +39,7 @@
                 file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.cpp"/>
           <FILE id="Mo2bNM" name="CustomLookAndFeel.h" compile="0" resource="0"
                 file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.h"/>
+          <FILE id="O4qPyp" name="Image_utils.hpp" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/Image_utils.hpp"/>
           <FILE id="B4UVYB" name="iOS_utils.hpp" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/iOS_utils.hpp"/>
           <FILE id="pCPy7z" name="SplitButtonComponent.cpp" compile="1" resource="0"
                 file="submodules/JUCE-AppBasics/Source/SplitButtonComponent.cpp"/>

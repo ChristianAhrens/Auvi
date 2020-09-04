@@ -10,6 +10,7 @@
 
 #include "VisuSelectComponent.h"
 
+#include "../submodules/JUCE-AppBasics/Source/Image_utils.hpp"
 
 namespace Auvi
 {
@@ -23,15 +24,11 @@ VisuSelectComponent::VisuSelectComponent()
     for(int i=AbstractAudioVisualizer::VisuType::InvalidFirst+1; i<AbstractAudioVisualizer::VisuType::InvalidLast; ++i)
     {
         m_visuSelectButtons[(AbstractAudioVisualizer::VisuType)i] = std::make_unique<DrawableButton>(String(i), DrawableButton::ButtonStyle::ImageOnButtonBackground);
+        
+        std::unique_ptr<juce::Drawable> NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage;
+        JUCEAppBasics::Image_utils::getDrawableButtonImages(getVisuTypeFileName((AbstractAudioVisualizer::VisuType)i), NormalImage, OverImage, DownImage, DisabledImage, NormalOnImage, OverOnImage, DownOnImage, DisabledOnImage);
 
-        std::unique_ptr<juce::Drawable> drawableVisuTypeNormalImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
-        drawableVisuTypeNormalImage->replaceColour(Colours::black, Colours::white);
-        std::unique_ptr<juce::Drawable> drawableVisuTypeOverImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
-        drawableVisuTypeOverImage->replaceColour(Colours::black, Colours::lightgrey);
-        std::unique_ptr<juce::Drawable> drawableVisuTypeDownImage = getVisuTypeDrawable((AbstractAudioVisualizer::VisuType)i);
-        drawableVisuTypeDownImage->replaceColour(Colours::black, Colours::grey);
-
-        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(drawableVisuTypeNormalImage.get(), drawableVisuTypeOverImage.get(), drawableVisuTypeDownImage.get(), nullptr, nullptr, nullptr, nullptr, nullptr);
+        m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setImages(NormalImage.get(), OverImage.get(), DownImage.get(), DisabledImage.get(), NormalOnImage.get(), OverOnImage.get(), DownOnImage.get(), DisabledOnImage.get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->setClickingTogglesState(true);
         addAndMakeVisible(m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i).get());
         m_visuSelectButtons.at((AbstractAudioVisualizer::VisuType)i)->addListener(this);
@@ -59,35 +56,27 @@ VisuSelectComponent::~VisuSelectComponent()
     }
 }
 
-std::unique_ptr<Drawable> VisuSelectComponent::getVisuTypeDrawable(AbstractAudioVisualizer::VisuType type)
+String VisuSelectComponent::getVisuTypeFileName(AbstractAudioVisualizer::VisuType type)
 {
-    std::unique_ptr<XmlElement> svg_xml;
     switch(type)
     {
         case AbstractAudioVisualizer::VisuType::MultiMeter:
-            svg_xml = XmlDocument::parse(BinaryData::equalizer24px_svg);
-            break;
+            return BinaryData::equalizer24px_svg;
         case AbstractAudioVisualizer::VisuType::Scope:
-            svg_xml = XmlDocument::parse(BinaryData::track_changes24px_svg);
-            break;
+            return BinaryData::track_changes24px_svg;
         case AbstractAudioVisualizer::VisuType::Rta:
-            svg_xml = XmlDocument::parse(BinaryData::show_chart24px_svg);
-            break;
+             return BinaryData::show_chart24px_svg;
         case AbstractAudioVisualizer::VisuType::Waveform:
-            svg_xml = XmlDocument::parse(BinaryData::graphic_eq24px_svg);
-            break;
+            return BinaryData::graphic_eq24px_svg;
         case AbstractAudioVisualizer::VisuType::Waterfall:
-            svg_xml = XmlDocument::parse(BinaryData::waves24px_svg);
-            break;
+            return BinaryData::waves24px_svg;
         case AbstractAudioVisualizer::VisuType::TwoDField:
-            svg_xml = XmlDocument::parse(BinaryData::grid_on24px_svg);
-            break;
+            return BinaryData::grid_on24px_svg;
         case AbstractAudioVisualizer::VisuType::InvalidFirst:
         case AbstractAudioVisualizer::VisuType::InvalidLast:
         default:
-            break;
+            return String();
     }
-    return Drawable::createFromSVG(*(svg_xml.get()));
 }
 
 void VisuSelectComponent::setActiveVisuTypes(std::set<AbstractAudioVisualizer::VisuType> visuTypes)
