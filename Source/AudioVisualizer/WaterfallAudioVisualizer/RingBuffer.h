@@ -157,6 +157,11 @@ public:
             }
         }
     }
+    
+    int getNumChannels()
+    {
+        return m_numChannels;
+    }
 
 private:
     int m_bufferSize;

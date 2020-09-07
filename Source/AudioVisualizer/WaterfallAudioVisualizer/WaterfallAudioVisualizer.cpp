@@ -82,7 +82,10 @@ void WaterfallAudioVisualizer::processingDataChanged(AbstractProcessorData *data
         if (ld && ld->GetChannelCount() > 0)
         {
             juce::AudioSampleBuffer* b = static_cast<juce::AudioSampleBuffer*>(ld);
+            bool bufferResizeRequired = (m_buffer->getNumChannels() != b->getNumChannels());
             m_buffer->writeSamples(*b, 0, b->getNumSamples());
+            if (bufferResizeRequired)
+                m_3Dspectrum->setRingBuffer(m_buffer.get());
             notifyChanges();
         }
         break;

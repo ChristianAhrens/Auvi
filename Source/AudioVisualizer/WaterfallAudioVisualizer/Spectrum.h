@@ -120,8 +120,8 @@ private:
     Draggable3DOrientation m_draggableOrientation;
     
     // Audio Structures
-    RingBuffer<GLfloat> * m_ringBuffer;
-    AudioBuffer<GLfloat> m_readBuffer;    // Stores data read from ring buffer
+    RingBuffer<GLfloat> * m_ringBuffer { nullptr };
+    std::unique_ptr<AudioBuffer<GLfloat>> m_readBuffer { nullptr };    // Stores data read from ring buffer
     dsp::FFT m_forwardFFT;
     GLfloat * m_fftData;
     

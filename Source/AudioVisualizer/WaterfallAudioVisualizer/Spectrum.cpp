@@ -7,7 +7,6 @@
 
 Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
 :   OpenGLAppComponent(),
-    m_readBuffer (2, RING_BUFFER_READ_SIZE),
 	m_forwardFFT(fftOrder)
 {
 	// Sets the version to 3.2
@@ -39,7 +38,12 @@ Spectrum::~Spectrum()
 
 void Spectrum::setRingBuffer(RingBuffer<GLfloat> * ringBuffer)
 {
+    if (!ringBuffer)
+        return;
+    
     m_ringBuffer = ringBuffer;
+    
+    m_readBuffer = std::make_unique<AudioBuffer<GLfloat>>(ringBuffer->getNumChannels(), RING_BUFFER_READ_SIZE);
 }
 
 //==========================================================================
@@ -159,10 +163,8 @@ void Spectrum::shutdown()
         }
     #endif
 
-	if(m_shader)
-		m_shader->release();
-	m_shader = nullptr;
-	m_uniforms = nullptr;
+    m_shader.reset();
+	m_uniforms.reset();
 	
 	delete [] m_xzVertices;
 	delete [] m_yVertices;
@@ -192,8 +194,8 @@ void Spectrum::render()
 	m_shader->use();
 	
 	// Copy data from ring buffer into FFT
-	m_ringBuffer->readSamples (m_readBuffer, RING_BUFFER_READ_SIZE);
 	FloatVectorOperations::clear (m_fftData, RING_BUFFER_READ_SIZE);
+	m_ringBuffer->readSamples (*m_readBuffer, RING_BUFFER_READ_SIZE);
 	
 	///** Future Feature:
 	//	Instead of summing channels below, keep the channels seperate and
@@ -206,8 +208,8 @@ void Spectrum::render()
 	//	FloatVectorOperations::add (m_fftData, m_readBuffer.getReadPointer(i, 0), RING_BUFFER_READ_SIZE);
 	//}
 
-	if(m_channel < m_readBuffer.getNumChannels())
-		FloatVectorOperations::add(m_fftData, m_readBuffer.getReadPointer(m_channel, 0), RING_BUFFER_READ_SIZE);
+	if(m_channel < m_readBuffer->getNumChannels())
+		FloatVectorOperations::add(m_fftData, m_readBuffer->getReadPointer(m_channel, 0), RING_BUFFER_READ_SIZE);
 	
 	// Calculate FFT Crap
 	m_forwardFFT.performFrequencyOnlyForwardTransform (m_fftData);
