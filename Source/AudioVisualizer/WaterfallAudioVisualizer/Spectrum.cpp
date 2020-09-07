@@ -13,7 +13,7 @@ Spectrum::Spectrum (RingBuffer<GLfloat> * ringBuffer)
 	// Sets the version to 3.2
 	openGLContext.setOpenGLVersionRequired (OpenGLContext::OpenGLVersion::openGL3_2);
  
-	m_ringBuffer = ringBuffer;
+    setRingBuffer(ringBuffer);
 	
 	// Set default 3D orientation
 	m_draggableOrientation.reset(Vector3D<float>(0.0, 1.0, 0.0));
@@ -35,6 +35,11 @@ Spectrum::~Spectrum()
 	
 	// Detach ringBuffer
 	m_ringBuffer = nullptr;
+}
+
+void Spectrum::setRingBuffer(RingBuffer<GLfloat> * ringBuffer)
+{
+    m_ringBuffer = ringBuffer;
 }
 
 //==========================================================================
@@ -272,7 +277,7 @@ void Spectrum::paint (Graphics& g) {}
 void Spectrum::resized ()
 {
 	m_draggableOrientation.setViewport (getLocalBounds());
-	m_statusLabel.setBounds (getLocalBounds().reduced (4).removeFromTop (75));
+	m_statusLabel.setBounds (getLocalBounds().reduced (8));
 }
 
 void Spectrum::mouseDown (const MouseEvent& e)
@@ -386,6 +391,7 @@ void Spectrum::createFragmentShader()
         "#version 300 es\n"
         "precision mediump float;\n"
         "out vec4 color;\n"
+        "\n"
         "void main()\n"
         "{\n"
         "    color = vec4 ("
@@ -399,6 +405,7 @@ void Spectrum::createFragmentShader()
 	m_fragmentShader = String(
 		"#version 330 core\n"
 		"out vec4 color;\n"
+        "\n"
 		"void main()\n"
 		"{\n"
 		"    color = vec4 ("
@@ -432,14 +439,14 @@ void Spectrum::createShaders()
         m_uniforms = std::make_unique<Uniforms>(openGLContext, *m_shader);
 		
 #ifdef DEBUG
-		statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2);
+		statusText = "GLSL: v" + String (OpenGLShaderProgram::getLanguageVersion(), 2) + "\n\nVertex Shader:\n" + m_vertexShader+ "\nFragment Shader:\n" + m_fragmentShader;
+        m_statusLabel.setText (statusText, dontSendNotification);
 #endif
 	}
 	else
 	{
 		statusText = newShader->getLastError();
         DBG(statusText);
+        m_statusLabel.setText (statusText, dontSendNotification);
 	}
-	
-	//m_statusLabel.setText (statusText, dontSendNotification);
 }

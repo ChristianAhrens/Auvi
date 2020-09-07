@@ -45,11 +45,14 @@ public:
      */
     void writeSamples(AudioBuffer<Type>& newAudioData, int startSample, int numSamples)
     {
-        if ((m_numChannels != newAudioData.getNumChannels()) || (m_bufferSize != numSamples))
+        if ((m_numChannels != newAudioData.getNumChannels()) || (m_bufferSize < numSamples))
         {
-            m_audioBuffer->setSize(newAudioData.getNumChannels(), numSamples, true, true, true);
+            m_audioBuffer->setSize(newAudioData.getNumChannels(), numSamples);
             m_bufferSize = numSamples;
+            m_numChannels = newAudioData.getNumChannels();
         }
+        
+        jassert(m_audioBuffer->getNumChannels() == newAudioData.getNumChannels());
             
         for (int i = 0; i < m_numChannels; ++i)
         {

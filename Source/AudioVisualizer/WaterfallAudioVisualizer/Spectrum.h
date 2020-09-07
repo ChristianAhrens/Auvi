@@ -14,8 +14,9 @@ class Spectrum :    public OpenGLAppComponent
     
 public:
     Spectrum (RingBuffer<GLfloat> * ringBuffer);
-    
     ~Spectrum();
+    
+    void setRingBuffer(RingBuffer<GLfloat> * ringBuffer);
     
     //==========================================================================
     // Oscilloscope Control Functions
