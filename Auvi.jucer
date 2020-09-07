@@ -51,7 +51,8 @@
     <GROUP id="{A7277E36-AB94-4408-FC2B-39F558038811}" name="Documentation"/>
     <GROUP id="{3482B756-6423-A110-A5E5-7E6AADE98E41}" name="Resources">
       <GROUP id="{E6327702-ADFE-25DB-51B3-D943A20FA2E6}" name="Images">
-        <FILE id="y9CNR0" name="Auvi.png" compile="0" resource="1" file="Resources/Images/Auvi.png"/>
+        <FILE id="y9CNR0" name="Auvi.png" compile="0" resource="1" file="Resources/Images/Auvi.png"
+              xcodeResource="1"/>
         <FILE id="sgyBt4" name="Auvi.xcf" compile="0" resource="1" file="Resources/Images/Auvi.xcf"/>
         <FILE id="LCX3QV" name="Auvi_radar.png" compile="0" resource="1" file="Resources/Images/Auvi_radar.png"/>
       </GROUP>
@@ -165,7 +166,8 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="y9CNR0" bigIcon="y9CNR0"
-                  microphonePermissionNeeded="1" iosDevelopmentTeamID="SB7Q3PP4FQ">
+                  microphonePermissionNeeded="1" iosDevelopmentTeamID="SB7Q3PP4FQ"
+                  customLaunchStoryboard="Resources/Deployment/iOS/LaunchScreen.storyboard">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug"/>
         <CONFIGURATION isDebug="0" name="Release"/>
