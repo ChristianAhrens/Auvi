@@ -279,7 +279,14 @@ void Spectrum::paint (Graphics& g) {}
 void Spectrum::resized ()
 {
 	m_draggableOrientation.setViewport (getLocalBounds());
-	m_statusLabel.setBounds (getLocalBounds().reduced (8));
+    
+    if (m_statusLabel.getText().isEmpty())
+    {
+        m_statusLabel.setVisible(true);
+        m_statusLabel.setBounds (getLocalBounds().reduced (8));
+    }
+    else
+        m_statusLabel.setVisible(false);
 }
 
 void Spectrum::mouseDown (const MouseEvent& e)
