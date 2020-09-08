@@ -61,8 +61,8 @@ void Spectrum::stop()
 
 void Spectrum::setChannel(int channel)
 {
-	if (channel > -1)
-		m_channel = channel;
+	if (channel > 0)
+		m_channel = channel - 1;
 	else
 		jassertfalse;
 }
@@ -323,7 +323,7 @@ void Spectrum::initializeYVertices()
 {
 	// Set all Y values to 0.0
 	m_yVertices = new GLfloat [m_numVertices];
-	memset(m_yVertices, 0.0f, sizeof(GLfloat) * m_xFreqResolution * m_zTimeResolution);
+	memset(m_yVertices, 0.0f, sizeof(GLfloat) * m_numVertices);
 }
 
 /** Calculates and returns the Projection Matrix.
