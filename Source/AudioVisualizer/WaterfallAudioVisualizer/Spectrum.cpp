@@ -280,7 +280,7 @@ void Spectrum::resized ()
 {
 	m_draggableOrientation.setViewport (getLocalBounds());
     
-    if (m_statusLabel.getText().isEmpty())
+    if (!m_statusLabel.getText().isEmpty())
     {
         m_statusLabel.setVisible(true);
         m_statusLabel.setBounds (getLocalBounds().reduced (8));
