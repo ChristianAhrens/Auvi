@@ -77,9 +77,10 @@ void AudioVisualizerConfigBase::comboBoxChanged(ComboBox* comboBoxThatHasChanged
     }
 }
 
-void AudioVisualizerConfigBase::buttonClicked(uint64 buttonId)
+void AudioVisualizerConfigBase::buttonClicked(JUCEAppBasics::SplitButtonComponent* button, uint64 buttonId)
 {
-    setUsesValuesInDB(m_usesValuesInDBSplitButton->getButtonDownText() == "dB");
+    if (m_usesValuesInDBSplitButton && m_usesValuesInDBSplitButton.get() == button)
+        setUsesValuesInDB(m_usesValuesInDBSplitButton->getButtonDownText() == "dB");
 }
 
 void AudioVisualizerConfigBase::setConfigFeatures(int features)
@@ -216,7 +217,7 @@ void AbstractAudioVisualizer::closeAudioVisualizerConfig()
         m_usesValuesInDB = m_visualizerConfig->getUsesValuesInDB();
         m_visualizerConfig.reset();
 
-        triggerConfigurationUpdate();
+        triggerConfigurationUpdate(true);
     }
 }
 

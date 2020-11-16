@@ -86,7 +86,7 @@ public:
     void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 
     //==============================================================================
-    void buttonClicked(uint64 buttonId) override;
+    void buttonClicked(JUCEAppBasics::SplitButtonComponent* button, uint64 buttonId) override;
 
     //==============================================================================
     void setConfigFeatures(int features);

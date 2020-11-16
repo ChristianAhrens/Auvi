@@ -59,7 +59,7 @@ MainComponent::MainComponent()
 		// Default visualizer shall be our scope
 		m_body->onUpdateVisuTypes(std::set<AbstractAudioVisualizer::VisuType>{ AbstractAudioVisualizer::VisuType::Scope });
 
-		triggerConfigurationUpdate();
+		triggerConfigurationUpdate(true);
 	}
 	else
 	{
@@ -206,7 +206,7 @@ AudioSelectComponent* MainComponent::onToggleAudioConfigSelect()
 	}
     else
     {
-		triggerConfigurationUpdate();
+		triggerConfigurationUpdate(true);
 
         removeChildComponent(m_audioConfig.get());
         m_audioConfig = nullptr;
@@ -239,7 +239,7 @@ VisuSelectComponent* MainComponent::onToggleVisuConfigSelect()
         removeChildComponent(m_visuConfig.get());
         m_visuConfig = nullptr;
 
-		triggerConfigurationUpdate();
+		triggerConfigurationUpdate(true);
 
         return nullptr;
     }
