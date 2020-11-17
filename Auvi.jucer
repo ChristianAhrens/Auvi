@@ -55,6 +55,7 @@
               xcodeResource="1"/>
         <FILE id="sgyBt4" name="Auvi.xcf" compile="0" resource="1" file="Resources/Images/Auvi.xcf"/>
         <FILE id="LCX3QV" name="Auvi_radar.png" compile="0" resource="1" file="Resources/Images/Auvi_radar.png"/>
+        <FILE id="U53aC0" name="AuviCanvas.png" compile="0" resource="1" file="Resources/Images/AuviCanvas.png"/>
         <FILE id="xEqHy1" name="AuviRect.png" compile="0" resource="1" file="Resources/Images/AuviRect.png"/>
       </GROUP>
     </GROUP>
@@ -166,7 +167,7 @@
         <MODULEPATH id="juce_dsp" path="../../../../../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="y9CNR0" bigIcon="y9CNR0"
+    <XCODE_IPHONE targetFolder="Builds/iOS" smallIcon="U53aC0" bigIcon="U53aC0"
                   microphonePermissionNeeded="1" iosDevelopmentTeamID="SB7Q3PP4FQ"
                   customLaunchStoryboard="Resources/Deployment/iOS/LaunchScreen.storyboard">
       <CONFIGURATIONS>
