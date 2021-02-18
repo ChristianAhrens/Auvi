@@ -10,7 +10,7 @@
 
 #include "VisuSelectComponent.h"
 
-#include "../submodules/JUCE-AppBasics/Source/Image_utils.hpp"
+#include <Image_utils.h>
 
 namespace Auvi
 {

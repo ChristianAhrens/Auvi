@@ -10,7 +10,7 @@
 
 #include "Processor/Processor.h"
 
-#include "../submodules/JUCE-AppBasics/Source/iOS_utils.hpp"
+#include <iOS_utils.h>
 
 #include "AppConfiguration.h"
 #include "utils.hpp"

@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="t0S85N" name="Auvi" projectType="guiapp" version="0.1.13"
               companyName="Christian Ahrens" companyEmail="christianahrens@me.com"
-              companyCopyright="2020" jucerFormatVersion="1">
+              companyCopyright="2020" jucerFormatVersion="1" headerPath="../../submodules/JUCE-AppBasics/Source/">
   <MAINGROUP id="wsXNhp" name="Auvi">
     <GROUP id="{BAE28760-B384-4AEF-64FE-7DD11A569849}" name="submodules">
       <GROUP id="{544F3BC2-3FCF-5A18-0ED0-B0479BC0D639}" name="JUCE-AppBasics">
@@ -39,8 +39,10 @@
                 file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.cpp"/>
           <FILE id="Mo2bNM" name="CustomLookAndFeel.h" compile="0" resource="0"
                 file="submodules/JUCE-AppBasics/Source/CustomLookAndFeel.h"/>
-          <FILE id="O4qPyp" name="Image_utils.hpp" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/Image_utils.hpp"/>
-          <FILE id="B4UVYB" name="iOS_utils.hpp" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/iOS_utils.hpp"/>
+          <FILE id="ena0mi" name="Image_utils.cpp" compile="1" resource="0" file="submodules/JUCE-AppBasics/Source/Image_utils.cpp"/>
+          <FILE id="Ulct22" name="Image_utils.h" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/Image_utils.h"/>
+          <FILE id="EoeIN3" name="iOS_utils.cpp" compile="1" resource="0" file="submodules/JUCE-AppBasics/Source/iOS_utils.cpp"/>
+          <FILE id="iJ7sg1" name="iOS_utils.h" compile="0" resource="0" file="submodules/JUCE-AppBasics/Source/iOS_utils.h"/>
           <FILE id="pCPy7z" name="SplitButtonComponent.cpp" compile="1" resource="0"
                 file="submodules/JUCE-AppBasics/Source/SplitButtonComponent.cpp"/>
           <FILE id="GnVV4X" name="SplitButtonComponent.h" compile="0" resource="0"
