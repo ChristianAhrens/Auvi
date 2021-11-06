@@ -110,22 +110,22 @@ void Spectrum::initialise()
 	
 	// Setup Buffer Objects
 	openGLContext.extensions.glGenBuffers (1, &m_xzVBO); // Vertex Buffer Object
-	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
-	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 2, m_xzVertices, GL_STATIC_DRAW);
+	openGLContext.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, m_xzVBO);
+	openGLContext.extensions.glBufferData (juce::gl::GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices * 2, m_xzVertices, juce::gl::GL_STATIC_DRAW);
 	
 	
 	openGLContext.extensions.glGenBuffers (1, &m_yVBO);
-	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
+	openGLContext.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glBufferData (juce::gl::GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, juce::gl::GL_STREAM_DRAW);
 	
 #if JUCE_OPENGL3
 	openGLContext.extensions.glGenVertexArrays(1, &m_VAO);
 	openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
-	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_xzVBO);
-	openGLContext.extensions.glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), NULL);
-	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	openGLContext.extensions.glVertexAttribPointer (1, 1, GL_FLOAT, GL_FALSE, sizeof(GLfloat), NULL);
+	openGLContext.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, m_xzVBO);
+	openGLContext.extensions.glVertexAttribPointer(0, 2, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, 2 * sizeof(GLfloat), NULL);
+	openGLContext.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glVertexAttribPointer (1, 1, juce::gl::GL_FLOAT, juce::gl::GL_FALSE, sizeof(GLfloat), NULL);
 	
 	openGLContext.extensions.glEnableVertexAttribArray (0);
 	openGLContext.extensions.glEnableVertexAttribArray (1);
@@ -181,14 +181,14 @@ void Spectrum::render()
 	
 	// Setup Viewport
 	const float renderingScale = (float)openGLContext.getRenderingScale();
-	glViewport (0, 0, roundToInt (renderingScale * getWidth()), roundToInt (renderingScale * getHeight()));
+    juce::gl::glViewport (0, 0, roundToInt (renderingScale * getWidth()), roundToInt (renderingScale * getHeight()));
 	
 	// Set background Color
 	OpenGLHelpers::clear (getLookAndFeel().findColour (ResizableWindow::backgroundColourId).darker());
 	
 	// Enable Alpha Blending
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    juce::gl::glEnable (juce::gl::GL_BLEND);
+    juce::gl::glBlendFunc (juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE_MINUS_SRC_ALPHA);
 	
 	// Use Shader Program that's been defined
 	m_shader->use();
@@ -239,8 +239,8 @@ void Spectrum::render()
 		}
 	}
 	
-	openGLContext.extensions.glBindBuffer (GL_ARRAY_BUFFER, m_yVBO);
-	openGLContext.extensions.glBufferData (GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, GL_STREAM_DRAW);
+	openGLContext.extensions.glBindBuffer (juce::gl::GL_ARRAY_BUFFER, m_yVBO);
+	openGLContext.extensions.glBufferData (juce::gl::GL_ARRAY_BUFFER, sizeof(GLfloat) * m_numVertices, m_yVertices, juce::gl::GL_STREAM_DRAW);
 	
 	
 	// Setup the Uniforms for use in the Shader
@@ -262,7 +262,7 @@ void Spectrum::render()
 #ifdef JUCE_OPENGL3
 	openGLContext.extensions.glBindVertexArray(m_VAO);
 #endif
-	glDrawArrays (GL_POINTS, 0, m_numVertices);
+    juce::gl::glDrawArrays (juce::gl::GL_POINTS, 0, m_numVertices);
 	
 	
 	// Zero Out FFT for next use
