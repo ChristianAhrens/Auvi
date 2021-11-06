@@ -284,11 +284,11 @@ bool AbstractAudioVisualizer::setStateXml(XmlElement* stateXml)
     if (stateXml->getTagName() != String(AbstractAudioVisualizer::VisuTypeToString(getType())))
         return false;
 
-    forEachXmlChildElement(*stateXml, stateXmlElement)
+    for (auto stateXmlElement : stateXml->getChildIterator())
     {
         if (stateXmlElement->getTagName() == AppConfiguration::getTagName(AppConfiguration::TagID::VISUMAP))
         {
-            forEachXmlChildElement(*stateXmlElement, mappingElement)
+            for (auto mappingElement : stateXmlElement->getChildIterator())
             {
                 if (m_channelMapping.count(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) > 0)
                     m_channelMapping.at(static_cast<AudioVisualizerConfigBase::MappingKey>(mappingElement->getTagName().getTrailingIntValue())) = mappingElement->getAllSubText().getIntValue();

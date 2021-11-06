@@ -220,7 +220,7 @@ bool Body::setStateXml(XmlElement* stateXml)
 
     std::set<AbstractAudioVisualizer::VisuType> visualizerTypes = {};
     std::map< AbstractAudioVisualizer::VisuType, XmlElement*> visualizerXmlElements;
-    forEachXmlChildElement(*stateXml, visualizerChildElement)
+    for (auto visualizerChildElement : stateXml->getChildIterator())
     {
         auto visuType = AbstractAudioVisualizer::StringToVisuType(visualizerChildElement->getTagName().toStdString());
         auto isActiveAttributeValue = visualizerChildElement->getBoolAttribute("isActive");
